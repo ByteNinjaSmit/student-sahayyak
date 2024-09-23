@@ -2,7 +2,7 @@ import { Schema,model,models } from "mongoose";
 
 const corridorSchema = new Schema({
     complaint:{
-        type:String,
+        type:[String],
         required:true,
     },
     complaintStatus:{
