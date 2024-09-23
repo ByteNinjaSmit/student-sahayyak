@@ -6,7 +6,6 @@ const userSchema = new Schema({
   username: {
       type: String,
       required: true,
-      unique: true,
   },
   room: {
       type: String,
@@ -28,47 +27,42 @@ userSchema.pre("save", async function (next) {
   const user = this;
 
   if (!user.isModified("password")) {
-      console.log('Password is not modified');
-      next();
+    console.log('Password is not modified');
+    return next(); // Added return here
   }
 
   try {
-      const saltRound = await bcrypt.genSalt(10);
-      const hash_password = await bcrypt.hash(user.password, saltRound);
-      user.password = hash_password;
-      console.log('Password hashed successfully');
-      next();
+    const saltRound = await bcrypt.genSalt(10);
+    const hash_password = await bcrypt.hash(user.password, saltRound);
+    user.password = hash_password;
   } catch (error) {
-      console.log('Error during password hashing:', error);
-      next(error);
+    console.log(error);
   }
 });
 
 
-// Compare bcrypt password
 
+// Compare bcrypt password
 userSchema.methods.comparePassword = async function (password:string) {
-    return bcrypt.compare(password, this.password);
-  };
+  return bcrypt.compare(password, this.password);
+};
 
 // JSON WEB TOKEN
 userSchema.methods.generateToken = async function () {
   try {
-      return jwt.sign(
-          {
-              userID: this._id.toString(),  // Use _id instead of userId
-              username: this.username,
-              hostelId: this.hostelId,
-          },
-          process.env.JWT_SECRET_KEY as string,
-          {
-              expiresIn: "1h",
-          }
-      );
-    // return token;
+    return jwt.sign(
+      {
+        userID: this._id.toString(),
+        room: this.room,
+        hostelId: this.hostelId,
+      },
+      process.env.JWT_SECRET_KEY as string,
+      {
+        expiresIn: "30d",
+      }
+    );
   } catch (error) {
-    console.error("Token generation error:", error);
-    throw new Error("Token generation failed");
+    console.error(error);
   }
 };
 

@@ -1,12 +1,11 @@
+// layout.tsx (or layout.js)
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import MainNavbar from "@/components/layout/navbar/page";
 import { NextUIProvider } from "@nextui-org/system";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { AuthProvider } from "./store/auth";
-
-const inter = Inter({ subsets: ["latin"] });
+import MainFooter from "@/components/layout/footer/page";
 
 export const metadata: Metadata = {
   title: "Hostellers Sahayyak",
@@ -20,12 +19,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body id="Layout">
         <NextUIProvider>
           <NextThemesProvider attribute="class" defaultTheme="light">
             <AuthProvider>
               <MainNavbar />
-              {children}
+              <main>{children}</main>
+              <MainFooter />
             </AuthProvider>
           </NextThemesProvider>
         </NextUIProvider>

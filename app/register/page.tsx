@@ -13,10 +13,10 @@ export default function Register() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { storeTokenInLS ,isLoggedIn} = useAuth();
+  const { storeTokenInLS, isLoggedIn } = useAuth();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission
     setError(''); 
 
     if (password !== rePassword) {
@@ -38,21 +38,23 @@ export default function Register() {
       const res_data = await response.json();
 
       if (response.ok) {
-        setLoading(false);
+        // Store the token and log in the user
         storeTokenInLS(res_data.token);
-        router.push("/");
+        router.push("/"); // Redirect to the home page
       } else {
-        setLoading(false);
         setError(res_data.error || "Registration failed");
       }
     } catch (error) {
-      setLoading(false);
       setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false); // Always reset loading state
     }
   };
 
-  if(isLoggedIn){
+  // Redirect if the user is already logged in
+  if (isLoggedIn) {
     router.push("/");
+    return null; // Prevent rendering the form if logged in
   }
 
   return (

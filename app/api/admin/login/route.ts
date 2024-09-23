@@ -1,7 +1,7 @@
 "use server";
 
 import { connectToDatabase } from "@/database/dbConn";
-import User from "@/database/models/user-model";
+import Faculty from "@/database/models/high-authority-model";
 import { NextRequest, NextResponse } from "next/server";
 
 // Ensure the database connection is established before processing requests
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const userExist = await User.findOne({username});
+    const userExist = await Faculty.findOne({username});
     if (!userExist) {
       return NextResponse.json(
         { message: "Invalid Credentials" },
