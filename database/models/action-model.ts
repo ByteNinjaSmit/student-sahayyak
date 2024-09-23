@@ -23,7 +23,7 @@ const actionSchema = new Schema({
     },
     highAuth:{
         type: mongoose.Types.ObjectId, 
-        ref: "Facultys", 
+        ref: "Faculties", 
     }
 
 },
