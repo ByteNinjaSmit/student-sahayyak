@@ -1,5 +1,4 @@
 "use server";
-
 import { connectToDatabase } from "@/database/dbConn";
 import User from "@/database/models/user-model";
 import { NextRequest, NextResponse } from "next/server";

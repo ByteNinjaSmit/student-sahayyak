@@ -1,20 +1,31 @@
-"use client"
-import React from "react";
-import {Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Link, Button} from "@nextui-org/react";
-import {AcmeLogo} from "./AcmeLogo.jsx";
-// import Link from 'next/link';
+"use client"; // Ensure this is present for client-side rendering
+import React, { useState } from "react";
+import { usePathname } from "next/navigation"; // Correct hook for the App Router
+import {
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  NavbarMenuToggle,
+  NavbarMenu,
+  NavbarMenuItem,
+  Link,
+  Button,
+} from "@nextui-org/react";
+import { AcmeLogo } from "./AcmeLogo.jsx";
 import { useAuth } from "@/app/store/auth";
 
 export default function MainNavabar() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const { isLoggedIn } = useAuth();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { userId, isLoggedIn } = useAuth();
+  const currentPath = usePathname(); // Correct hook to get the current path
 
   const menuItems = [
-    "Profile",
-    "Dashboard",
-    "My Settings",
-    "Help & Feedback",
-    "Log Out",
+    { name: "Profile", href: "/profile" },
+    { name: "Dashboard", href: "/dashboard" },
+    { name: "My Settings", href: "/settings" },
+    { name: "Help & Feedback", href: "/help" },
+    { name: "Log Out", href: "/logout" },
   ];
 
   return (
@@ -31,58 +42,72 @@ export default function MainNavabar() {
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem isActive>
-          <Link color="foreground" href="/">
+        <NavbarItem>
+          <Link
+            href="/"
+            aria-current="page"
+            color="foreground"
+            className={`${
+              currentPath === "/" ? "font-bold text-blue-500" : ""
+            }`}
+          >
             Home
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link href="#" aria-current="page">
-            Dashboard
-          </Link>
+          {isLoggedIn  && userId && (
+            <Link
+              href={`/${userId}/dashboard`} // Correctly formatted user dashboard URL
+              color="foreground"
+              className={`${
+                currentPath === `/${userId}/dashboard`
+                  ? "font-bold text-blue-500"
+                  : ""
+              }`}
+            >
+              Dashboard
+            </Link>
+          )}
         </NavbarItem>
+
         <NavbarItem>
-          <Link color="foreground" href="#">
+          <Link
+            href="/contact"
+            color="foreground"
+            className={`${
+              currentPath === "/contact" ? "font-bold text-blue-500" : ""
+            }`}
+          >
             Help
           </Link>
         </NavbarItem>
       </NavbarContent>
+
       <NavbarContent justify="end">
         <NavbarItem>
-          {/* if isLoggedin then logout otherwise logout */}
           {isLoggedIn ? (
-            <Button
-              as={Link}
-              color="danger"
-              href="/logout"
-              variant="flat"
-            >
+            <Button as={Link} color="danger" href="/logout" variant="flat">
               Logout
             </Button>
           ) : (
-            <Button
-              as={Link}
-              color="primary"
-              href="/login"
-              variant="flat"
-            >
+            <Button as={Link} color="primary" href="/login" variant="flat">
               Login
             </Button>
           )}
         </NavbarItem>
       </NavbarContent>
+
       <NavbarMenu>
         {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
+          <NavbarMenuItem key={`${item.name}-${index}`}>
             <Link
-              color={
-                index === 2 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
-              }
-              className="w-full"
-              href="#"
+              href={item.href}
+              className={`w-full ${
+                currentPath === item.href ? "font-bold text-blue-500" : ""
+              }`}
               size="lg"
             >
-              {item}
+              {item.name}
             </Link>
           </NavbarMenuItem>
         ))}

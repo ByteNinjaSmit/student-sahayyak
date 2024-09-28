@@ -10,7 +10,7 @@ export default function Login() {
   const [username, setUsername] = useState(""); // Stores the input username
   const [password, setPassword] = useState(""); // Stores the input password
   const [loading, setLoading] = useState(false); // Tracks the loading state during login
-  const { storeTokenInLS, isLoggedIn } = useAuth(); // Custom hook from AuthContext
+  const { storeTokenInLS,storeUserId, isLoggedIn } = useAuth(); // Custom hook from AuthContext
   const [error, setError] = useState(""); // Stores any login errors
   const router = useRouter(); // Navigation hook to redirect on successful login
 
@@ -22,7 +22,7 @@ export default function Login() {
     setLoading(true);
     if(role === "student"){
       try {
-        const response = await fetch("/api/user/login", {
+        const response = await fetch("/api/auth/user/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -34,6 +34,7 @@ export default function Login() {
     
         if (response.ok) {
           storeTokenInLS(res_data.token);
+          storeUserId(res_data.userId);
           router.push("/"); // Redirect to the home page
         } else {
           setError(res_data.error || "Login failed");
