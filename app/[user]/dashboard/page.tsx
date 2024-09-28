@@ -16,10 +16,17 @@ const Dashboard = () => {
 
 
   const grievanceCategories = [
-    { icon: <FaBuilding />, name: "Accommodation Issues", description: "Report problems related to rooms, furniture, or maintenance." },
-    { icon: <FaUtensils />, name: "Food Quality", description: "Raise concerns about mess food quality or hygiene." },
-    { icon: <FaTools />, name: "Facilities", description: "Report issues with common areas, utilities, or amenities." },
-    { icon: <FaShieldAlt />, name: "Safety Concerns", description: "Notify about security issues or safety hazards." },
+    { icon: <FaShieldAlt />, name: "Profile", description: "Click to view and edit your profile." },
+    { icon: <FaBuilding />, name: "Hostel Issues", description: "Report problems related to rooms, common-area, or maintenance of hostel." },
+    { icon: <FaUtensils />, name: "Mess / Tiffin Issues", description: "Raise concerns about issues related to mess/tiffin." },
+    { icon: <FaTools />, name: "Issues in Facilities", description: "Report issues with facilies, utilities, or amenities such as drinking water , wifi connectivity." },
+    { icon: <FaShieldAlt />, name: "Security and Other ", description: "Notify about security issues or safety hazards." },
+    { icon: <FaShieldAlt />, name: "Action", description: "Click if problem is'nt resolved." },
+
+    { icon: <FaShieldAlt />, name: "Track Complaint", description: "Click to check the status of your complaint." },
+    { icon: <FaShieldAlt />, name: "About Us", description: "Click to see about us." },
+    { icon: <FaShieldAlt />, name: "Faq", description: "Click to see frequently asked questions." },
+    { icon: <FaShieldAlt />, name: "Help and support", description: "Click to get help" },
   ];
 
   const recentGrievances = [
@@ -39,6 +46,7 @@ const Dashboard = () => {
     { label: "Contact Support", icon: <FaHeadset /> },
     { label: "Policy Guidelines", icon: <FaBook /> },
   ];
+  
   
 
   return (

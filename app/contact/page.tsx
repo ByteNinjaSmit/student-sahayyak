@@ -14,13 +14,13 @@ const HelpSupportPage = () => {
             <ol className="list-decimal list-inside space-y-2">
               <li>Log in to your student portal</li>
               <li>Navigate to the "Grievance" section</li>
-              <li>Click on "New Grievance"</li>
-              <li>Fill in all required fields with accurate information</li>
-              <li>Upload any supporting documents if necessary</li>
+              <li>Click on "Submit Your Complaint Now"</li>
+              <li>Fill out the grievance form , specifying your issue</li>
+              <li>Upload any supporting images if necessary</li>
               <li>Review your submission and click "Submit"</li>
             </ol>
             <img
-              src="https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+              src="https://media.istockphoto.com/photos/complaint-picture-id475991835?k=6&m=475991835&s=170667a&w=0&h=g6cSyjh5iSgBFxqdVTytnvXuHXP888W0Lkv-OAFT178="
               alt="Filling form"
               className="w-full h-48 object-cover rounded-lg"
             />
@@ -60,11 +60,25 @@ const HelpSupportPage = () => {
                 },
                 {
                   q: "Can I submit anonymous complaints?",
-                  a: "No, all complaints must be submitted with valid student credentials."
+                  a: "Yes, all complaints must be submitted with valid student credentials are anonymous to the rector."
                 },
                 {
                   q: "What types of grievances can I report?",
-                  a: "You can report issues related to hostel facilities, mess, security, or any other hostel-related concerns."
+                  a: "You can report all types of issues related to hostel facilities, mess, security, or any other hostel-related concerns."
+                },
+                {
+                  q: "What should i do if my issue is not resolved?",
+                  a: "If your issue isn't resolved in time, its severity will automatically increase, and it will be sent to a higher authority. Otherwise, you can file an 'action' on that issue."
+                }
+                ,
+                {
+                  q: "Who review my grievance?",
+                  a: "First, the issue is reviewed by the hostel rector. If it isn't resolved, it is then transferred to the higher hostel authority."
+                }
+                ,
+                {
+                  q: "Is there any limit to the number of complaint i can file?",
+                  a: "There is no limit, but please submit only genuine issues."
                 }
               ].map((item, index) => (
                 <details key={index} className="bg-gray-100 p-4 rounded-lg">
@@ -81,14 +95,14 @@ const HelpSupportPage = () => {
             <h3 className="text-xl font-semibold">Emergency Contact</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-gray-100 p-4 rounded-lg">
-                <h4 className="font-semibold">Hostel Warden</h4>
-                <p>Phone: +1 234 567 8900</p>
-                <p>Email: warden@college.edu</p>
+                <h4 className="font-semibold">Hostel Chief Warden : Pankaj Patil Sir</h4>
+                <p>Phone: +91 942 237 0964</p>
+                <p>Email: pankajpatil@sanjivanicoe.org.in</p>
               </div>
               <div className="bg-gray-100 p-4 rounded-lg">
-                <h4 className="font-semibold">Security Office</h4>
+                <h4 className="font-semibold">Hostel Clerk : Suralkar Sir</h4>
                 <p>Phone: +1 234 567 8901</p>
-                <p>Email: security@college.edu</p>
+                <p>Email: clerk@sanjivanicoe.org.in</p>
               </div>
             </div>
             <img
@@ -103,8 +117,17 @@ const HelpSupportPage = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-semibold">About Us</h3>
             <p>
-              The College Grievance System is designed to address and resolve issues faced by hostel residents efficiently. Our goal is to ensure a comfortable and safe living environment for all students.
-            </p>
+            Welcome to the Hostel Grievance System of Sanjivani College of Engineering.
+Sanjivani College of Engineering is dedicated to fostering a supportive and enriching environment for our students. To enhance the hostel experience for both boys and girls, we have established the Hostel Grievance System—an online platform designed to address and resolve student concerns related to hostel facilities and services.
+
+Our Purpose
+The Hostel Grievance System aims to provide a transparent and efficient way for students to voice their grievances. We believe that a comfortable living environment is essential for academic success and overall well-being. This system ensures that every concern is acknowledged and addressed in a timely manner.
+
+Key Features
+Simple Submission Process: Easily submit grievances through our user-friendly interface.
+Confidential Handling: All submissions are treated with confidentiality to protect student privacy.
+Timely Responses: Our dedicated team works diligently to ensure that grievances are resolved quickly and effectively.
+At Sanjivani College of Engineering, your comfort is our priority. We encourage all students to utilize this system to help us create a better living experience for everyone. Thank you for being an integral part of our community!   </p>
             <div className="bg-gray-100 p-4 rounded-lg">
               <h4 className="font-semibold">Our Process:</h4>
               <ul className="list-disc list-inside mt-2">
@@ -115,9 +138,9 @@ const HelpSupportPage = () => {
               </ul>
             </div>
             <img
-              src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
+              src="https://media.istockphoto.com/vectors/young-man-outside-hostel-flat-vector-illustration-vector-id1191236486?k=6&m=1191236486&s=612x612&w=0&h=HAMwVDNKK6p9h5sYD5HMTsBjHdq0wyZK1499r52gZTw="
               alt="College campus"
-              className="w-full h-48 object-cover rounded-lg"
+              className="w-full h-75 object-cover rounded-lg"
             />
           </div>
         );
@@ -128,7 +151,7 @@ const HelpSupportPage = () => {
             <div className="space-y-2">
               {[{
                   problem: "Unable to log in",
-                  solution: "Reset your password or contact the IT department."
+                  solution: "Reset your password or contact the Computer Department."
                 },
                 {
                   problem: "Grievance form not submitting",
