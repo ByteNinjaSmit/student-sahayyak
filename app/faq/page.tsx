@@ -18,25 +18,47 @@ const FAQ: React.FC = () => {
     },
     {
       question: "Can I submit anonymous complaints?",
-      answer: "Yes, all complaints must be submitted with valid student credentials are anonymous to the rector."
+      answer: "Yes, all complaints must be submitted with valid student credentials, but are anonymous to the rector."
     },
     {
       question: "What types of grievances can I report?",
       answer: "You can report all types of issues related to hostel facilities, mess, security, or any other hostel-related concerns."
     },
     {
-      question: "What should i do if my issue is not resolved?",
+      question: "What should I do if my issue is not resolved?",
       answer: "If your issue isn't resolved in time, its severity will automatically increase, and it will be sent to a higher authority. Otherwise, you can file an 'action' on that issue."
-    }
-    ,
+    },
     {
-      question: "Who review my grievance?",
+      question: "Who reviews my grievance?",
       answer: "First, the issue is reviewed by the hostel rector. If it isn't resolved, it is then transferred to the higher hostel authority."
-    }
-    ,
+    },
     {
-      question: "Is there any limit to the number of complaint i can file?",
+      question: "Is there any limit to the number of complaints I can file?",
       answer: "There is no limit, but please submit only genuine issues."
+    },
+    {
+      question: "Can I track the status of my grievance?",
+      answer: "Yes, you can track the progress of your complaint through the grievance portal."
+    },
+    {
+      question: "What happens if I file a false complaint?",
+      answer: "Filing false complaints may result in penalties, including suspension of complaint privileges."
+    },
+    {
+      question: "Can I withdraw my grievance after filing it?",
+      answer: "Yes, you can withdraw your complaint at any time before it is resolved."
+    },
+    {
+      question: "What details do I need to provide when filing a grievance?",
+      answer: "You need to provide a clear description of the issue, location, and any relevant details to help resolve the matter faster."
+    },
+    {
+      question: "Can I report grievances on behalf of another student?",
+      answer: "No, grievances must be filed individually to ensure accuracy and accountability."
+    },
+    {
+      question: "Is there a time limit for filing a grievance?",
+      answer: "No, but it’s recommended to file your complaint as soon as possible after the issue arises to ensure timely resolution."
     }
   ];
 
