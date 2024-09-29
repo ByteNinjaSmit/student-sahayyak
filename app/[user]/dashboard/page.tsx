@@ -17,7 +17,7 @@ const Dashboard = () => {
   }, [isLoggedIn, params.user, userId, router]);
 
   const grievanceCategories = [
-    { icon: <FaUserCog />, name: "Profile", description: "Click to view and edit your profile.", link: "/profile/edit", buttonText: "Edit" },
+    { icon: <FaUserCog />, name: "Profile", description: "Click to view and edit your profile.", link: `/${params.user}/dashboard/edit-profile`, buttonText: "Edit" },
     { icon: <FaBuilding />, name: "Hostel Issues", description: "Report problems related to rooms, common-area, or maintenance of hostel.", link: `/${params.user}/issue/hostel`, buttonText: "Raise a Grievance" },
     { icon: <FaUtensils />, name: "Mess / Tiffin Issues", description: "Raise concerns about issues related to mess/tiffin.", link: `/${params.user}/issue/mess`, buttonText: "Raise a Grievance" },
     { icon: <FaTools />, name: "Issues in Facilities", description: "Report issues with facilies, utilities, or amenities such as drinking water , wifi connectivity.", link:`/${params.user}/issue/facilities`, buttonText: "Raise a Grievance" },
