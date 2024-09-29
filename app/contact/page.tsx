@@ -96,12 +96,12 @@ const HelpSupportPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-gray-100 p-4 rounded-lg">
                 <h4 className="font-semibold">Hostel Chief Warden : Pankaj Patil Sir</h4>
-                <p>Phone: +91 942 237 0964</p>
+                <p>Phone: +91 9422370964</p>
                 <p>Email: pankajpatil@sanjivanicoe.org.in</p>
               </div>
               <div className="bg-gray-100 p-4 rounded-lg">
                 <h4 className="font-semibold">Hostel Clerk : Suralkar Sir</h4>
-                <p>Phone: +1 234 567 8901</p>
+                <p>Phone: +91 9322447307</p>
                 <p>Email: clerk@sanjivanicoe.org.in</p>
               </div>
             </div>

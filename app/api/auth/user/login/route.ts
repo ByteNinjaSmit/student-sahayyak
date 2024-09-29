@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
         msg: "Login Successfull",
         token: await userExist.generateToken(),
         userId: userExist._id.toString(),
+        userExist,
         status: 200,
     });
     }

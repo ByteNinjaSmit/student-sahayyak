@@ -1,6 +1,6 @@
-"use client"; // Ensure this is present for client-side rendering
+"use client"; 
 import React, { useState } from "react";
-import { usePathname } from "next/navigation"; // Correct hook for the App Router
+import { usePathname } from "next/navigation"; 
 import {
   Navbar,
   NavbarBrand,
@@ -18,15 +18,25 @@ import { useAuth } from "@/app/store/auth";
 export default function MainNavabar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { userId, isLoggedIn } = useAuth();
-  const currentPath = usePathname(); // Correct hook to get the current path
+  const currentPath = usePathname(); 
 
   const menuItems = [
-    { name: "Profile", href: "/profile" },
-    { name: "Dashboard", href: "/dashboard" },
-    { name: "My Settings", href: "/settings" },
-    { name: "Help & Feedback", href: "/help" },
-    { name: "Log Out", href: "/logout" },
-  ];
+    { name: "Home", href: "/" },
+    ...(isLoggedIn
+      ? [
+          { name: "Profile", href: `/${userId}/profile` },
+          { name: "Dashboard", href: `/${userId}/dashboard` },
+          { name: "Help & Feedback", href: "/contact" }, 
+          { name: "FAQ", href: "/faq" }, 
+          { name: "Log Out", href: "/logout" },
+        ]
+      : []),
+    !isLoggedIn && { name: "Help & Feedback", href: "/contact" },
+    !isLoggedIn && { name: "FAQ", href: "/faq" },
+    ...(isLoggedIn ? [] : [{ name: "Log In", href: "/login" }]),  // For when not logged in
+  ].filter(Boolean); // filter to remove falsey values
+  
+
 
   return (
     <Navbar onMenuOpenChange={setIsMenuOpen}>
@@ -36,8 +46,10 @@ export default function MainNavabar() {
           className="sm:hidden"
         />
         <NavbarBrand>
+          <Link href="/" color="foreground" >
           <AcmeLogo />
           <p className="font-bold text-inherit">Hostellers</p>
+          </Link>
         </NavbarBrand>
       </NavbarContent>
 

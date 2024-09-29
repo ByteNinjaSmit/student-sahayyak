@@ -1,20 +1,24 @@
 "use client";
-
 import { useEffect } from "react";
 import { useAuth } from "../store/auth";
 import { useRouter } from "next/navigation";
 
 export default function Logout() {
-  const { LogoutUser } = useAuth();
+  const { LogoutUser, isLoggedIn } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    // Perform the logout operation
-    LogoutUser();
-    // Redirect to the login page
-    router.push("/login");
-  }, [LogoutUser, router]);
+    // Perform the logout operation only if the user is logged in
+    if (isLoggedIn) {
+      LogoutUser();
+      // Redirect to the login page after logging out
+      router.push("/login");
+    } else {
+      // If already logged out, redirect to home
+      router.push("/");
+    }
+  }, [isLoggedIn, LogoutUser, router]);
 
-  // Since the redirect happens in useEffect, you don't need to return any JSX
+  // No JSX needed since the component just handles logout and redirection
   return null;
 }
