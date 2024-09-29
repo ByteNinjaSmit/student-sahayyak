@@ -33,6 +33,7 @@ export default function MainNavabar() {
       : []),
     !isLoggedIn && { name: "Help & Feedback", href: "/contact" },
     !isLoggedIn && { name: "FAQ", href: "/faq" },
+    !isLoggedIn && { name: "Rules", href: "/rule-regulations" },
     ...(isLoggedIn ? [] : [{ name: "Log In", href: "/login" }]),  // For when not logged in
   ].filter(Boolean); // filter to remove falsey values
   
@@ -91,6 +92,17 @@ export default function MainNavabar() {
             }`}
           >
             Help
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link
+            href="/rule-regulations"
+            color="foreground"
+            className={`${
+              currentPath === "/rule-regulations" ? "font-bold text-blue-500" : ""
+            }`}
+          >
+            Rules
           </Link>
         </NavbarItem>
       </NavbarContent>

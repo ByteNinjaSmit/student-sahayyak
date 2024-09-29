@@ -55,31 +55,31 @@ const HelpSupportPage = () => {
             <h3 className="text-xl font-semibold">Frequently Asked Questions</h3>
             <div className="space-y-2">
               {[{
-                  q: "How long does it take to process a grievance?",
-                  a: "Typically, grievances are processed within 7-10 working days."
-                },
-                {
-                  q: "Can I submit anonymous complaints?",
-                  a: "Yes, all complaints must be submitted with valid student credentials are anonymous to the rector."
-                },
-                {
-                  q: "What types of grievances can I report?",
-                  a: "You can report all types of issues related to hostel facilities, mess, security, or any other hostel-related concerns."
-                },
-                {
-                  q: "What should i do if my issue is not resolved?",
-                  a: "If your issue isn't resolved in time, its severity will automatically increase, and it will be sent to a higher authority. Otherwise, you can file an 'action' on that issue."
-                }
+                q: "How long does it take to process a grievance?",
+                a: "Typically, grievances are processed within 7-10 working days."
+              },
+              {
+                q: "Can I submit anonymous complaints?",
+                a: "Yes, all complaints must be submitted with valid student credentials are anonymous to the rector."
+              },
+              {
+                q: "What types of grievances can I report?",
+                a: "You can report all types of issues related to hostel facilities, mess, security, or any other hostel-related concerns."
+              },
+              {
+                q: "What should i do if my issue is not resolved?",
+                a: "If your issue isn't resolved in time, its severity will automatically increase, and it will be sent to a higher authority. Otherwise, you can file an 'action' on that issue."
+              }
                 ,
-                {
-                  q: "Who review my grievance?",
-                  a: "First, the issue is reviewed by the hostel rector. If it isn't resolved, it is then transferred to the higher hostel authority."
-                }
+              {
+                q: "Who review my grievance?",
+                a: "First, the issue is reviewed by the hostel rector. If it isn't resolved, it is then transferred to the higher hostel authority."
+              }
                 ,
-                {
-                  q: "Is there any limit to the number of complaint i can file?",
-                  a: "There is no limit, but please submit only genuine issues."
-                }
+              {
+                q: "Is there any limit to the number of complaint i can file?",
+                a: "There is no limit, but please submit only genuine issues."
+              }
               ].map((item, index) => (
                 <details key={index} className="bg-gray-100 p-4 rounded-lg">
                   <summary className="font-semibold cursor-pointer">{item.q}</summary>
@@ -117,17 +117,17 @@ const HelpSupportPage = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-semibold">About Us</h3>
             <p>
-            Welcome to the Hostel Grievance System of Sanjivani College of Engineering.
-Sanjivani College of Engineering is dedicated to fostering a supportive and enriching environment for our students. To enhance the hostel experience for both boys and girls, we have established the Hostel Grievance System—an online platform designed to address and resolve student concerns related to hostel facilities and services.
+              Welcome to the Hostel Grievance System of Sanjivani College of Engineering.
+              Sanjivani College of Engineering is dedicated to fostering a supportive and enriching environment for our students. To enhance the hostel experience for both boys and girls, we have established the Hostel Grievance System—an online platform designed to address and resolve student concerns related to hostel facilities and services.
 
-Our Purpose
-The Hostel Grievance System aims to provide a transparent and efficient way for students to voice their grievances. We believe that a comfortable living environment is essential for academic success and overall well-being. This system ensures that every concern is acknowledged and addressed in a timely manner.
+              Our Purpose
+              The Hostel Grievance System aims to provide a transparent and efficient way for students to voice their grievances. We believe that a comfortable living environment is essential for academic success and overall well-being. This system ensures that every concern is acknowledged and addressed in a timely manner.
 
-Key Features
-Simple Submission Process: Easily submit grievances through our user-friendly interface.
-Confidential Handling: All submissions are treated with confidentiality to protect student privacy.
-Timely Responses: Our dedicated team works diligently to ensure that grievances are resolved quickly and effectively.
-At Sanjivani College of Engineering, your comfort is our priority. We encourage all students to utilize this system to help us create a better living experience for everyone. Thank you for being an integral part of our community!   </p>
+              Key Features
+              Simple Submission Process: Easily submit grievances through our user-friendly interface.
+              Confidential Handling: All submissions are treated with confidentiality to protect student privacy.
+              Timely Responses: Our dedicated team works diligently to ensure that grievances are resolved quickly and effectively.
+              At Sanjivani College of Engineering, your comfort is our priority. We encourage all students to utilize this system to help us create a better living experience for everyone. Thank you for being an integral part of our community!   </p>
             <div className="bg-gray-100 p-4 rounded-lg">
               <h4 className="font-semibold">Our Process:</h4>
               <ul className="list-disc list-inside mt-2">
@@ -150,17 +150,17 @@ At Sanjivani College of Engineering, your comfort is our priority. We encourage 
             <h3 className="text-xl font-semibold">Troubleshoot</h3>
             <div className="space-y-2">
               {[{
-                  problem: "Unable to log in",
-                  solution: "Reset your password or contact the Computer Department."
-                },
-                {
-                  problem: "Grievance form not submitting",
-                  solution: "Check your internet connection and try again. If the issue persists, clear your browser cache."
-                },
-                {
-                  problem: "Cannot upload documents",
-                  solution: "Ensure your file is in a supported format (PDF, JPG, PNG) and under 5MB in size."
-                }
+                problem: "Unable to log in",
+                solution: "Reset your password or contact the Computer Department."
+              },
+              {
+                problem: "Grievance form not submitting",
+                solution: "Check your internet connection and try again. If the issue persists, clear your browser cache."
+              },
+              {
+                problem: "Cannot upload documents",
+                solution: "Ensure your file is in a supported format (PDF, JPG, PNG) and under 5MB in size."
+              }
               ].map((item, index) => (
                 <div key={index} className="bg-gray-100 p-4 rounded-lg">
                   <h4 className="font-semibold">{item.problem}</h4>
@@ -181,35 +181,35 @@ At Sanjivani College of Engineering, your comfort is our priority. We encourage 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-1 space-y-4">
           {[{
-              id: "form",
-              icon: FaFileAlt,
-              label: "How to Fill the Grievance Form"
-            },
-            {
-              id: "track",
-              icon: FaSearch,
-              label: "Track Complaint"
-            },
-            {
-              id: "faq",
-              icon: FaQuestionCircle,
-              label: "FAQ"
-            },
-            {
-              id: "contact",
-              icon: FaPhoneAlt,
-              label: "Emergency Contact"
-            },
-            {
-              id: "about",
-              icon: FaInfoCircle,
-              label: "About Us"
-            },
-            {
-              id: "troubleshoot",
-              icon: FaCog,
-              label: "Troubleshoot"
-            }
+            id: "form",
+            icon: FaFileAlt,
+            label: "How to Fill the Grievance Form"
+          },
+          {
+            id: "track",
+            icon: FaSearch,
+            label: "Track Complaint"
+          },
+          {
+            id: "faq",
+            icon: FaQuestionCircle,
+            label: "FAQ"
+          },
+          {
+            id: "contact",
+            icon: FaPhoneAlt,
+            label: "Emergency Contact"
+          },
+          {
+            id: "about",
+            icon: FaInfoCircle,
+            label: "About Us"
+          },
+          {
+            id: "troubleshoot",
+            icon: FaCog,
+            label: "Troubleshoot"
+          }
           ].map((item) => (
             <button
               key={item.id}

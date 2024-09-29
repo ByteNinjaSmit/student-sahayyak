@@ -13,7 +13,7 @@ export default function Register() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { storeTokenInLS, isLoggedIn } = useAuth();
+  const { storeTokenInLS, storeUserId, isLoggedIn } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission
@@ -40,6 +40,7 @@ export default function Register() {
       if (response.ok) {
         // Store the token and log in the user
         storeTokenInLS(res_data.token);
+        storeUserId(res_data.userId);
         router.push("/"); // Redirect to the home page
       } else {
         setError(res_data.error || "Registration failed");

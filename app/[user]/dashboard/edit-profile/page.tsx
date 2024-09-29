@@ -1,8 +1,10 @@
 "use client";
 import React, { useState } from "react";
-import { FaEye, FaEyeSlash, FaLock, FaUser, FaHome, FaBuilding, FaEnvelope, FaPhone, FaCalendarAlt, FaMapMarkerAlt, FaGraduationCap } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaLock, FaUser, FaHome, FaBuilding} from "react-icons/fa";
+import { useAuth } from "@/app/store/auth";
 
 const EditProfilePage = () => {
+  const { user } = useAuth();
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -24,8 +26,8 @@ const EditProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 flex items-center justify-center p-4">
-      <div className="max-w-xl w-full bg-white bg-opacity-90 backdrop-filter backdrop-blur-lg rounded-2xl shadow-2xl p-8">
+    <div className="min-h-screen bg-gradient-to-br from-purple-300 via-pink-300 to-red-300 flex items-center justify-center p-4">
+      <div className="max-w-xl w-full bg-white bg-opacity-50 backdrop-filter backdrop-blur-lg rounded-2xl shadow-2xl p-8">
         <h1 className="text-4xl font-bold text-center mb-2 text-indigo-800">Edit Profile</h1>
         <p className="text-gray-600 text-center mb-8">
           Update your profile information and password below.
@@ -42,7 +44,7 @@ const EditProfilePage = () => {
                 id="username"
                 name="username"
                 className="w-full px-3 py-2 border border-indigo-300 rounded-md bg-white text-indigo-800"
-                value="UCS23M1009"
+                value={`${user?.user.username}`}
                 disabled
               />
             </div>
@@ -56,7 +58,7 @@ const EditProfilePage = () => {
                 id="roomNumber"
                 name="roomNumber"
                 className="w-full px-3 py-2 border border-pink-300 rounded-md bg-white text-pink-800"
-                value="110"
+                value={`${user?.user.room}`}
                 disabled
               />
             </div>
@@ -70,14 +72,14 @@ const EditProfilePage = () => {
                 id="hostel"
                 name="hostel"
                 className="w-full px-3 py-2 border border-purple-300 rounded-md bg-white text-purple-800"
-                value="A4"
+                value={`${user?.user.hostelId}`}
                 disabled
               />
             </div>
 
             <div className="pt-6">
               <h2 className="text-2xl font-semibold mb-4 text-red-600">Change Password</h2>
-              <div className="border-t border-red-200 mb-6"></div>
+              <div className="border-t border-red-400 mb-6"></div>
 
               <div className="space-y-4">
                 <div className="bg-red-50 p-4 rounded-lg">
