@@ -13,44 +13,30 @@ const FAQ: React.FC = () => {
 
   const faqs: FAQItem[] = [
     {
-      question: "What is your return policy?",
-      answer: "We offer a 30-day return policy for all our products. If you're not satisfied with your purchase, you can return it for a full refund within 30 days of delivery."
+      question: "How long does it take to process a grievance?",
+      answer: "Typically, grievances are processed within 7-10 working days."
     },
     {
-      question: "How long does shipping take?",
-      answer: "Shipping times vary depending on your location. Typically, domestic orders are delivered within 3-5 business days, while international orders may take 7-14 business days."
+      question: "Can I submit anonymous complaints?",
+      answer: "Yes, all complaints must be submitted with valid student credentials are anonymous to the rector."
     },
     {
-      question: "Do you offer international shipping?",
-      answer: "Yes, we offer international shipping to most countries. Shipping costs and delivery times may vary depending on the destination."
+      question: "What types of grievances can I report?",
+      answer: "You can report all types of issues related to hostel facilities, mess, security, or any other hostel-related concerns."
     },
     {
-      question: "How can I track my order?",
-      answer: "Once your order is shipped, you will receive a tracking number via email. You can use this number to track your package on our website or the carrier's website."
-    },
+      question: "What should i do if my issue is not resolved?",
+      answer: "If your issue isn't resolved in time, its severity will automatically increase, and it will be sent to a higher authority. Otherwise, you can file an 'action' on that issue."
+    }
+    ,
     {
-      question: "What payment methods do you accept?",
-      answer: "We accept all major credit cards (Visa, MasterCard, American Express), PayPal, and Apple Pay."
-    },
+      question: "Who review my grievance?",
+      answer: "First, the issue is reviewed by the hostel rector. If it isn't resolved, it is then transferred to the higher hostel authority."
+    }
+    ,
     {
-      question: "Do you provide customer support?",
-      answer: "Yes, our customer support team is available via email and live chat to assist you with any questions or issues."
-    },
-    {
-      question: "Can I change my order after it has been placed?",
-      answer: "If you need to make changes to your order, please contact us within 24 hours of placing it. After this period, we may not be able to accommodate your request."
-    },
-    {
-      question: "What should I do if my item is defective?",
-      answer: "If you receive a defective item, please contact our customer support team within 7 days of receiving your order, and we will assist you in resolving the issue."
-    },
-    {
-      question: "How do I unsubscribe from your newsletter?",
-      answer: "You can unsubscribe from our newsletter at any time by clicking the 'unsubscribe' link at the bottom of any newsletter email."
-    },
-    {
-      question: "Do you have a loyalty program?",
-      answer: "Yes! We offer a loyalty program that rewards you with points for every purchase, which can be redeemed for discounts on future orders."
+      question: "Is there any limit to the number of complaint i can file?",
+      answer: "There is no limit, but please submit only genuine issues."
     }
   ];
 
