@@ -1,4 +1,4 @@
-// layout.tsx (or layout.js)
+// layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
 import MainNavbar from "@/components/layout/navbar/page";

@@ -1,32 +1,32 @@
-"use client"
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/app/store/auth";
-import { useRouter } from "next/navigation";
-import { FaBuilding, FaUtensils, FaTools, FaShieldAlt, FaExclamationCircle, FaCheckCircle, FaPencilAlt, FaQuestionCircle, FaHeadset, FaBook } from "react-icons/fa";
+import { useRouter,useParams } from "next/navigation";
+import { FaUserCog,FaBuilding, FaUtensils, FaTools, FaShieldAlt, FaExclamationCircle, FaCheckCircle, FaPencilAlt, FaQuestionCircle, FaHeadset, FaBook } from "react-icons/fa";
 
 const Dashboard = () => {
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn, user,userId } = useAuth();
   const router = useRouter();
+  const params = useParams<{ user: string;}>()
   useEffect(() => {
-    if (!isLoggedIn) {
+    // Redirect to home if not logged in
+    if (!isLoggedIn || params.user !== userId) {
       router.push("/");
     }
-  }, [isLoggedIn, router]);
-
+  }, [isLoggedIn, params.user, userId, router]);
 
   const grievanceCategories = [
-    { icon: <FaShieldAlt />, name: "Profile", description: "Click to view and edit your profile." },
-    { icon: <FaBuilding />, name: "Hostel Issues", description: "Report problems related to rooms, common-area, or maintenance of hostel." },
-    { icon: <FaUtensils />, name: "Mess / Tiffin Issues", description: "Raise concerns about issues related to mess/tiffin." },
-    { icon: <FaTools />, name: "Issues in Facilities", description: "Report issues with facilies, utilities, or amenities such as drinking water , wifi connectivity." },
-    { icon: <FaShieldAlt />, name: "Security and Other ", description: "Notify about security issues or safety hazards." },
-    { icon: <FaShieldAlt />, name: "Action", description: "Click if problem is'nt resolved." },
-
-    { icon: <FaShieldAlt />, name: "Track Complaint", description: "Click to check the status of your complaint." },
-    { icon: <FaShieldAlt />, name: "About Us", description: "Click to see about us." },
-    { icon: <FaShieldAlt />, name: "Faq", description: "Click to see frequently asked questions." },
-    { icon: <FaShieldAlt />, name: "Help and support", description: "Click to get help" },
+    { icon: <FaUserCog />, name: "Profile", description: "Click to view and edit your profile.", link: "/profile/edit", buttonText: "Edit" },
+    { icon: <FaBuilding />, name: "Hostel Issues", description: "Report problems related to rooms, common-area, or maintenance of hostel.", link: `/${params.user}/issue/hostel`, buttonText: "Raise a Grievance" },
+    { icon: <FaUtensils />, name: "Mess / Tiffin Issues", description: "Raise concerns about issues related to mess/tiffin.", link: `/${params.user}/issue/mess`, buttonText: "Raise a Grievance" },
+    { icon: <FaTools />, name: "Issues in Facilities", description: "Report issues with facilies, utilities, or amenities such as drinking water , wifi connectivity.", link:`/${params.user}/issue/facilities`, buttonText: "Raise a Grievance" },
+    { icon: <FaShieldAlt />, name: "Security and Other", description: "Notify about security issues or safety hazards.", link: `/${params.user}/issue/security`, buttonText: "Raise a Grievance" },
+    { icon: <FaPencilAlt />, name: "Action", description: "Click if problem isn't resolved.", link: "/grievance/action", buttonText: "Raise a Grievance" },
+    { icon: <FaCheckCircle />, name: "Track Complaint", description: "Click to check the status of your complaint.", link: "/grievance/track", buttonText: "Track" },
+    { icon: <FaBook />, name: "About Us", description: "Click to see about us.", link: "/contact", buttonText: "View" },
+    { icon: <FaQuestionCircle />, name: "Faq", description: "Click to see frequently asked questions.", link: "/faq", buttonText: "View" },
+    { icon: <FaHeadset />, name: "Help and Support", description: "Click to get help.", link: "/contact", buttonText: "View" },
   ];
 
   const recentGrievances = [
@@ -42,22 +42,19 @@ const Dashboard = () => {
   ];
 
   const quickLinks = [
-    { label: "FAQ", icon: <FaQuestionCircle /> },
-    { label: "Contact Support", icon: <FaHeadset /> },
-    { label: "Policy Guidelines", icon: <FaBook /> },
+    { label: "FAQ", icon: <FaQuestionCircle />, link: "/faq" },
+    { label: "Contact Support", icon: <FaHeadset />, link: "/support" },
+    { label: "Policy Guidelines", icon: <FaBook />, link: "/policies" },
   ];
-  
-  
 
   return (
     <div className="bg-gray-100 min-h-screen p-8">
       <header className="mb-8">
         <h1 className="text-4xl font-bold text-center text-blue-600">Dashboard</h1>
         <p className="text-xl text-gray-600 text-center">
-          Welcome back, {user.user.username} to the Hostellers Grievance System
+          Welcome back, {user?.user.username} to the Hostellers Grievance System
         </p>
       </header>
-
 
       <section className="mb-12">
         <h2 className="text-2xl font-semibold mb-4 text-blue-800">Grievance Categories</h2>
@@ -67,8 +64,11 @@ const Dashboard = () => {
               <div className="text-4xl mb-4 text-blue-500">{category.icon}</div>
               <h3 className="text-xl font-semibold mb-2">{category.name}</h3>
               <p className="text-gray-600 mb-4">{category.description}</p>
-              <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors duration-300">
-                Raise a Grievance
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors duration-300"
+                onClick={() => router.push(category.link)}
+              >
+                {category.buttonText}
               </button>
             </div>
           ))}
@@ -130,6 +130,7 @@ const Dashboard = () => {
             <button
               key={index}
               className="flex items-center bg-white px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+              onClick={() => router.push(link.link)}
             >
               <span className="text-xl mr-2 text-blue-500">{link.icon}</span>
               {link.label}
