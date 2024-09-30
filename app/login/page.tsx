@@ -4,6 +4,7 @@ import Link from "next/link"; // Import Link for navigation
 import { useAuth } from "../store/auth"; // Ensure this is the correct path to the auth context
 import { useRouter } from "next/navigation"; // For client-side routing
 import { Spinner } from "@nextui-org/react"; // Using Spinner for loading state
+import { toast } from 'react-toastify';
 
 export default function Login() {
   const [role, setRole] = useState(""); // Stores the selected role (student, rector, higher authority)
@@ -34,10 +35,12 @@ export default function Login() {
     
         if (response.ok) {
           storeTokenInLS(res_data.token);
+          toast.success("Login Successful");
           storeUserId(res_data.userId);
           router.push("/"); // Redirect to the home page
         } else {
           setError(res_data.error || "Login failed");
+          toast.error(res_data.error || "Login failed");
         }
       } catch (error) {
         setError("An unexpected error occurred. Please try again.");

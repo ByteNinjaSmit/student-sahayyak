@@ -8,7 +8,7 @@ import {
 } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useParams,useRouter } from "next/navigation";
-
+import { toast } from 'react-toastify';
 // Define the interface for the form data
 interface FormData {
   room: string[];
@@ -128,6 +128,27 @@ const GrievanceForm: React.FC = () => {
     const otherConcernsValue = formData.otherConcernsOther;
     if (otherConcernsValue && !relevantData.includes(otherConcernsValue)) {
       relevantData.push(otherConcernsValue);
+    }
+
+    if(sectionKey === params.issue){
+      try {
+        const response = await fetch(`/api/issues/${params.user}/${params.issue}`, {
+          method: "POST", // Use POST instead of GET
+          headers: {
+            "Content-Type": "application/json",
+            //Authorization: `Bearer ${token}`, // Include the token if needed
+          },
+          body: JSON.stringify({relevantData}), // Pass userId in the request body
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch user details");
+        }
+        toast.success("Grievances Raised");
+        router.push(`/${params.user}/dashboard`);
+      } catch (error) {
+        console.error("Error Grievances Raise Failed details:", error);
+        toast.success("Grievances Raise Failed");
+      }
     }
 
     console.log(`Relevant Data: ${relevantData}`);

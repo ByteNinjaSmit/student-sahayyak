@@ -6,6 +6,8 @@ import { NextUIProvider } from "@nextui-org/system";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { AuthProvider } from "./store/auth";
 import MainFooter from "@/components/layout/footer/page";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 export const metadata: Metadata = {
   title: "Hostellers Sahayyak",
@@ -27,6 +29,19 @@ export default function RootLayout({
               <main>{children}</main>
               <MainFooter />
             </AuthProvider>
+            <ToastContainer
+              position="top-right"
+              autoClose={2000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="colored"
+              bodyClassName="toastBody"
+            />
           </NextThemesProvider>
         </NextUIProvider>
       </body>

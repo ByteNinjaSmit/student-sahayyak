@@ -19,24 +19,6 @@ const foodqualitySchema = new Schema({
         type:String,
         default:"Not Processed",
     },
-    complainsecond:{
-        type:[String],
-        required:true,
-        // It is Quality
-    },
-    complaintsecondStatus:{
-        type:String,
-        default:"Not Processed",
-    },
-    complainthird:{
-        type:[String],
-        required:true,
-        // Quanity
-    },
-    complaintthirdStatus:{
-        type:String,
-        default:"Not Processed",
-    },
     user: {
         type: mongoose.Types.ObjectId,
         ref: "Users",
