@@ -12,16 +12,6 @@ const drinkwaterSchema = new Schema({
         type:String,
         default:"Not Processed",
     },
-    complainSecond:{
-        type:[String],
-        required:true,
-        // It is Array
-        // Availability
-    },
-    complaintSecondStatus:{
-        type:String,
-        default:"Not Processed",
-    },
     user: {
         type: mongoose.Types.ObjectId, // Use Types.ObjectId for better practice
         ref: "Users", // Reference the User model
