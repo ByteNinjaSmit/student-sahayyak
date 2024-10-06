@@ -1,20 +1,21 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useAuth } from "@/app/store/auth";
+import { useSession } from "@/app/store/session";
 import { useRouter,useParams } from "next/navigation";
 import { FaUserCog,FaBuilding, FaUtensils, FaTools, FaShieldAlt, FaExclamationCircle, FaCheckCircle, FaPencilAlt, FaQuestionCircle, FaHeadset, FaBook } from "react-icons/fa";
 
 const Dashboard = () => {
-  const { isLoggedIn, user,userId } = useAuth();
+  const { isLoggedIn,isUser,user } = useSession();
   const router = useRouter();
   const params = useParams<{ user: string;}>()
+  const userId = params.user;
   useEffect(() => {
     // Redirect to home if not logged in
-    if (!isLoggedIn || params.user !== userId) {
+    if (!isLoggedIn && !isUser && !userId) {
       router.push("/");
     }
-  }, [isLoggedIn, params.user, userId, router]);
+  }, [isLoggedIn, router]);
 
   const grievanceCategories = [
     { icon: <FaUserCog />, name: "Profile", description: "Click to view and edit your profile.", link: `/${params.user}/dashboard/edit-profile`, buttonText: "Edit" },
@@ -52,7 +53,7 @@ const Dashboard = () => {
       <header className="mb-8">
         <h1 className="text-4xl font-bold text-center text-blue-600">Dashboard</h1>
         <p className="text-xl text-gray-600 text-center">
-          Welcome back, {user?.user.username} to the Hostellers Grievance System
+          Welcome back, {user?.username} to the Hostellers Grievance System
         </p>
       </header>
 

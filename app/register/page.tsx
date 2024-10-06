@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from 'next/link'; 
-import { useAuth } from "../store/auth";
+import { useSession } from "../store/session";
 
 export default function Register() {
   const [username, setUsername] = useState('');
@@ -13,7 +13,7 @@ export default function Register() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { storeTokenInLS, storeUserId, isLoggedIn } = useAuth();
+  const { isLoggedIn } = useSession();
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission
@@ -39,8 +39,6 @@ export default function Register() {
 
       if (response.ok) {
         // Store the token and log in the user
-        storeTokenInLS(res_data.token);
-        storeUserId(res_data.userId);
         router.push("/"); // Redirect to the home page
       } else {
         setError(res_data.error || "Registration failed");

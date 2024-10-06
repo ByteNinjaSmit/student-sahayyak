@@ -1,5 +1,5 @@
 "use client";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaWifi,
   FaUtensils,
@@ -7,8 +7,8 @@ import {
   FaExclamationCircle,
 } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { useParams,useRouter } from "next/navigation";
-import { toast } from 'react-toastify';
+import { useParams, useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 // Define the interface for the form data
 interface FormData {
   room: string[];
@@ -25,8 +25,7 @@ interface FormData {
   otherConcernsOther: string;
   foodownerName: string;
   foodServiceType: string;
-}  
-
+}
 
 const GrievanceForm: React.FC = () => {
   const router = useRouter();
@@ -38,7 +37,7 @@ const GrievanceForm: React.FC = () => {
   console.log(params);
 
   useEffect(() => {
-    // Check if 
+    // Check if
     if (
       params.issue !== "room" &&
       params.issue !== "corridor" &&
@@ -54,7 +53,6 @@ const GrievanceForm: React.FC = () => {
     }
   }, [params.issue, params.user, router]);
 
-
   const [formData, setFormData] = useState<FormData>({
     room: [],
     corridor: [],
@@ -63,7 +61,7 @@ const GrievanceForm: React.FC = () => {
     wifiissues: [],
     drinkingwater: [],
     security: [],
-    foodowner: [], // Initialize as an array
+    foodowner: [],
     cleanlinessOther: "",
     foodQualityOther: "",
     wifiIssuesOther: "",
@@ -130,16 +128,25 @@ const GrievanceForm: React.FC = () => {
       relevantData.push(otherConcernsValue);
     }
 
-    if(sectionKey === params.issue){
+    if (sectionKey === params.issue) {
       try {
-        const response = await fetch(`/api/issues/${params.user}/${params.issue}`, {
-          method: "POST", // Use POST instead of GET
-          headers: {
-            "Content-Type": "application/json",
-            //Authorization: `Bearer ${token}`, // Include the token if needed
-          },
-          body: JSON.stringify({relevantData}), // Pass userId in the request body
-        });
+        const response = await fetch(
+          `/api/issues/${params.user}/${params.issue}`,
+          {
+            method: "POST", // Use POST instead of GET
+            headers: {
+              "Content-Type": "application/json",
+              //Authorization: `Bearer ${token}`, // Include the token if needed
+            },
+            body: JSON.stringify({
+              relevantData, // Pass relevantData directly
+              ...(params.issue === "foodquality" || params.issue === "foodowner" ? {
+                foodownerName: formData.foodownerName,
+                foodServiceType: formData.foodServiceType,
+              } : {})
+            })  // Pass userId in the request body
+          }
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch user details");
         }
@@ -147,7 +154,7 @@ const GrievanceForm: React.FC = () => {
         router.push(`/${params.user}/dashboard`);
       } catch (error) {
         console.error("Error Grievances Raise Failed details:", error);
-        toast.success("Grievances Raise Failed");
+        toast.error("Grievances Raise Failed");
       }
     }
 
@@ -244,7 +251,9 @@ const GrievanceForm: React.FC = () => {
         "Dirty tiffins / plates",
         "Bad quality",
         "Late food delivery",
+        "Insect found in food",
       ],
+      options1: ["Tiffin", "Mess"],
       stateKey: "foodquality" as keyof FormData,
     },
     {
@@ -304,33 +313,58 @@ const GrievanceForm: React.FC = () => {
                     <span className="ml-2">{section.title}</span>
                   </h3>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    {section.options && section.stateKey !== "foodowner" ? (
-                      section.options.map((option) => (
-                        <div key={option} className="flex items-start">
-                          <div className="flex items-center h-5">
+                    {(section.options && section.stateKey !== "foodowner") ||
+                    section.stateKey === "foodquality" ? (
+                      <>
+                        {section.options.map((option) => (
+                          <div key={option} className="flex items-start">
+                            <div className="flex items-center h-5">
+                              <input
+                                id={`${section.stateKey}-${option}`}
+                                name={`${section.stateKey}-${option}`}
+                                type="checkbox"
+                                checked={formData[section.stateKey].includes(
+                                  option
+                                )}
+                                onChange={() =>
+                                  handleCheckboxChange(section.stateKey, option)
+                                }
+                                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                              />
+                            </div>
+                            <div className="ml-3 text-sm">
+                              <label
+                                htmlFor={`${section.stateKey}-${option}`}
+                                className="font-medium text-gray-700"
+                              >
+                                {option}
+                              </label>
+                            </div>
+                          </div>
+                        ))}
+
+                        {/* Show the foodownerName input when stateKey is "foodquality" */}
+                        {section.stateKey === "foodquality" && (
+                          <div className="mt-4">
+                            <label
+                              htmlFor="foodownerName"
+                              className="block text-sm font-medium text-gray-700"
+                            >
+                              Name of Food Owner
+                            </label>
                             <input
-                              id={`${section.stateKey}-${option}`}
-                              name={`${section.stateKey}-${option}`}
-                              type="checkbox"
-                              checked={formData[section.stateKey].includes(
-                                option
-                              )}
-                              onChange={() =>
-                                handleCheckboxChange(section.stateKey, option)
+                              type="text"
+                              id="foodownerName"
+                              value={formData.foodownerName}
+                              onChange={(e) =>
+                                handleInputChange(e, "foodownerName")
                               }
-                              className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                              required
                             />
                           </div>
-                          <div className="ml-3 text-sm">
-                            <label
-                              htmlFor={`${section.stateKey}-${option}`}
-                              className="font-medium text-gray-700"
-                            >
-                              {option}
-                            </label>
-                          </div>
-                        </div>
-                      ))
+                        )}
+                      </>
                     ) : (
                       <div>
                         <label
@@ -351,7 +385,9 @@ const GrievanceForm: React.FC = () => {
                         />
                       </div>
                     )}
-                    {section.stateKey === "foodowner" && (
+
+                    {(section.stateKey === "foodowner" ||
+                      section.stateKey === "foodquality") && (
                       <div>
                         <label
                           htmlFor="foodServiceType"
@@ -369,11 +405,18 @@ const GrievanceForm: React.FC = () => {
                           required
                         >
                           <option value="">Select Type</option>
-                          {section.options.map((option) => (
-                            <option key={option} value={option}>
-                              {option}
-                            </option>
-                          ))}
+                          {/* Render options1 if stateKey is foodquality, otherwise render section.options */}
+                          {section.stateKey === "foodquality"
+                            ? section.options1.map((options1) => (
+                                <option key={options1} value={options1}>
+                                  {options1}
+                                </option>
+                              ))
+                            : section.options.map((option) => (
+                                <option key={option} value={option}>
+                                  {option}
+                                </option>
+                              ))}
                         </select>
                       </div>
                     )}

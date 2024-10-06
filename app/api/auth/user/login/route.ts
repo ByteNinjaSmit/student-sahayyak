@@ -31,12 +31,16 @@ export async function POST(request: NextRequest) {
     const user = await userExist.comparePassword(password);
     if (user) {
       const token = await userExist.generateToken();
-
-      // Set the cookie directly
+      // Set the httpOnly cookie for security
       cookies().set("user-token", token, {
         httpOnly: true,
         path: "/",
-        secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 60 * 2,
+      });
+
+      // Also, set a non-httpOnly cookie for tracking login state
+      cookies().set("isLoggedIn", "true", {
+        path: "/",
         maxAge: 60 * 60 * 2,
       });
 

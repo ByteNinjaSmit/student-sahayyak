@@ -1,11 +1,12 @@
 "use client"
 import React from "react";
-import { useAuth } from "@/app/store/auth";
+import { useSession } from "@/app/store/session";
 import { FaQuestionCircle, FaInfoCircle, FaEnvelope } from "react-icons/fa";
 import Link from "next/link";
 
 const HeroSection = () => {
-  const {userId, isLoggedIn } = useAuth();
+  const {isLoggedIn,user } = useSession();
+  const userId = user?._id;
   return (
     <div className="relative bg-gradient-to-r from-blue-500 to-green-400 min-h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 bg-cover bg-center z-0" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')" }}></div>

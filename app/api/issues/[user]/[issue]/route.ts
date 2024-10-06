@@ -24,7 +24,7 @@ export async function POST(
   // DRINK WATER COMPLAINT POST LOGIC
   // -----------------------------
 
-  if (params.issue === "drinkwater") {
+  if (params.issue === "drinkingwater") {
     try {
       // Parse the request body
       const reqBody = await request.json();

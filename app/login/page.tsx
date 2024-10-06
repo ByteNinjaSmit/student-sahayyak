@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link"; // Import Link for navigation
-import { useAuth } from "../store/auth"; // Ensure this is the correct path to the auth context
+import { useSession } from "../store/session"; // Ensure this is the correct path to the auth context
 import { useRouter } from "next/navigation"; // For client-side routing
 import { Spinner } from "@nextui-org/react"; // Using Spinner for loading state
 import { toast } from 'react-toastify';
@@ -11,7 +11,7 @@ export default function Login() {
   const [username, setUsername] = useState(""); // Stores the input username
   const [password, setPassword] = useState(""); // Stores the input password
   const [loading, setLoading] = useState(false); // Tracks the loading state during login
-  const { storeTokenInLS,storeUserId, isLoggedIn } = useAuth(); // Custom hook from AuthContext
+  const { setIsLoggedIn,isLoggedIn } = useSession(); // Custom hook from AuthContext
   const [error, setError] = useState(""); // Stores any login errors
   const router = useRouter(); // Navigation hook to redirect on successful login
 
@@ -34,9 +34,10 @@ export default function Login() {
         const res_data = await response.json();
     
         if (response.ok) {
-          storeTokenInLS(res_data.token);
+          // document.cookie = "user-token=" + res_data.token + "; path=/; max-age=7200"; // assuming you get the token from res_data
+          // document.cookie = "isLoggedIn=true; path=/; max-age=7200"; // Setting login status
+          setIsLoggedIn(true);
           toast.success("Login Successful");
-          storeUserId(res_data.userId);
           router.push("/"); // Redirect to the home page
         } else {
           setError(res_data.error || "Login failed");
@@ -61,7 +62,6 @@ export default function Login() {
         const res_data = await response.json();
     
         if (response.ok) {
-          storeTokenInLS(res_data.token);
           router.push("/"); // Redirect to the home page
         } else {
           setError(res_data.error || "Login failed");

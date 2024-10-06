@@ -1,6 +1,6 @@
-"use client"; 
+"use client";
 import React, { useState } from "react";
-import { usePathname } from "next/navigation"; 
+import { usePathname } from "next/navigation";
 import {
   Navbar,
   NavbarBrand,
@@ -13,12 +13,14 @@ import {
   Button,
 } from "@nextui-org/react";
 import { AcmeLogo } from "./AcmeLogo.jsx";
-import { useAuth } from "@/app/store/auth";
+import { useSession } from "@/app/store/session";
 
 export default function MainNavabar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { userId, isLoggedIn } = useAuth();
-  const currentPath = usePathname(); 
+  const { user, logout, isLoggedIn } = useSession();
+  const currentPath = usePathname();
+
+  const userId = user?._id;
 
   const menuItems = [
     { name: "Home", href: "/" },
@@ -26,18 +28,16 @@ export default function MainNavabar() {
       ? [
           { name: "Profile", href: `/${userId}/profile` },
           { name: "Dashboard", href: `/${userId}/dashboard` },
-          { name: "Help & Feedback", href: "/contact" }, 
-          { name: "FAQ", href: "/faq" }, 
-          { name: "Log Out", href: "/logout" },
+          { name: "Help & Feedback", href: "/contact" },
+          { name: "FAQ", href: "/faq" },
+          { name: "Log Out", onClick: logout },
         ]
       : []),
     !isLoggedIn && { name: "Help & Feedback", href: "/contact" },
     !isLoggedIn && { name: "FAQ", href: "/faq" },
     !isLoggedIn && { name: "Rules", href: "/rule-regulations" },
-    ...(isLoggedIn ? [] : [{ name: "Log In", href: "/login" }]),  // For when not logged in
+    ...(isLoggedIn ? [] : [{ name: "Log In", href: "/login" }]), // For when not logged in
   ].filter(Boolean); // filter to remove falsey values
-  
-
 
   return (
     <Navbar onMenuOpenChange={setIsMenuOpen}>
@@ -47,9 +47,9 @@ export default function MainNavabar() {
           className="sm:hidden"
         />
         <NavbarBrand>
-          <Link href="/" color="foreground" >
-          <AcmeLogo />
-          <p className="font-bold text-inherit">Hostellers</p>
+          <Link href="/" color="foreground">
+            <AcmeLogo />
+            <p className="font-bold text-inherit">Hostellers</p>
           </Link>
         </NavbarBrand>
       </NavbarContent>
@@ -68,7 +68,7 @@ export default function MainNavabar() {
           </Link>
         </NavbarItem>
         <NavbarItem>
-          {isLoggedIn  && userId && (
+          {isLoggedIn && userId && (
             <Link
               href={`/${userId}/dashboard`} // Correctly formatted user dashboard URL
               color="foreground"
@@ -99,7 +99,9 @@ export default function MainNavabar() {
             href="/rule-regulations"
             color="foreground"
             className={`${
-              currentPath === "/rule-regulations" ? "font-bold text-blue-500" : ""
+              currentPath === "/rule-regulations"
+                ? "font-bold text-blue-500"
+                : ""
             }`}
           >
             Rules
@@ -110,7 +112,7 @@ export default function MainNavabar() {
       <NavbarContent justify="end">
         <NavbarItem>
           {isLoggedIn ? (
-            <Button as={Link} color="danger" href="/logout" variant="flat">
+            <Button as={Link} color="danger" onClick={logout} variant="flat">
               Logout
             </Button>
           ) : (
