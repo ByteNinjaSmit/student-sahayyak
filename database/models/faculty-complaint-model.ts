@@ -2,12 +2,12 @@ import mongoose from "mongoose";
 import { Schema,model,models } from "mongoose"; 
 
 const facultycomplaintSchema = new Schema({
-    complaintfirst:{
+    complaint:{
         type:[String],
         required:true,
         // It is Array
     },
-    complaintStatus:{
+    status:{
         type:String,
         default:"Not Processed",
     },

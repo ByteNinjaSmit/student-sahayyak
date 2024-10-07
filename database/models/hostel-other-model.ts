@@ -2,12 +2,12 @@ import mongoose from "mongoose";
 import { Schema,model,models } from "mongoose"; 
 
 const hostelotherSchema = new Schema({
-    complaintfirst:{
+    complaint:{
         type:[String],
         required:true,
         // Description Long
     },
-    complaintStatus:{
+    status:{
         type:String,
         default:"Not Processed",
     },

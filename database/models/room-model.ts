@@ -3,11 +3,11 @@ import { Schema, model, models } from "mongoose";
 
 const roomSchema = new Schema(
     {
-        roomCom: {
+        complaint: {
             type: [String], // Define as an array of strings
             required: true,
         },
-        complaintStatus: {
+        status: {
             type: String,
             default: "Not Processed",
         },

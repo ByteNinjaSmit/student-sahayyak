@@ -5,7 +5,7 @@ const corridorSchema = new Schema({
         type:[String],
         required:true,
     },
-    complaintStatus:{
+    status:{
         type:String,
         default:"Not Processed",
     },

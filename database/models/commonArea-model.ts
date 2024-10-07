@@ -2,12 +2,12 @@ import mongoose from "mongoose";
 import { Schema,model,models } from "mongoose"; 
 
 const commonareaSchema = new Schema({
-    complainfirst:{
+    complaint:{
         type:[String],
         required:true,
         // It is Array
     },
-    complaintfirstStatus:{
+    status:{
         type:String,
         default:"Not Processed",
     },

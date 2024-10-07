@@ -69,7 +69,7 @@ facultySchema.methods.generateToken = async function () {
             },
             process.env.JWT_SECRET_KEY as string,
             {
-                expiresIn: "1h",
+                expiresIn: "30d",
             }
         );
       // return token;

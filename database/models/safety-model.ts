@@ -2,13 +2,13 @@ import mongoose from "mongoose";
 import { Schema,model,models } from "mongoose"; 
 
 const safetySchema = new Schema({
-    complainfirst:{
+    complaint:{
         type:[String],
         required:true,
         // It is Array
         // ragging Anti- ragging disturbance
     },
-    complaintfirstStatus:{
+    status:{
         type:String,
         default:"Not Processed",
     },

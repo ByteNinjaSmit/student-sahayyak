@@ -31,7 +31,7 @@ export async function POST(
       const { relevantData } = reqBody;
 
       await DrinkWater.create({
-        complainfirst: relevantData,
+        complaint: relevantData,
         user: params.user,
       });
 
@@ -57,7 +57,7 @@ export async function POST(
       const { relevantData } = reqBody;
 
       await Room.create({
-        roomCom: relevantData,
+        complaint: relevantData,
         user: params.user,
       });
 
@@ -108,7 +108,7 @@ export async function POST(
       const { relevantData } = reqBody;
 
       await CommonArea.create({
-        complainfirst: relevantData,
+        complaint: relevantData,
         user: params.user,
       });
 
@@ -133,7 +133,7 @@ export async function POST(
       const { relevantData, foodownerName, foodServiceType } = reqBody;
 
       await FoodQuality.create({
-        complainfirst: relevantData,
+        complaint: relevantData,
         foodOwner: foodownerName,
         service: foodServiceType,
         user: params.user,
@@ -160,7 +160,7 @@ export async function POST(
       const { relevantData, foodownerName, foodServiceType } = reqBody;
 
       await FoodOwner.create({
-        complainfirst: relevantData,
+        complaint: relevantData,
         foodOwner: foodownerName,
         service: foodServiceType,
         user: params.user,
@@ -187,7 +187,7 @@ export async function POST(
       const { relevantData } = reqBody;
 
       await NetworkConn.create({
-        complainfirst: relevantData,
+        complaint: relevantData,
         user: params.user,
       });
 
@@ -212,7 +212,7 @@ export async function POST(
       const { relevantData } = reqBody;
 
       await Safety.create({
-        complainfirst: relevantData,
+        complaint: relevantData,
         user: params.user,
       });
 

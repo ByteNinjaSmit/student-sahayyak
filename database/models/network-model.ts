@@ -2,13 +2,13 @@ import mongoose from "mongoose";
 import { Schema,model,models } from "mongoose"; 
 
 const networkconnSchema = new Schema({
-    complainfirst:{
+    complaint:{
         type:[String],
         required:true,
         // It is Array
         // Network Connectivity reliablity 
     },
-    complaintfirstStatus:{
+    status:{
         type:String,
         default:"Not Processed",
     },

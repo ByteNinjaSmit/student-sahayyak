@@ -10,12 +10,12 @@ const foodownerSchema = new Schema({
         type:String,
         required:true,
     },
-    complainfirst:{
+    complaint:{
         type:[String],
         required:true,
         // It is Array
     },
-    complaintfirstStatus:{
+    status:{
         type:String,
         default:"Not Processed",
     },

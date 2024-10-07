@@ -10,12 +10,12 @@ const foodqualitySchema = new Schema({
         type:String,
         required:true,
     },
-    complainfirst:{
+    complaint:{
         type:[String],
         required:true,
         // It is Hygene
     },
-    complaintfirstStatus:{
+    status:{
         type:String,
         default:"Not Processed",
     },

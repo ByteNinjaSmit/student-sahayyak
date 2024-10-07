@@ -2,13 +2,13 @@ import mongoose from "mongoose";
 import { Schema,model,models } from "mongoose"; 
 
 const drinkwaterSchema = new Schema({
-    complainfirst:{
+    complaint:{
         type:[String],
         required:true,
         // It is Array
         // Quality
     },
-    complaintfirstStatus:{
+    status:{
         type:String,
         default:"Not Processed",
     },
