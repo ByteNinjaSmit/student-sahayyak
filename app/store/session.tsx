@@ -1,17 +1,23 @@
 "use client";
-import React, { useState, createContext, useContext, useEffect, ReactNode } from "react";
+import React, {
+  useState,
+  createContext,
+  useContext,
+  useEffect,
+  ReactNode,
+} from "react";
 import { useRouter } from "next/navigation";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
-// Define the session state type
+// Define the user object shape
 interface User {
   id: string;
   name: string;
-  email: string;
   isHighAuth?: boolean;
   isRector?: boolean;
 }
 
+// Define the session state type
 interface SessionState {
   user?: User;
   isAuth: boolean;
@@ -35,67 +41,119 @@ const resetSessionState = (): SessionState => ({
 // Create a provider component
 const SessionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<SessionState>(resetSessionState());
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
+  const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userData, setUserData] = useState<User | null>(null);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const isLoggedInCookie = document.cookie.split('; ').find(row => row.startsWith('isLoggedIn='))?.split('=')[1];
-        // console.log("isLoggedInCookie:", isLoggedInCookie); // Debugging line
+  // Function to store token in cookie (for auth) and localStorage (for persistence)
+  const storeTokenInLS = (serverToken: string) => {
+    setToken(serverToken);
+    localStorage.setItem("token", serverToken);
+  };
 
-        if (isLoggedInCookie === "true") {
-          // Fetch user data if logged in
-          const userResponse = await fetch("/api/auth/user/current");
-          if (userResponse.ok) {
-            const userData: User = await userResponse.json();
-            console.log("User data fetched:", userData); // Debugging line
-            setSession(prev => ({ ...prev, user: userData, isAuth: true }));
-            setIsLoggedIn(true); // Set isLoggedIn to true when user data is fetched
+  const isLoggedIn = !!token;
+
+  // Fetch user details based on cookie or localStorage
+  const fetchUserData = async () => {
+    if (!token) return;
+    try {
+      const isLoggedInCookie = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("isLoggedIn="))
+        ?.split("=")[1];
+
+      if (isLoggedInCookie === "true") {
+        const userResponse = await fetch("/api/auth/user/current");
+        if (userResponse.ok) {
+          const userData: User = await userResponse.json();
+          setUserData(userData);
+          localStorage.setItem("user", JSON.stringify(userData));
+
+          setSession((prev) => ({
+            ...prev,
+            user: userData,
+            isAuth: true,
+          }));
+          setIsLoading(false);
+        } else {
+          setSession(resetSessionState());
+        }
+      } else {
+        // Check for admin token
+        const adminToken = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith("admin-token="));
+        if (adminToken) {
+          const adminResponse = await fetch("/api/auth/admin/current");
+          if (adminResponse.ok) {
+            const adminData = await adminResponse.json();
+            setUserData(adminData);
+            localStorage.setItem("user", JSON.stringify(adminData));
+
+            setSession((prev) => ({
+              ...prev,
+              user: adminData,
+              isAuth: true,
+              isAdmin: true,
+              isHighAuth: Boolean(adminData.isHighAuth),
+              isRector: Boolean(adminData.isRector),
+            }));
           } else {
-            console.warn("User response not ok:", userResponse.status); // Debugging line
             setSession(resetSessionState());
           }
         } else {
-          const adminToken = document.cookie.split('; ').find(row => row.startsWith('admin-token='));
-          if (adminToken) {
-            const adminResponse = await fetch("/api/auth/admin/current");
-            if (adminResponse.ok) {
-              const adminData = await adminResponse.json();
-              setSession(prev => ({
-                ...prev,
-                user: adminData,
-                isAuth: true,
-                isAdmin: true,
-                isHighAuth: Boolean(adminData.isHighAuth),
-                isRector: Boolean(adminData.isRector),
-              }));
-              setIsLoggedIn(true); // Set isLoggedIn to true for admin as well
-            } else {
-              console.warn("Admin response not ok:", adminResponse.status); // Debugging line
-              setSession(resetSessionState());
-            }
-          } else {
-            setSession(resetSessionState());
-          }
+          setSession(resetSessionState());
         }
-      } catch (error) {
-        console.error("Error fetching session data:", error);
-        setSession(resetSessionState());
       }
-    };
+    } catch (error) {
+      console.error("Error fetching session data:", error);
+      setSession(resetSessionState());
+    }
+  };
 
-    fetchUserData();
+  // Load token and user from localStorage on component mount
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    const userFromStorage = localStorage.getItem("user");
+
+    if (storedToken) {
+      setToken(storedToken);
+    }
+
+    if (userFromStorage) {
+      try {
+        setUserData(JSON.parse(userFromStorage));
+      } catch (error) {
+        console.error("Error parsing user data from localStorage:", error);
+      }
+    }
+
+    setIsLoading(false); // Stop loading once token and user are initialized
   }, []);
 
+  useEffect(() => {
+    if (token) {
+      fetchUserData();
+    } else {
+      setIsLoading(false);
+    }
+  }, [token]);
+
+  // Logout function to clear cookies and localStorage
   const logout = async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
-      document.cookie = "user-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      document.cookie = "admin-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      document.cookie = "isLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie =
+        "user-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie =
+        "admin-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie =
+        "isLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      localStorage.clear();
+      setToken(null);
+      setUserData(null);
       setSession(resetSessionState());
-      setIsLoggedIn(false); // Reset isLoggedIn on logout
       router.push("/login");
       toast.success("Logout Successful");
     } catch (error) {
@@ -104,24 +162,22 @@ const SessionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }
   };
 
-  // Derive states
+  // Derive the user states
   const { isAuth, isAdmin, isHighAuth, isRector, user } = session;
-  const isUser = isAuth && !isAdmin;
-  const isAdminUser = isAdmin;
-  const isAdminHighAuth = isAdmin && isHighAuth;
-  const isAdminRector = isAdmin && isRector;
 
   return (
     <SessionContext.Provider
       value={{
+        ...session,
         isLoggedIn,
-        isUser,
-        isAdmin: isAdminUser,
-        isHighAuth: isAdminHighAuth,
-        isRector: isAdminRector,
+        storeTokenInLS,
+        isUser: isAuth && !isAdmin,
+        isAdmin,
+        isHighAuth: isAdmin && isHighAuth,
+        isRector: isAdmin && isRector,
         user,
+        userData,
         logout,
-        setIsLoggedIn // Provide setIsLoggedIn to the context
       }}
     >
       {children}

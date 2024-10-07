@@ -11,7 +11,7 @@ export default function Login() {
   const [username, setUsername] = useState(""); // Stores the input username
   const [password, setPassword] = useState(""); // Stores the input password
   const [loading, setLoading] = useState(false); // Tracks the loading state during login
-  const { setIsLoggedIn,isLoggedIn } = useSession(); // Custom hook from AuthContext
+  const { isLoggedIn,storeTokenInLS } = useSession(); // Custom hook from AuthContext
   const [error, setError] = useState(""); // Stores any login errors
   const router = useRouter(); // Navigation hook to redirect on successful login
 
@@ -36,7 +36,8 @@ export default function Login() {
         if (response.ok) {
           // document.cookie = "user-token=" + res_data.token + "; path=/; max-age=7200"; // assuming you get the token from res_data
           // document.cookie = "isLoggedIn=true; path=/; max-age=7200"; // Setting login status
-          setIsLoggedIn(true);
+          document.cookie = "isLoggedIn=true; path=/;";
+          storeTokenInLS(res_data.token);
           toast.success("Login Successful");
           router.push("/"); // Redirect to the home page
         } else {

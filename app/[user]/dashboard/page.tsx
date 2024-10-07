@@ -6,16 +6,17 @@ import { useRouter,useParams } from "next/navigation";
 import { FaUserCog,FaBuilding, FaUtensils, FaTools, FaShieldAlt, FaExclamationCircle, FaCheckCircle, FaPencilAlt, FaQuestionCircle, FaHeadset, FaBook } from "react-icons/fa";
 
 const Dashboard = () => {
-  const { isLoggedIn,isUser,user } = useSession();
+  const { isLoggedIn,userData } = useSession();
   const router = useRouter();
+  const [userId, setUserId] = useState(null);
+  const [user,setUser] = useState([]);
   const params = useParams<{ user: string;}>()
-  const userId = params.user;
+  // const userId = params.user;
   useEffect(() => {
     // Redirect to home if not logged in
-    if (!isLoggedIn && !isUser && !userId) {
-      router.push("/");
-    }
-  }, [isLoggedIn, router]);
+    setUserId(userData?._id);
+    setUser(userData);
+  }, [isLoggedIn]);
 
   const grievanceCategories = [
     { icon: <FaUserCog />, name: "Profile", description: "Click to view and edit your profile.", link: `/${params.user}/dashboard/edit-profile`, buttonText: "Edit" },

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { usePathname } from "next/navigation";
 import {
   Navbar,
@@ -17,10 +17,21 @@ import { useSession } from "@/app/store/session";
 
 export default function MainNavabar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, logout, isLoggedIn } = useSession();
+  const { userData,logout, isLoggedIn } = useSession();
   const currentPath = usePathname();
+  const [userId, setUserId] = useState(null);
 
-  const userId = user?._id;
+  useEffect(() => {
+    // This effect runs when `isLoggedIn` changes
+    if (isLoggedIn) {
+      // Call an API or take any action to refresh user data
+      setUserId(userData?._id);
+      console.log('User is logged in, refreshing user data...');
+      // You can implement logic to refresh user here, e.g.:
+      // fetchUserData();
+    }
+  }, [isLoggedIn,userData])
+
 
   const menuItems = [
     { name: "Home", href: "/" },
@@ -68,7 +79,7 @@ export default function MainNavabar() {
           </Link>
         </NavbarItem>
         <NavbarItem>
-          {isLoggedIn && userId && (
+          {isLoggedIn && (
             <Link
               href={`/${userId}/dashboard`} // Correctly formatted user dashboard URL
               color="foreground"
