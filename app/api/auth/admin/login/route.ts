@@ -5,10 +5,11 @@ import Faculty from "@/database/models/high-authority-model";
 import { NextRequest, NextResponse } from "next/server";
 
 // Ensure the database connection is established before processing requests
-connectToDatabase();
+
 
 export async function POST(request: NextRequest) {
   try {
+    await connectToDatabase();
     // Parse request body
     const reqBody = await request.json();
     const { username, password } = reqBody;

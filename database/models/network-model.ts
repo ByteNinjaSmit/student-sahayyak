@@ -1,5 +1,4 @@
-import mongoose from "mongoose"; 
-import { Schema,model,models } from "mongoose"; 
+import mongoose, { Schema,model } from "mongoose";
 
 const networkconnSchema = new Schema({
     complaint:{
@@ -14,11 +13,22 @@ const networkconnSchema = new Schema({
     },
     user: {
         type: mongoose.Types.ObjectId, // Use Types.ObjectId for better practice
-        ref: "Users", // Reference the User model
+        ref: "User", // Reference the User model
     },
 },
 { timestamps: true }
 );
 
-const NetworkConn = models.NetworkConn || model('NetworkConn',networkconnSchema);
+// Singleton pattern for Safety model definition
+const NetworkConn = (() => {
+    try {
+      // Return the existing model if it is already compiled
+      return model('NetworkConn');
+    } catch {
+      // Otherwise, define and return the new model
+      return model('NetworkConn',networkconnSchema);
+    }
+  })();
+
+// const NetworkConn = model('NetworkConn',networkconnSchema);
 export default NetworkConn;

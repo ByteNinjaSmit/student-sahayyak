@@ -1,5 +1,4 @@
-import mongoose from "mongoose"; 
-import { Schema,model,models } from "mongoose"; 
+import mongoose, { Schema,model } from "mongoose";
 
 const commonareaSchema = new Schema({
     complaint:{
@@ -13,11 +12,21 @@ const commonareaSchema = new Schema({
     },
     user: {
         type: mongoose.Types.ObjectId, // Use Types.ObjectId for better practice
-        ref: "Users", // Reference the User model
+        ref: "User", // Reference the User model
     },
 },
 { timestamps: true }
 )
 
-const CommonArea = models.CommonArea || model('CommonArea',commonareaSchema);
+const CommonArea = (() => {
+    try {
+      // Return the existing model if it is already compiled
+      return model('CommonArea');
+    } catch {
+      // Otherwise, define and return the new model
+      return model('CommonArea',commonareaSchema);
+    }
+  })();
+
+// const CommonArea = model('CommonArea',commonareaSchema);
 export default CommonArea;

@@ -1,5 +1,4 @@
-import mongoose from "mongoose"; 
-import { Schema,model,models } from "mongoose"; 
+import mongoose, { Schema,model } from "mongoose";
 
 const actionSchema = new Schema({
     message:{
@@ -19,7 +18,7 @@ const actionSchema = new Schema({
     },
     user: {
         type: mongoose.Types.ObjectId, 
-        ref: "Users", 
+        ref: "User", 
     },
     highAuth:{
         type: mongoose.Types.ObjectId, 
@@ -30,5 +29,16 @@ const actionSchema = new Schema({
 { timestamps: true }
 );
 
-const ActionTake = models.ActionTake || model('ActionTake',actionSchema);
+const ActionTake = (() => {
+    try {
+      // Return the existing model if it is already compiled
+      return model('ActionTake');
+    } catch {
+      // Otherwise, define and return the new model
+      return model('ActionTake',actionSchema);
+    }
+  })();
+
+
+// const ActionTake =model('ActionTake',actionSchema);
 export default ActionTake;

@@ -1,4 +1,4 @@
-import { Schema,model,models } from "mongoose"; 
+import { Schema,model } from "mongoose"; 
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -65,7 +65,17 @@ userSchema.methods.generateToken = async function () {
     console.error(error);
   }
 };
-
-const User = models.User || model('User',userSchema);
+// Define the User model if it doesn't exist already
+// Define the User model directly (no conditionals)
+// Singleton pattern for model definition
+const User = (() => {
+  try {
+    // Check if the model is already compiled
+    return model("User");
+  } catch {
+    // If not compiled, create and return the model
+    return model("User", userSchema);
+  }
+})();
 
 export default User;

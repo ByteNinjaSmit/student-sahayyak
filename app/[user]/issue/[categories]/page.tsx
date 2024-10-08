@@ -1,7 +1,13 @@
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
-import { FaBed, FaRoad, FaUsers, FaGlassWhiskey } from "react-icons/fa";
+import {
+  FaBed,
+  FaRoad,
+  FaUsers,
+
+  FaGlassWhiskey,
+} from "react-icons/fa";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { MdCellWifi } from "react-icons/md";
 import { useRouter, useParams } from "next/navigation";
@@ -84,7 +90,9 @@ const HostelIssuesCategory = () => {
   };
 
   const handleConfirm = () => {
-    const categoryRoute = categories.find((category) => category.name === selectedCategory)?.route;
+    const categoryRoute = categories.find(
+      (category) => category.name === selectedCategory
+    )?.route;
 
     if (categoryRoute) {
       // Navigate to the corresponding category page
@@ -106,7 +114,9 @@ const HostelIssuesCategory = () => {
             </button>
           </Link>
         </div>
-        <p className="text-xl text-gray-600 mb-8">Select a category to raise your grievance</p>
+        <p className="text-xl text-gray-600 mb-8">
+          Select a category to raise your grievance
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {categories.map((category) => (
             <div
@@ -115,8 +125,12 @@ const HostelIssuesCategory = () => {
             >
               <div className="p-6">
                 <div className="flex justify-center mb-4">{category.icon}</div>
-                <h2 className="text-2xl font-semibold text-center mb-2">{category.name}</h2>
-                <p className="text-gray-600 text-center mb-4">{category.description}</p>
+                <h2 className="text-2xl font-semibold text-center mb-2">
+                  {category.name}
+                </h2>
+                <p className="text-gray-600 text-center mb-4">
+                  {category.description}
+                </p>
                 <button
                   onClick={() => handleRaiseGrievance(category.name)}
                   className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors duration-300"
@@ -133,7 +147,8 @@ const HostelIssuesCategory = () => {
           <div className="bg-white p-8 rounded-lg max-w-md w-full">
             <h2 className="text-2xl font-semibold mb-4">Confirm Grievance</h2>
             <p className="mb-6">
-              Are you sure you want to raise a grievance for the {selectedCategory} category?
+              Are you sure you want to raise a grievance for the{" "}
+              {selectedCategory} category?
             </p>
             <div className="flex justify-end space-x-4">
               <button

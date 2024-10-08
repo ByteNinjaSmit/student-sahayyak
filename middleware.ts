@@ -27,6 +27,12 @@ export function middleware(request: NextRequest) {
   const userToken = request.cookies.get("user-token")?.value || "";
   const adminToken = request.cookies.get("admin-token")?.value || "";
 
+  if(publicPaths){
+    if(userToken ||adminToken ){
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+  }
+
   if(!userToken || !adminToken){
 
   }

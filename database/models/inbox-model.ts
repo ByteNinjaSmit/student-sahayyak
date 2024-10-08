@@ -1,6 +1,4 @@
-import mongoose from "mongoose"; 
-import { Schema,model,models } from "mongoose"; 
-
+import mongoose, { Schema,model } from "mongoose";
 const inboxSchema = new Schema({
     message:{
         type:String,
@@ -19,7 +17,7 @@ const inboxSchema = new Schema({
     },
     user: {
         type: mongoose.Types.ObjectId, 
-        ref: "Users", 
+        ref: "User", 
     },
     highAuth:{
         type: mongoose.Types.ObjectId, 
@@ -30,5 +28,15 @@ const inboxSchema = new Schema({
 { timestamps: true }
 );
 
-const Inbox = models.Inbox || model('Inbox',inboxSchema);
+const Inbox = (() => {
+    try {
+      // Return the existing model if it is already compiled
+      return model('Inbox');
+    } catch {
+      // Otherwise, define and return the new model
+      return model('Inbox',inboxSchema);
+    }
+  })();
+
+// const Inbox =model('Inbox',inboxSchema);                                   
 export default Inbox;

@@ -1,5 +1,4 @@
-import mongoose from "mongoose"; 
-import { Schema,model,models } from "mongoose"; 
+import mongoose, { Schema,model } from "mongoose";
 
 const hostelotherSchema = new Schema({
     complaint:{
@@ -13,11 +12,21 @@ const hostelotherSchema = new Schema({
     },
     user: {
         type: mongoose.Types.ObjectId, // Use Types.ObjectId for better practice
-        ref: "Users", // Reference the User model
+        ref: "User", // Reference the User model
     },
 },
 { timestamps: true }
 );
 
-const HostelOther = models.HostelOther || model('HostelOther',hostelotherSchema);
+const HostelOther = (() => {
+    try {
+      // Return the existing model if it is already compiled
+      return model('HostelOther');
+    } catch {
+      // Otherwise, define and return the new model
+      return model('HostelOther',hostelotherSchema);
+    }
+  })();
+
+// const HostelOther = model('HostelOther',hostelotherSchema);
 export default HostelOther;

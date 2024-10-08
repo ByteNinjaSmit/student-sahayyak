@@ -1,5 +1,4 @@
-import mongoose from "mongoose"; 
-import { Schema,model,models } from "mongoose"; 
+import mongoose, { Schema,model } from "mongoose";
 
 const foodqualitySchema = new Schema({
     foodOwner:{
@@ -21,12 +20,23 @@ const foodqualitySchema = new Schema({
     },
     user: {
         type: mongoose.Types.ObjectId,
-        ref: "Users",
+        ref: "User",
     },
 
 },
 { timestamps: true }
 );
 
-const FoodQuality = models.FoodQuality || model('FoodQuality',foodqualitySchema);
+const FoodQuality = (() => {
+    try {
+      // Return the existing model if it is already compiled
+      return model('FoodQuality');
+    } catch {
+      // Otherwise, define and return the new model
+      return model('FoodQuality',foodqualitySchema);
+    }
+  })();
+
+
+// const FoodQuality = model('FoodQuality',foodqualitySchema);
 export default FoodQuality;

@@ -22,7 +22,7 @@ export const connectToDatabase = async () => {
     }
 
     cached.conn = await cached.promise;
-    console.log("Connected to MongoDB:", MONGO_URI);
+    // console.log("Connected to MongoDB:", MONGO_URI);
   } catch (error) {
     console.error("Failed to connect to MongoDB:", error);
     throw new Error("Failed to connect to the database");

@@ -30,16 +30,16 @@ export async function GET(
     const networkData = await NetworkConn.find({ user: user });
     const safetyData = await Safety.find({ user: user });
 
-    // Combine all the arrays into one
+    // Combine all the arrays into one with categories
     const combinedData = [
-      ...drinkWaterData,
-      ...roomData,
-      ...commonAreaData,
-      ...corridorData,
-      ...foodQualityData,
-      ...foodOwnerData,
-      ...networkData,
-      ...safetyData,
+      ...drinkWaterData.map(doc => ({ ...doc.toObject(), category: 'Hostel' })),
+      ...roomData.map(doc => ({ ...doc.toObject(), category: 'Hostel' })),
+      ...commonAreaData.map(doc => ({ ...doc.toObject(), category: 'Hostel' })),
+      ...corridorData.map(doc => ({ ...doc.toObject(), category: 'Hostel' })),
+      ...foodQualityData.map(doc => ({ ...doc.toObject(), category: 'Mess / Tiffin' })),
+      ...foodOwnerData.map(doc => ({ ...doc.toObject(), category: 'Mess / Tiffin' })),
+      ...networkData.map(doc => ({ ...doc.toObject(), category: 'Facility' })),
+      ...safetyData.map(doc => ({ ...doc.toObject(), category: 'Security' })),
     ];
 
     // Sort the combined data by `createdAt` in descending order

@@ -14,7 +14,9 @@ import {
   FaPencilAlt,
   FaQuestionCircle,
   FaHeadset,
+  FaUser,
   FaBook,
+  FaDoorOpen,
 } from "react-icons/fa";
 import Link from "next/link";
 
@@ -127,11 +129,26 @@ const Dashboard = () => {
   ];
 
   const statistics = [
-    { label: "Total Grievances", value: complaintData.length, icon: <FaExclamationCircle /> },
-    { label: "Resolved", value: complaintData.filter(grievance => grievance.status === "Resolved").length, icon: <FaCheckCircle /> },
-    { label: "Pending", value: complaintData.filter(grievance => grievance.status === "Not Processed").length, icon: <FaPencilAlt /> },
+    {
+      label: "Total Grievances",
+      value: complaintData.length,
+      icon: <FaExclamationCircle />,
+    },
+    {
+      label: "Resolved",
+      value: complaintData.filter(
+        (grievance) => grievance.status === "Resolved"
+      ).length,
+      icon: <FaCheckCircle />,
+    },
+    {
+      label: "Pending",
+      value: complaintData.filter(
+        (grievance) => grievance.status === "Not Processed"
+      ).length,
+      icon: <FaPencilAlt />,
+    },
   ];
-  
 
   const quickLinks = [
     { label: "FAQ", icon: <FaQuestionCircle />, link: "/faq" },
@@ -146,8 +163,29 @@ const Dashboard = () => {
           Dashboard
         </h1>
         <p className="text-xl text-gray-600 text-center">
-          Welcome back, {user?.username} to the Hostellers Grievance System
+          Welcome back, {userData?.username} to the Hostellers Grievance System
         </p>
+        {/* Show here username Hostek id Room Number using icons and justify even */}
+        <div className="sm:w-[55%] mr-auto ml-auto flex justify-evenly items-center text-xl space-x-4 mt-4">
+          <div className="flex items-center font-medium text-indigo-700">
+            <FaUser className="inline mr-2" />
+            <span className=" text-indigo-800 border-indigo-300">
+              {userData?.username}
+            </span>
+          </div>
+          <div className="flex items-center font-medium text-purple-700">
+            <FaBuilding className="inline mr-2" />
+            <span className=" border-purple-300 text-purple-800">
+              {userData?.hostelId}
+            </span>
+          </div>
+          <div className="flex items-center text-pink-700 font-medium">
+            <FaDoorOpen className="inline mr-2" />
+            <span className="border-pink-300 text-pink-800">
+              {userData?.room}
+            </span>
+          </div>
+        </div>
       </header>
 
       <section className="mb-12">
@@ -158,13 +196,17 @@ const Dashboard = () => {
           {grievanceCategories.map((category, index) => (
             <div
               key={index}
-              className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+              className="flex flex-col justify-between bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
             >
-              <div className="text-4xl mb-4 text-blue-500">{category.icon}</div>
-              <h3 className="text-xl font-semibold mb-2">{category.name}</h3>
-              <p className="text-gray-600 mb-4">{category.description}</p>
+              <div>
+                <div className="text-4xl mb-4 text-blue-500">
+                  {category.icon}
+                </div>
+                <h3 className="text-xl font-semibold mb-2">{category.name}</h3>
+                <p className="text-gray-600 mb-4">{category.description}</p>
+              </div>
               <button
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors duration-300"
+                className="self-center bg-blue-500 w-[50%] text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors duration-300"
                 onClick={() => router.push(category.link)}
               >
                 {category.buttonText}
@@ -183,16 +225,19 @@ const Dashboard = () => {
           <table className="w-full">
             <thead className="bg-blue-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-blue-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase tracking-wider">
+                  Category
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase tracking-wider">
                   Complaint Title
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-blue-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-blue-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase tracking-wider">
                   Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-blue-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-blue-600 uppercase tracking-wider">
                   Action
                 </th>
               </tr>
@@ -200,21 +245,31 @@ const Dashboard = () => {
             <tbody className="divide-y divide-gray-200">
               {complaintData.length > 0 ? (
                 complaintData.map((grievance, index) => (
-                  <tr key={index}>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                  <tr
+                    key={index}
+                    className="hover:bg-gray-100 transition-colors duration-200"
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-800 font-bold">
+                      {grievance.category}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-700">
                       {Array.isArray(grievance.complaint) ? (
                         <ul className="list-disc list-inside">
                           {grievance.complaint.map((item, idx) => (
-                            <li key={idx}>{item}</li>
+                            <li key={idx} className="text-gray-700">
+                              {item}
+                            </li>
                           ))}
                         </ul>
                       ) : (
-                        grievance.complaint
+                        <span className="text-gray-700">
+                          {grievance.complaint}
+                        </span>
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        className={`px-2 inline-flex text-sm leading-5 font-semibold rounded-full ${
                           grievance.status === "Resolved"
                             ? "bg-green-100 text-green-800"
                             : "bg-yellow-100 text-yellow-800"
@@ -223,21 +278,26 @@ const Dashboard = () => {
                         {grievance.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-600">
                       {new Date(grievance.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <Link href={`/${userId}/issue/singleissue/${grievance._id}`}>
-                      <button className="text-blue-600 hover:text-blue-900">
-                        View Details
-                      </button>
+                      <Link
+                        href={`/${userId}/issue/singleissue/${grievance._id}`}
+                      >
+                        <button className="text-blue-600 hover:text-blue-900">
+                          View Details
+                        </button>
                       </Link>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td className="px-6 py-4 text-center" colSpan={4}>
+                  <td
+                    className="px-6 py-4 text-center text-gray-500"
+                    colSpan={5}
+                  >
                     No recent grievances found.
                   </td>
                 </tr>

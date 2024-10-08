@@ -1,25 +1,33 @@
-import mongoose from "mongoose"; 
-import { Schema,model,models } from "mongoose"; 
+import mongoose, { Schema,model } from "mongoose";
 
-const safetySchema = new Schema({
-    complaint:{
-        type:[String],
-        required:true,
-        // It is Array
-        // ragging Anti- ragging disturbance
+// Create the Safety Schema
+const safetySchema = new Schema(
+  {
+    complaint: {
+      type: [String],
+      required: true,
     },
-    status:{
-        type:String,
-        default:"Not Processed",
+    status: {
+      type: String,
+      default: "Not Processed",
     },
     user: {
-        type: mongoose.Types.ObjectId, // Use Types.ObjectId for better practice
-        ref: "Users", // Reference the User model
+      type: mongoose.Types.ObjectId,
+      ref: "User", // Reference to Users model
     },
-
-},
-{ timestamps: true }
+  },
+  { timestamps: true }
 );
 
-const Safety = models.Safety || model('Safety',safetySchema);
-export default Safety;
+// Singleton pattern for Safety model definition
+const Safety = (() => {
+    try {
+      // Return the existing model if it is already compiled
+      return mongoose.model("Safety");
+    } catch {
+      // Otherwise, define and return the new model
+      return mongoose.model("Safety", safetySchema);
+    }
+  })();
+  
+  export default Safety;

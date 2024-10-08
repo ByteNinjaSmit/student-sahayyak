@@ -1,4 +1,4 @@
-import { Schema, model, models } from "mongoose";
+import mongoose, { Schema,model } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -79,6 +79,16 @@ facultySchema.methods.generateToken = async function () {
     }
   };
 
-const Faculty = models.Faculty || model("Faculty", facultySchema);
+  const Faculty = (() => {
+    try {
+      // Return the existing model if it is already compiled
+      return model("Faculty");
+    } catch {
+      // Otherwise, define and return the new model
+      return model("Faculty", facultySchema);
+    }
+  })();
 
+
+// const Faculty =model("Faculty", facultySchema);
 export default Faculty;

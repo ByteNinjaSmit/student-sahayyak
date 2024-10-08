@@ -22,23 +22,26 @@ export async function GET(
     // Destructure the issueid from params
     const { issueid } = params;
 
-    // Try to fetch data from each model and return the first found document
+    // Array of models and their respective category names
     const models = [
-      DrinkWater,
-      Room,
-      CommonArea,
-      Corridor,
-      FoodQuality,
-      FoodOwner,
-      NetworkConn,
-      Safety,
+      { model: DrinkWater, category: "Hostel" },
+      { model: Room, category: "Hostel" },
+      { model: CommonArea, category: "Hostel" },
+      { model: Corridor, category: "Hostel" },
+      { model: FoodQuality, category: "Mess / Tiffin" },
+      { model: FoodOwner, category: "Mess / Tiffin" },
+      { model: NetworkConn, category: "Facility" },
+      { model: Safety, category: "Security" },
     ];
 
     let foundDocument = null;
+    let foundCategory = null;
 
-    for (const model of models) {
-      foundDocument = await model.findById({_id: issueid}).exec();
+    // Try to fetch data from each model and return the first found document
+    for (const { model, category } of models) {
+      foundDocument = await model.findById(issueid).populate("user", "-password").exec();
       if (foundDocument) {
+        foundCategory = category; // Save the found category
         break; // Exit loop once a document is found
       }
     }
@@ -48,13 +51,14 @@ export async function GET(
       return NextResponse.json({ error: "Document not found" }, { status: 404 });
     }
 
-    // Return the found document
-    return NextResponse.json(foundDocument);
+    // Return the found document along with the category
+    return NextResponse.json({ document: foundDocument, category: foundCategory });
   } catch (error) {
     console.error("Error fetching issue data:", error);
     return NextResponse.json({ error: "Error fetching issue data" }, { status: 500 });
   }
 }
+
 
 // Function to handle DELETE requests
 export async function DELETE(

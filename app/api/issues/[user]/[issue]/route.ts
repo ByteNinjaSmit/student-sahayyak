@@ -12,12 +12,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 // Database Connection
 // Ensure the database connection is established before processing requests
-connectToDatabase();
+
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { user: string; issue: string } }
 ) {
+  await connectToDatabase();  
   // if params.issue === drinkwater then use this
 
   // --------------------

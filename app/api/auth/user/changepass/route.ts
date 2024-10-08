@@ -4,10 +4,11 @@ import User from "@/database/models/user-model";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
-connectToDatabase();
+
 
 export async function PATCH(request: NextRequest) {
   try {
+    await connectToDatabase();
     const reqBody = await request.json();
     const { id, username, newpassword } = reqBody;
 

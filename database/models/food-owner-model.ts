@@ -1,5 +1,4 @@
-import mongoose from "mongoose"; 
-import { Schema,model,models } from "mongoose"; 
+import mongoose, { Schema,model } from "mongoose";
 
 const foodownerSchema = new Schema({
     foodOwner:{
@@ -21,12 +20,23 @@ const foodownerSchema = new Schema({
     },
     user: {
         type: mongoose.Types.ObjectId,
-        ref: "Users",
+        ref: "User",
     },
 
 },
 { timestamps: true }
 );
 
-const FoodOwner = models.FoodOwner || model('FoodOwner',foodownerSchema);
+const FoodOwner = (() => {
+    try {
+      // Return the existing model if it is already compiled
+      return model('FoodOwner');
+    } catch {
+      // Otherwise, define and return the new model
+      return model('FoodOwner',foodownerSchema);
+    }
+  })();
+
+
+// const FoodOwner = model('FoodOwner',foodownerSchema);
 export default FoodOwner;

@@ -1,5 +1,4 @@
-import mongoose from "mongoose"; 
-import { Schema, model, models } from "mongoose"; 
+import mongoose, { Schema,model } from "mongoose";
 
 const roomSchema = new Schema(
     {
@@ -13,11 +12,21 @@ const roomSchema = new Schema(
         },
         user: {
             type: mongoose.Types.ObjectId, // Use Types.ObjectId for better practice
-            ref: "Users", // Reference the User model
+            ref: "User", // Reference the User model
         },
     },
     { timestamps: true } // Move this here as an option to the Schema
 );
 
-const Room = models.Room || model('Room', roomSchema);
+// Singleton pattern for Safety model definition
+const Room = (() => {
+    try {
+      // Return the existing model if it is already compiled
+      return model('Room');
+    } catch {
+      // Otherwise, define and return the new model
+      return model('Room', roomSchema);
+    }
+  })();
+
 export default Room;

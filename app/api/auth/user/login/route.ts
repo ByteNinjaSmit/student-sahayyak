@@ -5,10 +5,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers"; // Import cookies utility
 
 // Ensure the database connection is established before processing requests
-connectToDatabase();
+
 
 export async function POST(request: NextRequest) {
   try {
+    await connectToDatabase();
     // Parse request body
     const reqBody = await request.json();
     const { username, password } = reqBody;
