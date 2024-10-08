@@ -151,7 +151,7 @@ const GrievanceForm: React.FC = () => {
           throw new Error("Failed to fetch user details");
         }
         toast.success("Grievances Raised");
-        router.push(`/${params.user}/dashboard`);
+        router.push(`/client/${params.user}/dashboard`);
       } catch (error) {
         console.error("Error Grievances Raise Failed details:", error);
         toast.error("Grievances Raise Failed");

@@ -1,78 +1,91 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
-//   // Define public paths
-  const publicPaths = ["/faq", "/contact", "/login", "/rule-regulations"];
-  const publicApiPath = ["/api/auth/user/login","/api/auth/user/register","/api/auth/admin/login","/api/auth/logout"]
-//   // Define user-specific paths
-  // const userPaths = [
-  //   "/user:/dashboard",
-  //   "/user:/issue/categories:/issue:/form",
-  //   "/user:/issue/categories:",
-  // ];
+  // Define public paths
+  const publicPaths = ["/login", "/register"];
+  const publicVisitsPath = ["/contact", "/faq", "/rule-regulations"];
+  const publicApiPath = [
+    "/api/auth/user/login",
+    "/api/auth/user/register",
+    "/api/auth/admin/login",
+    "/api/auth/logout",
+  ];
 
-//   // Define admin-specific paths
-//   const adminPaths = ["/admin/admin:/dashboard"];
+  // Define user-specific paths
+  const userPaths = [
+    "/client/:path", // Match any path under a user's route
+  ];
 
-//   // Define protected API routes
-//   const userAPIRoutes = [
-//     "/api/userdata/userinfo/id:",
-//     "/issues/user:/issue:",
-//   ];
+  // Define protected API routes
+  const userAPIRoutes = ["/api/userdata/:path", "/issues/:path"];
 
-//   // Get tokens from cookies
+  // Get tokens from cookies
   const userToken = request.cookies.get("user-token")?.value || "";
   const adminToken = request.cookies.get("admin-token")?.value || "";
 
-  if(publicPaths){
-    if(userToken ||adminToken ){
+  // Redirect logic for public paths
+  if (publicPaths.includes(path) || publicVisitsPath.includes(path)) {
+    if (userToken || adminToken) {
+      // If user or admin is logged in, redirect them to the home page
       return NextResponse.redirect(new URL("/", request.url));
     }
   }
 
-  if(!userToken || !adminToken){
-
+  // Redirect if accessing a protected path without a user token
+  if (
+    !publicPaths.includes(path) &&
+    !publicVisitsPath.includes(path) &&
+    !publicApiPath.includes(path)
+  ) {
+    if (!userToken && !adminToken) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
   }
 
-//   // Redirect logic for public paths
-//   if (publicPaths.includes(path) && userToken) {
-//     return NextResponse.redirect(new URL("/", request.url));
-//   }
+  // Protect user-specific paths
+  if (path.startsWith("/client/")) {
+    // Redirect to login if accessing client paths without a user token
+    if (!userToken) {
+      if (request.nextUrl.pathname.startsWith("/api")) {
+        return NextResponse.json(
+          {
+            message: "Access Denied!!",
+            success: false,
+          },
+          {
+            status: 401,
+          }
+        );
+      }
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+  }
 
-//   // Redirect if accessing a protected path without a user token
-//   if (!publicPaths.includes(path) && !userToken) {
-//     return NextResponse.redirect(new URL("/login", request.url));
-//   }
+  // Protect API routes
+  if (
+    userAPIRoutes.some((route) =>
+      path.startsWith(route.replace(/:\w+/g, ""))
+    ) &&
+    !userToken
+  ) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
 
-//   // Additional check for user paths
-//   if (userPaths.includes(path) && !userToken) {
-//     return NextResponse.redirect(new URL("/login", request.url));
-//   }
-
-//   // Admin path protection
-//   if (adminPaths.includes(path) && !adminToken) {
-//     return NextResponse.redirect(new URL("/login", request.url));
-//   }
-
-//   // Protect API routes
-//   if (userAPIRoutes.some(route => path.startsWith(route)) && !userToken) {
-//     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-//   }
+  // Add other custom logic if needed
 }
 
-// // Configuration for which paths to apply the middleware to
+// Configuration for which paths to apply the middleware to
 export const config = {
   matcher: [
-    // "/",
-    // "/faq",
-    // "/contact",
-    // "/api/:path*", // Apply middleware to all API routes
-    // "/:user/dashboard",
-    // "/:user/:path"
-    // "/:user/issue/categories:/issue:/form",
-    // "/admin/admin:/dashboard",
+    "/login",
+    "/register",
+    "/contact",
+    "/faq",
+    "/rule-regulations",
+    "/api/:path*", // Apply middleware to all API routes
+    "/client/:path*", // Apply middleware to all client-specific routes
   ],
 };

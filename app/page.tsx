@@ -21,7 +21,7 @@ const HeroSection = () => {
               An easy and secure way to submit, track, and resolve all your hostel-related issues.
             </p>
             {isLoggedIn ? (
-              <Link href={`/${userId}/dashboard`}>
+              <Link href={`/client/${userId}/dashboard`}>
                 <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-8 rounded-full transition duration-300 ease-in-out transform hover:scale-105 shadow-lg">
                   Submit Your Complaint Now
                 </button>

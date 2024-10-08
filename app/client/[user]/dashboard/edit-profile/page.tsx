@@ -11,6 +11,7 @@ import {
 import { useSession } from "@/app/store/session";
 import { toast } from 'react-toastify';
 import { useRouter,useParams } from "next/navigation"; // For client-side routing
+import Link from "next/link";
 
 const EditProfilePage = () => {
   const { user } = useSession();
@@ -250,12 +251,14 @@ const EditProfilePage = () => {
           </div>
 
           <div className="mt-8 flex justify-end space-x-4">
+            <Link href={`/client/${user?.username}/dashboard`}>
             <button
               type="button"
               className="px-6 py-3 border border-gray-300 rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
             >
               Cancel
             </button>
+            </Link>
             <button
               type="submit"
               className="px-6 py-3 border border-red-500 rounded-full text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"

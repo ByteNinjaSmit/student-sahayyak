@@ -77,11 +77,11 @@ export default function Login() {
   
 
   // Redirect to homepage if the user is already logged in
-  useEffect(() => {
-    if (isLoggedIn) {
-      router.push("/"); // If logged in, redirect to homepage
-    }
-  }, [isLoggedIn, router]);
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     router.push("/"); // If logged in, redirect to homepage
+  //   }
+  // }, [isLoggedIn, router]);
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100 p-4 relative">

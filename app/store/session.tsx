@@ -44,7 +44,7 @@ const SessionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [userData, setUserData] = useState<User | null>(null);
+  const [userData, setUserData] = useState<User | undefined>(undefined);
 
   // Function to store token in cookie (for auth) and localStorage (for persistence)
   const storeTokenInLS = (serverToken: string) => {
@@ -65,7 +65,11 @@ const SessionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
       if (isLoggedInCookie === "true") {
         const userResponse = await fetch("/api/auth/user/current");
+        if(!userResponse.ok){
+          toast.error("error getting User")
+        }
         if (userResponse.ok) {
+          // toast.error("Fetched Again")
           const userData: User = await userResponse.json();
           setUserData(userData);
           localStorage.setItem("user", JSON.stringify(userData));
@@ -86,6 +90,9 @@ const SessionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
           .find((row) => row.startsWith("admin-token="));
         if (adminToken) {
           const adminResponse = await fetch("/api/auth/admin/current");
+          if(!adminResponse.ok){
+            toast.error("error getting User")
+          }
           if (adminResponse.ok) {
             const adminData = await adminResponse.json();
             setUserData(adminData);
@@ -134,11 +141,12 @@ const SessionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     if (token) {
-      fetchUserData();
+      if(userData === undefined)
+        fetchUserData();
     } else {
       setIsLoading(false);
     }
-  }, [token]);
+  }, [userData,token]);
 
   // Logout function to clear cookies and localStorage
   const logout = async () => {

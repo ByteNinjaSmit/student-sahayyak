@@ -58,7 +58,7 @@ const Dashboard = () => {
       icon: <FaUserCog />,
       name: "Profile",
       description: "Click to view and edit your profile.",
-      link: `/${params.user}/dashboard/edit-profile`,
+      link: `/client/${params.user}/dashboard/edit-profile`,
       buttonText: "Edit",
     },
     {
@@ -66,14 +66,14 @@ const Dashboard = () => {
       name: "Hostel Issues",
       description:
         "Report problems related to rooms, common-area, or maintenance of hostel.",
-      link: `/${params.user}/issue/hostel`,
+      link: `/client/${params.user}/issue/hostel`,
       buttonText: "Raise a Grievance",
     },
     {
       icon: <FaUtensils />,
       name: "Mess / Tiffin Issues",
       description: "Raise concerns about issues related to mess/tiffin.",
-      link: `/${params.user}/issue/mess`,
+      link: `/client/${params.user}/issue/mess`,
       buttonText: "Raise a Grievance",
     },
     {
@@ -81,21 +81,21 @@ const Dashboard = () => {
       name: "Issues in Facilities",
       description:
         "Report issues with facilies, utilities, or amenities such as drinking water , wifi connectivity.",
-      link: `/${params.user}/issue/facilities`,
+      link: `/client/${params.user}/issue/facilities`,
       buttonText: "Raise a Grievance",
     },
     {
       icon: <FaShieldAlt />,
       name: "Security and Other",
       description: "Notify about security issues or safety hazards.",
-      link: `/${params.user}/issue/security`,
+      link: `/client/${params.user}/issue/security`,
       buttonText: "Raise a Grievance",
     },
     {
       icon: <FaPencilAlt />,
       name: "Action",
       description: "Click if problem isn't resolved.",
-      link: "/grievance/action",
+      link: "/client/grievance/action",
       buttonText: "Raise a Grievance",
     },
     {
@@ -283,7 +283,7 @@ const Dashboard = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Link
-                        href={`/${userId}/issue/singleissue/${grievance._id}`}
+                        href={`/client/${userId}/issue/singleissue/${grievance._id}`}
                       >
                         <button className="text-blue-600 hover:text-blue-900">
                           View Details

@@ -28,25 +28,25 @@ const HostelIssuesCategory = () => {
             name: "Room",
             description: "Report issues with room facilities",
             icon: <FaBed className="text-4xl text-blue-500" />,
-            route: `/${params.user}/issue/${params.categories}/room/form`,
+            route: `/client/${params.user}/issue/${params.categories}/room/form`,
           },
           {
             name: "Corridor",
             description: "Notify about corridor maintenance issues",
             icon: <FaRoad className="text-4xl text-green-500" />,
-            route: `/${params.user}/issue/${params.categories}/corridor/form`,
+            route: `/client/${params.user}/issue/${params.categories}/corridor/form`,
           },
           {
             name: "Common Area",
             description: "Report concerns in shared spaces",
             icon: <FaUsers className="text-4xl text-purple-500" />,
-            route: `/${params.user}/issue/${params.categories}/commonarea/form`,
+            route: `/client/${params.user}/issue/${params.categories}/commonarea/form`,
           },
           {
             name: "Drinking Water",
             description: "Report issues related to drinking water supply",
             icon: <FaGlassWhiskey className="text-4xl text-teal-500" />,
-            route: `/${params.user}/issue/${params.categories}/drinkingwater/form`,
+            route: `/client/${params.user}/issue/${params.categories}/drinkingwater/form`,
           },
         ]
       : params.categories === "mess"
@@ -55,13 +55,13 @@ const HostelIssuesCategory = () => {
             name: "Food Quality",
             description: "Report issues regarding food quality",
             icon: <GiForkKnifeSpoon className="text-4xl text-orange-500" />,
-            route: `/${params.user}/issue/${params.categories}/foodquality/form`,
+            route: `/client/${params.user}/issue/${params.categories}/foodquality/form`,
           },
           {
             name: "Mess Owner",
             description: "Raise issues with the mess owner",
             icon: <FaUsers className="text-4xl text-red-500" />,
-            route: `/${params.user}/issue/${params.categories}/foodowner/form`,
+            route: `/client/${params.user}/issue/${params.categories}/foodowner/form`,
           },
         ]
       : params.categories === "facilities"
@@ -70,7 +70,7 @@ const HostelIssuesCategory = () => {
             name: "WiFi / Network",
             description: "Report issues with WiFi or network connectivity",
             icon: <MdCellWifi className="text-4xl text-blue-500" />,
-            route: `/${params.user}/issue/${params.categories}/wifiissues/form`,
+            route: `/client/${params.user}/issue/${params.categories}/wifiissues/form`,
           },
         ]
       : params.categories === "security"
@@ -79,7 +79,7 @@ const HostelIssuesCategory = () => {
             name: "Safety & Disturbance",
             description: "Report safety or disturbance issues",
             icon: <TbUserShield className="text-4xl text-purple-600" />,
-            route: `/${params.user}/issue/${params.categories}/security/form`,
+            route: `/client/${params.user}/issue/${params.categories}/security/form`,
           },
         ]
       : [];
@@ -107,7 +107,7 @@ const HostelIssuesCategory = () => {
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800">Hostel Issues</h1>
-          <Link href={`/${params.user}/dashboard`}>
+          <Link href={`/client/${params.user}/dashboard`}>
             <button className="flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-300">
               <IoMdArrowRoundBack className="mr-2" />
               Back to User Panel

@@ -37,8 +37,8 @@ export default function MainNavabar() {
     { name: "Home", href: "/" },
     ...(isLoggedIn
       ? [
-          { name: "Profile", href: `/${userId}/profile` },
-          { name: "Dashboard", href: `/${userId}/dashboard` },
+          { name: "Profile", href: `/${userId}/edit-profile` },
+          { name: "Dashboard", href: `/client/${userId}/dashboard` },
           { name: "Help & Feedback", href: "/contact" },
           { name: "FAQ", href: "/faq" },
           { name: "Log Out", onClick: logout },
@@ -81,7 +81,7 @@ export default function MainNavabar() {
         <NavbarItem>
           {isLoggedIn && (
             <Link
-              href={`/${userId}/dashboard`} // Correctly formatted user dashboard URL
+              href={`/client/${userId}/dashboard`} // Correctly formatted user dashboard URL
               color="foreground"
               className={`${
                 currentPath === `/${userId}/dashboard`

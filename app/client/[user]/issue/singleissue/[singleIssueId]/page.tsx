@@ -84,7 +84,7 @@ const GrievanceView = () => {
 
         // Optionally, redirect or update state after deletion
         toast.success("Grievance deleted successfully!");
-        router.push(`/${user}/dashboard`); // Redirect to grievances list or home page
+        router.push(`/client/${user}/dashboard`); // Redirect to grievances list or home page
       } catch (error) {
         toast.error(`Error: ${error.message}`);
       }
@@ -113,7 +113,7 @@ const GrievanceView = () => {
           </p>
         </div>
         <div className="flex justify-end items-center mr-2">
-          <Link href={`/${user}/dashboard`}>
+          <Link href={`/client/${user}/dashboard`}>
             <button className="flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-300">
               <IoMdArrowRoundBack className="mr-2" />
               Back to User Panel
