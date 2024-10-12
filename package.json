@@ -19,7 +19,7 @@
     "framer-motion": "^11.3.30",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.4",
-    "next": "^14.2.13",
+    "next": "^14.2.15",
     "next-themes": "^0.3.0",
     "nextjs-cors": "^2.2.0",
     "react": "^18",

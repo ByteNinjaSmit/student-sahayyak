@@ -98,3 +98,62 @@ export async function DELETE(
     return NextResponse.json({ error: "Error deleting issue data" }, { status: 500 });
   }
 }
+//  PATCH Method To Change Status 
+// Function to handle PATCH requests (update status)
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { issueid: string } }
+) {
+  try {
+    // Connect to the database
+    await connectToDatabase();
+
+    // Destructure the issueid from params
+    const { issueid } = params;
+
+    // Extract the status from the request body
+    const { status } = await request.json();
+
+    if (!status) {
+      return NextResponse.json({ error: "Status is required" }, { status: 400 });
+    }
+
+    // Array of models
+    const models = [
+      DrinkWater,
+      Room,
+      CommonArea,
+      Corridor,
+      FoodQuality,
+      FoodOwner,
+      NetworkConn,
+      Safety,
+    ];
+
+    let updatedDocument = null;
+
+    // Try to find the document and update the status
+    for (const model of models) {
+      updatedDocument = await model.findByIdAndUpdate(
+        issueid,
+        { status: status }, // Update the status
+        { new: true } // Return the updated document
+      ).exec();
+
+      if (updatedDocument) {
+        break; // Exit loop once the document is found and updated
+      }
+    }
+
+    // If no document was updated, return a 404 response
+    if (!updatedDocument) {
+      return NextResponse.json({ error: "Document not found" }, { status: 404 });
+    }
+
+    // Return the updated document
+    return NextResponse.json({ message: "Status updated successfully" });
+  } catch (error) {
+    console.error("Error updating status:", error);
+    return NextResponse.json({ error: "Error updating status" }, { status: 500 });
+  }
+}

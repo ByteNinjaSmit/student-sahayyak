@@ -52,17 +52,19 @@ export default function Login() {
     }
     if(role === "rector" || role === "higher-authority"){
       try {
-        const response = await fetch("/api/admin/login", {
+        const response = await fetch("/api/auth/admin/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ username, password }),
+          body: JSON.stringify({ username, password,role }),
         });
     
         const res_data = await response.json();
     
         if (response.ok) {
+          document.cookie = "isLoggedIn=true; path=/;";
+          storeTokenInLS(res_data.token);
           router.push("/"); // Redirect to the home page
         } else {
           setError(res_data.error || "Login failed");

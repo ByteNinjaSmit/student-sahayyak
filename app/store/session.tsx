@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 interface User {
   id: string;
   name: string;
+  email?:string;
   isHighAuth?: boolean;
   isRector?: boolean;
 }
@@ -22,8 +23,8 @@ interface SessionState {
   user?: User;
   isAuth: boolean;
   isAdmin: boolean;
-  isHighAuth: boolean;
-  isRector: boolean;
+  isHighAuth?: boolean;
+  isRector?: boolean;
 }
 
 // Create the context
@@ -62,6 +63,10 @@ const SessionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         .split("; ")
         .find((row) => row.startsWith("isLoggedIn="))
         ?.split("=")[1];
+        // const isAdminLoggedInCookie = document.cookie
+        // .split("; ")
+        // .find((row) => row.startsWith("isAdminLoggedIn="))
+        // ?.split("=")[1];
 
       if (isLoggedInCookie === "true") {
         const userResponse = await fetch("/api/auth/user/current");
@@ -77,42 +82,16 @@ const SessionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
           setSession((prev) => ({
             ...prev,
             user: userData,
-            isAuth: true,
+            // isAuth: true,
+            // isAdmin: true,
+            isHighAuth: Boolean(userData?.isHighAuth),
+            isRector: Boolean(userData?.isRector),
           }));
           setIsLoading(false);
         } else {
           setSession(resetSessionState());
         }
-      } else {
-        // Check for admin token
-        const adminToken = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("admin-token="));
-        if (adminToken) {
-          const adminResponse = await fetch("/api/auth/admin/current");
-          if(!adminResponse.ok){
-            toast.error("error getting User")
-          }
-          if (adminResponse.ok) {
-            const adminData = await adminResponse.json();
-            setUserData(adminData);
-            localStorage.setItem("user", JSON.stringify(adminData));
-
-            setSession((prev) => ({
-              ...prev,
-              user: adminData,
-              isAuth: true,
-              isAdmin: true,
-              isHighAuth: Boolean(adminData.isHighAuth),
-              isRector: Boolean(adminData.isRector),
-            }));
-          } else {
-            setSession(resetSessionState());
-          }
-        } else {
-          setSession(resetSessionState());
-        }
-      }
+      } 
     } catch (error) {
       console.error("Error fetching session data:", error);
       setSession(resetSessionState());
@@ -154,13 +133,15 @@ const SessionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       await fetch("/api/auth/logout", { method: "POST" });
       document.cookie =
         "user-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie =
+        "user-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       document.cookie =
         "admin-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       document.cookie =
-        "isLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        "isAdminLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       localStorage.clear();
       setToken(null);
-      setUserData(null);
+      setUserData(undefined);
       setSession(resetSessionState());
       router.push("/login");
       toast.success("Logout Successful");

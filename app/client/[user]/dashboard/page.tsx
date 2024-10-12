@@ -272,7 +272,10 @@ const Dashboard = () => {
                         className={`px-2 inline-flex text-sm leading-5 font-semibold rounded-full ${
                           grievance.status === "Resolved"
                             ? "bg-green-100 text-green-800"
+                            : grievance.status === "Urgent"
+                                  ? "bg-red-200 text-red-800"
                             : "bg-yellow-100 text-yellow-800"
+                            
                         }`}
                       >
                         {grievance.status}

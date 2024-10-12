@@ -56,8 +56,32 @@ const GrievanceView = () => {
     setGrievance({ ...grievance, status: "Resolved" });
   };
 
-  const handleEscalate = () => {
-    setGrievance({ ...grievance, status: "Escalated" });
+  const handleEscalate = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to Escalate this grievance?"
+    );
+
+    if (confirmed) {
+      try {
+        const response = await fetch(
+          `/api/issues/getissue/singleissue/${singleIssueId}`,
+          {
+            method: "PATCH",
+            body:JSON.stringify({status:"Urgent"})
+          }
+        );
+
+        if (!response.ok) {
+          toast.error("Failed to Escalate grievance");
+        }
+
+        // Optionally, redirect or update state after deletion
+        toast.success("Grievance Escalate successfully!");
+        router.push(`/client/${user}/dashboard`); // Redirect to grievances list or home page
+      } catch (error) {
+        toast.error(`Error: ${error.message}`);
+      }
+    }
   };
 
   const handleAddComment = () => {

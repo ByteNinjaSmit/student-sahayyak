@@ -1,5 +1,5 @@
 "use client";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import {
   Navbar,
@@ -17,28 +17,45 @@ import { useSession } from "@/app/store/session";
 
 export default function MainNavabar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { userData,logout, isLoggedIn } = useSession();
+  const { userData, logout, isLoggedIn } = useSession();
   const currentPath = usePathname();
-  const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false); // State for admin check
 
+  // Set userId and isAdmin when user data changes
   useEffect(() => {
-    // This effect runs when `isLoggedIn` changes
-    if (isLoggedIn) {
-      // Call an API or take any action to refresh user data
-      setUserId(userData?._id);
-      console.log('User is logged in, refreshing user data...');
-      // You can implement logic to refresh user here, e.g.:
-      // fetchUserData();
-    }
-  }, [isLoggedIn,userData])
+    if (isLoggedIn && userData) {
+      setUserId(userData._id); // Set user ID
 
+      // Check if the user is an admin
+      if (userData.isRector || userData.isHighAuth) {
+        setIsAdmin(true);
+        // console.log("this is Admin");
+        
+      } else {
+        setIsAdmin(false);
+        // console.log("this is user");
+        
+      }
+
+      // console.log("User is logged in, user data:", userData);
+    } else {
+      setUserId(null); // Clear userId if not logged in
+      setIsAdmin(false); // Clear admin status if not logged in
+    }
+  }, [isLoggedIn, userData]);
 
   const menuItems = [
     { name: "Home", href: "/" },
     ...(isLoggedIn
       ? [
           { name: "Profile", href: `/${userId}/edit-profile` },
-          { name: "Dashboard", href: `/client/${userId}/dashboard` },
+          ...(!isAdmin
+            ? [{ name: "Dashboard", href: `/client/${userId}/dashboard` }]
+            : []),
+          ...(isAdmin
+            ? [{ name: "Dashboard", href: `/admin/${userId}/dashboard` }]
+            : []),
           { name: "Help & Feedback", href: "/contact" },
           { name: "FAQ", href: "/faq" },
           { name: "Log Out", onClick: logout },
@@ -80,17 +97,35 @@ export default function MainNavabar() {
         </NavbarItem>
         <NavbarItem>
           {isLoggedIn && (
-            <Link
-              href={`/client/${userId}/dashboard`} // Correctly formatted user dashboard URL
-              color="foreground"
-              className={`${
-                currentPath === `/${userId}/dashboard`
-                  ? "font-bold text-blue-500"
-                  : ""
-              }`}
-            >
-              Dashboard
-            </Link>
+            <>
+            {isAdmin && (
+                <Link
+                  href={`/admin/${userId}/dashboard`} // Admin Dashboard URL
+                  color="foreground"
+                  className={`${
+                    currentPath === `/admin/${userId}/dashboard`
+                      ? "font-bold text-blue-500"
+                      : ""
+                  }`}
+                >
+                  Dashboard
+                </Link>
+              )}
+              {!isAdmin && (
+                <Link
+                  href={`/client/${userId}/dashboard`} // User Dashboard URL
+                  color="foreground"
+                  className={`${
+                    currentPath === `/client/${userId}/dashboard`
+                      ? "font-bold text-blue-500"
+                      : ""
+                  }`}
+                >
+                  Dashboard
+                </Link>
+              )}
+              
+            </>
           )}
         </NavbarItem>
 

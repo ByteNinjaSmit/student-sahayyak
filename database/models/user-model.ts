@@ -1,33 +1,32 @@
-import { Schema,model } from "mongoose"; 
+import { Schema, model } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 const userSchema = new Schema({
   username: {
-      type: String,
-      required: true,
+    type: String,
+    required: true,
   },
   room: {
-      type: String,
-      required: true,
+    type: String,
+    required: true,
   },
   hostelId: {
-      type: String,
-      required: true,
+    type: String,
+    required: true,
   },
   password: {
-      type: String,
-      required: true,
+    type: String,
+    required: true,
   },
 });
-
 
 // secure the password
 userSchema.pre("save", async function (next) {
   const user = this;
 
   if (!user.isModified("password")) {
-    console.log('Password is not modified');
+    console.log("Password is not modified");
     return next(); // Added return here
   }
 
@@ -40,10 +39,8 @@ userSchema.pre("save", async function (next) {
   }
 });
 
-
-
 // Compare bcrypt password
-userSchema.methods.comparePassword = async function (password:string) {
+userSchema.methods.comparePassword = async function (password: string) {
   return bcrypt.compare(password, this.password);
 };
 

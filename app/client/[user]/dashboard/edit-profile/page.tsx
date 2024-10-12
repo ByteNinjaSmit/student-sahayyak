@@ -14,7 +14,7 @@ import { useRouter,useParams } from "next/navigation"; // For client-side routin
 import Link from "next/link";
 
 const EditProfilePage = () => {
-  const { user } = useSession();
+  const { userData } = useSession();
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -60,8 +60,8 @@ const EditProfilePage = () => {
           },
           body: JSON.stringify({
             newpassword: newPassword,
-            username: user.username,
-            id: user._id,
+            username: userData.username,
+            id: userData._id,
           }),
         }
       );
@@ -108,7 +108,7 @@ const EditProfilePage = () => {
                 id="username"
                 name="username"
                 className="w-full px-3 py-2 border border-indigo-300 rounded-md bg-white text-indigo-800"
-                value={user?.username}
+                value={userData?.username}
                 disabled
               />
             </div>
@@ -125,7 +125,7 @@ const EditProfilePage = () => {
                 id="roomNumber"
                 name="roomNumber"
                 className="w-full px-3 py-2 border border-pink-300 rounded-md bg-white text-pink-800"
-                value={user?.room}
+                value={userData?.room}
                 disabled
               />
             </div>
@@ -142,7 +142,7 @@ const EditProfilePage = () => {
                 id="hostel"
                 name="hostel"
                 className="w-full px-3 py-2 border border-purple-300 rounded-md bg-white text-purple-800"
-                value={user?.hostelId}
+                value={userData?.hostelId}
                 disabled
               />
             </div>
@@ -251,7 +251,7 @@ const EditProfilePage = () => {
           </div>
 
           <div className="mt-8 flex justify-end space-x-4">
-            <Link href={`/client/${user?.username}/dashboard`}>
+            <Link href={`/client/${userData?.username}/dashboard`}>
             <button
               type="button"
               className="px-6 py-3 border border-gray-300 rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"

@@ -1,9 +1,7 @@
 "use server";
-
 import { connectToDatabase } from "@/database/dbConn";
 import User from "@/database/models/user-model";
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
 
 // Ensure the database connection is established before processing requests
 
