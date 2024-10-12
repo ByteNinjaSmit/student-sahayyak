@@ -8,26 +8,69 @@ import FoodQuality from "@/database/models/food-quality-model";
 import FoodOwner from "@/database/models/food-owner-model";
 import NetworkConn from "@/database/models/network-model";
 import Safety from "@/database/models/safety-model";
+import User from "@/database/models/user-model";  // Ensure User model is imported
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  request: NextRequest,
-) {
+export async function GET(request: NextRequest) {
   try {
     await connectToDatabase();
-    
-    // Extract the user parameter
-    // const { user } = params;
-    
-    // Fetch data from all models where `user` matches the provided user
-    const drinkWaterData = await DrinkWater.find().populate("user", "-password");
-    const roomData = await Room.find().populate("user", "-password");
-    const commonAreaData = await CommonArea.find().populate("user", "-password");
-    const corridorData = await Corridor.find().populate("user", "-password");
-    const foodQualityData = await FoodQuality.find().populate("user", "-password");
-    const foodOwnerData = await FoodOwner.find().populate("user", "-password");
-    const networkData = await NetworkConn.find().populate("user", "-password");
-    const safetyData = await Safety.find().populate("user", "-password");
+
+    // Fetch data from all models and populate the `user` field with `strictPopulate: false`
+    const drinkWaterData = await DrinkWater.find().populate({
+      path: "user",
+      model: 'User', // Ensure you explicitly use the User model
+      select: "-password",
+      options: { strictPopulate: false }
+    });
+
+    const roomData = await Room.find().populate({
+      path: "user",
+      model: 'User',
+      select: "-password",
+      options: { strictPopulate: false }
+    });
+
+    const commonAreaData = await CommonArea.find().populate({
+      path: "user",
+      model: 'User',
+      select: "-password",
+      options: { strictPopulate: false }
+    });
+
+    const corridorData = await Corridor.find().populate({
+      path: "user",
+      model: 'User',
+      select: "-password",
+      options: { strictPopulate: false }
+    });
+
+    const foodQualityData = await FoodQuality.find().populate({
+      path: "user",
+      model: 'User',
+      select: "-password",
+      options: { strictPopulate: false }
+    });
+
+    const foodOwnerData = await FoodOwner.find().populate({
+      path: "user",
+      model: 'User',
+      select: "-password",
+      options: { strictPopulate: false }
+    });
+
+    const networkData = await NetworkConn.find().populate({
+      path: "user",
+      model: 'User',
+      select: "-password",
+      options: { strictPopulate: false }
+    });
+
+    const safetyData = await Safety.find().populate({
+      path: "user",
+      model: 'User',
+      select: "-password",
+      options: { strictPopulate: false }
+    });
 
     // Combine all the arrays into one with categories
     const combinedData = [

@@ -13,10 +13,11 @@ import {
   FaListAlt,
   FaInfoCircle,
   FaQuestionCircle,
-  FaLifeRing,
+  FaLifeRing,FaUsers,
   FaTimes, // Import the close (times) icon
 } from "react-icons/fa";
-
+import { PiUsersThreeFill } from "react-icons/pi";
+import { useParams, useRouter } from "next/navigation";
 // Define the prop types
 interface AdminSidebarProps {
   sidebarOpen: boolean;
@@ -24,10 +25,12 @@ interface AdminSidebarProps {
 }
 
 const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen, toggleSidebar }) => {
+  const { admin } = useParams();
   const sidebarItems = [
-    { icon: <FaHome />, text: "Home", href: "/admin/home" },
+    { icon: <FaHome />, text: "Home", href: `/admin/${admin}/dashboard` },
     { icon: <FaChartBar />, text: "Overview", href: "/admin/overview" },
     { icon: <FaUser />, text: "Profile", href: "/admin/profile" },
+    { icon: <FaUsers />, text: "Students", href: `/admin/${admin}/hostellers` },
     { icon: <FaBed />, text: "Hostel Issues", href: "/admin/hostel-issues" },
     { icon: <FaUtensils />, text: "Mess/Tiffin Issues", href: "/admin/mess-issues" },
     { icon: <FaToolbox />, text: "Facilities Issues", href: "/admin/facilities-issues" },

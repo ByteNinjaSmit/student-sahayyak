@@ -52,8 +52,35 @@ const GrievanceView = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const handleResolve = () => {
-    setGrievance({ ...grievance, status: "Resolved" });
+  const handleResolve =async () => {
+    
+    const confirmed = window.confirm(
+      "Are you sure you want to Resolved this grievance?"
+    );
+
+    if (confirmed) {
+      try {
+        const response = await fetch(
+          `/api/issues/getissue/singleissue/${singleIssueId}`,
+          {
+            method: "PATCH",
+            body:JSON.stringify({status:"Resolved"})
+          }
+        );
+
+        if (!response.ok) {
+          toast.error("Failed to Resolved grievance");
+        }
+
+        // Optionally, redirect or update state after deletion
+        setGrievance({ ...grievance, status: "Resolved" }); 
+        toast.success("Grievance Resolved successfully!");
+        router.push(`/client/${user}/dashboard`); // Redirect to grievances list or home page
+      } catch (error) {
+        toast.error(`Error: ${error.message}`);
+      }
+    }
+
   };
 
   const handleEscalate = async () => {

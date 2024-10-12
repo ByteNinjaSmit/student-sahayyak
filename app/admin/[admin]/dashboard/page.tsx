@@ -73,6 +73,24 @@ const AdminDashboard = () => {
     (grievance) => grievance.status === "Urgent"
   ).length;
 
+  const hostelNumber = complaintData.filter(
+    (grievance) => grievance.category === "Hostel"
+  ).length;
+  const messNumber = complaintData.filter(
+    (grievance) => grievance.category === "Mess / Tiffin"
+  ).length;
+
+  const FacilitiesNumber = complaintData.filter(
+    (grievance) => grievance.category === "Facility"
+  ).length;
+
+  const securityNumber = complaintData.filter(
+    (grievance) => grievance.category === "Security"
+  ).length;
+
+  // const createdAtDate = new Date(complaintData.createdAt);
+  // const month = createdAtDate.getMonth();
+
   const sidebarItems = [
     { icon: <FaHome />, text: "Home" },
     { icon: <FaChartBar />, text: "Overview" },
@@ -128,42 +146,68 @@ const AdminDashboard = () => {
     { title: "Urgent Issues", value: urgentNumber, color: "bg-red-500", progress: (urgentNumber/allComplaints)*100 },
   ];
 
-  const lineChartData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+  // Line chart initial structure
+  const [lineChartData, setLineChartData] = useState({
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     datasets: [
       {
         label: "Complaints",
-        data: [65, 59, 80, 81, 56, 55],
+        data: new Array(12).fill(0), // Array to store complaint counts for each month
         fill: false,
         borderColor: "rgb(75, 192, 192)",
         tension: 0.1,
       },
     ],
-  };
+  });
 
+  useEffect(() => {
+    if (complaintData.length > 0) {
+      // Initialize an array to count complaints for each month (index 0 for Jan, 11 for Dec)
+      const monthlyComplaints = new Array(12).fill(0);
+
+      complaintData.forEach(complaint => {
+        const createdAt = new Date(complaint.createdAt); // Parse createdAt to Date object
+        const month = createdAt.getMonth(); // Extract the month (0 = Jan, 11 = Dec)
+        
+        // Increment the count for the respective month
+        monthlyComplaints[month]++;
+      });
+
+      // Update the line chart data with the monthly counts
+      setLineChartData(prevData => ({
+        ...prevData,
+        datasets: [
+          {
+            ...prevData.datasets[0],
+            data: monthlyComplaints,
+          },
+        ],
+      }));
+    }
+  }, [complaintData]);
   const pieChartData = {
-    labels: ["Pending", "Resolved"],
+    labels: ["Pending", "Resolved","Urgent"],
     datasets: [
       {
-        data: [45, 95],
-        backgroundColor: ["#FFCE56", "#36A2EB"],
-        hoverBackgroundColor: ["#FFCE56", "#36A2EB"],
+        data: [pendingNumber, resolvedNumber,urgentNumber],
+        backgroundColor: ["#FFCE56", "#22C55E","#EF4444"],
+        hoverBackgroundColor: ["#FFCE56", "#22C55E","#EF4444"],
       },
     ],
   };
 
   const barChartData = {
-    labels: ["Hostel", "Mess", "Facilities", "Security", "Other"],
+    labels: ["Hostel", "Mess", "Facilities", "Security"],
     datasets: [
       {
         label: "Complaints",
-        data: [65, 59, 80, 81, 56],
+        data: [hostelNumber, messNumber, FacilitiesNumber, securityNumber],
         backgroundColor: [
           "#FF6384",
           "#36A2EB",
           "#FFCE56",
           "#4BC0C0",
-          "#9966FF",
+          // "#9966FF",
         ],
       },
     ],
@@ -396,7 +440,7 @@ const AdminDashboard = () => {
                         >
                           <td className="p-3">{grievance._id}</td>
                           <td className="p-3">{grievance.category}</td>
-                          <td className="p-3">{grievance.user.username}</td>
+                          <td className="p-3">{grievance.user?.username}</td>
                           <td className="p-3">
                             <span
                               className={`px-2 py-1 rounded text-xs font-semibold ${
@@ -411,9 +455,12 @@ const AdminDashboard = () => {
                             </span>
                           </td>
                           <td className="p-3">
+                            <Link href={`/admin/${userData._id}/singleissue/${grievance._id}`}>
                             <button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition-colors duration-200">
                               View
                             </button>
+                            </Link>
+
                           </td>
                         </tr>
                       ))

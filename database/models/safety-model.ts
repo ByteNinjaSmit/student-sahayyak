@@ -1,7 +1,23 @@
-import mongoose, { Schema, model } from "mongoose";
+import mongoose, { Schema, model, Document } from "mongoose";
 
-// Create the Safety Schema
-const safetySchema = new Schema(
+// Interface for ActionLog
+interface ActionLog {
+  action: string;
+  actionTakenBy: mongoose.Types.ObjectId;
+  actionDate: Date;
+  remarks?: string;
+}
+
+// Interface for SafetyDocument
+interface SafetyDocument extends Document {
+  complaint: string[];
+  status: string;
+  user: mongoose.Types.ObjectId;
+  actionLog: ActionLog[];
+}
+
+// Define the Safety schema
+const safetySchema = new Schema<SafetyDocument>(
   {
     complaint: {
       type: [String],
@@ -28,10 +44,10 @@ const safetySchema = new Schema(
         },
         actionDate: {
           type: Date,
-          default: Date.now, // Timestamp when the action was taken
+          default: Date.now,
         },
         remarks: {
-          type: String, // Optional field for additional information about the action
+          type: String, // Optional field for additional information
         },
       },
     ],
@@ -39,15 +55,17 @@ const safetySchema = new Schema(
   { timestamps: true } // Automatically adds createdAt and updatedAt fields
 );
 
-// Singleton pattern for Safety model definition
+
 const Safety = (() => {
   try {
     // Return the existing model if it is already compiled
-    return mongoose.model("Safety");
+    return model<SafetyDocument>("Safety");
   } catch {
     // Otherwise, define and return the new model
-    return mongoose.model("Safety", safetySchema);
+    return model<SafetyDocument>("Safety", safetySchema);
   }
 })();
+// Singleton pattern to ensure the model is compiled only once
+// const Safety = model<SafetyDocument>("Safety", safetySchema);
 
 export default Safety;

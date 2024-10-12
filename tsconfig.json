@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/layout/navbar/AcmeLogo.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/layout/navbar/AcmeLogo.jsx", "app/admin/[admin]/hostellers/page.tsx"],
   "exclude": ["node_modules"]
 }
