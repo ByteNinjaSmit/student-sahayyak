@@ -455,7 +455,7 @@ const AdminDashboard = () => {
                             </span>
                           </td>
                           <td className="p-3">
-                            <Link href={`/admin/${userData._id}/singleissue/${grievance._id}`}>
+                            <Link href={`/admin/${userData?._id}/singleissue/${grievance?._id}`}>
                             <button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition-colors duration-200">
                               View
                             </button>

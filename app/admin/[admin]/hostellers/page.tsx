@@ -1,10 +1,12 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import AdminSidebar from "@/components/layout/admin/sidebar";
 import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { error } from "console";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -18,6 +20,7 @@ const UserManagement = () => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const itemsPerPage = 50; // Number of users to display per page
 
+const { admin } = useParams();
   const notifications = [
     { id: 1, message: "New complaint received (GR005)" },
     { id: 2, message: "Urgent issue reported in Hostel Block A" },
@@ -65,12 +68,16 @@ const UserManagement = () => {
       setLoading(true);
       try {
         // Simulated delete API call
-        const response = await fetch(`/api/auth/admin/users/${userId}`, {
+        const response = await fetch(`/api/admin/users/${userId}`, {
           method: "DELETE",
         });
-        if (!response.ok) throw new Error("Failed to delete user");
-
-        setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
+        if (!response.ok){
+          toast.error("Faild To Delete error");
+        }
+        if(response.ok){
+          fetchUsers(currentPage);
+          toast.success(`User Successfully Deleted`);
+        }
       } catch (error) {
         console.error("Error deleting user:", error);
         // Handle error (e.g., show notification)
@@ -185,9 +192,12 @@ const UserManagement = () => {
         </header>
         <main className="flex-1 overflow-auto p-4">
           <h1 className="text-2xl font-bold mb-4">User Management</h1>
-          <Link href={'#'}>
+          <Link href={`/admin/${admin}/hostellers/new-user`}>
           <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add New Hosteller</button>
           </Link>
+
+          {/* Loading Fucntion Animation Spinner */}
+
           {loading && (
             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
               <AiOutlineLoading3Quarters className="text-white text-4xl animate-spin" />
@@ -211,17 +221,17 @@ const UserManagement = () => {
                       className="text-blue-600 hover:underline"
                       onClick={() => handleView(user)}
                     >
-                      {user.username}
+                      {user?.username}
                     </button>
                   </td>
                   <td className="py-2 px-4">{user.hostelId}</td>
                   <td className="py-2 px-4">
-                    <button
+                    {/* <button
                       className="mr-2 text-blue-600 hover:text-blue-800"
                       onClick={() => handleView(user)}
                     >
                       <FaEye />
-                    </button>
+                    </button> */}
                     <button
                       className="mr-2 text-green-600 hover:text-green-800"
                       onClick={() => handleEdit(user)}
@@ -230,7 +240,7 @@ const UserManagement = () => {
                     </button>
                     <button
                       className="text-red-600 hover:text-red-800"
-                      onClick={() => handleDelete(user.id)}
+                      onClick={() => handleDelete(user?._id)}
                     >
                       <FaTrash />
                     </button>
@@ -268,6 +278,7 @@ const UserManagement = () => {
                 <h2 className="text-xl font-bold mb-2">User Details</h2>
                 <p><strong>ID:</strong> {selectedUser?._id}</p>
                 <p><strong>Username:</strong> {selectedUser?.username}</p>
+                <p><strong>Room Number:</strong> {selectedUser?.room}</p>
                 <p><strong>Hostel:</strong> {selectedUser?.hostelId}</p>
                 <button
                   className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"

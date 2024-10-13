@@ -1,5 +1,5 @@
 "use client";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { FaCheckCircle, FaExclamationTriangle, FaSpinner } from "react-icons/fa";
 import { useParams, useRouter } from "next/navigation";
 const GrievanceView = () => {
@@ -17,7 +17,7 @@ const GrievanceView = () => {
     }
   ]);
 
-  const [complaintData,setComplaintData] = useState(null);
+  const [complaintData, setComplaintData] = useState(null);
   const [category, setCategory] = useState(null);
   // Fetch data From 
   // /api/issues/getissue/singleissue/${id}
@@ -43,7 +43,7 @@ const GrievanceView = () => {
     fetchGrievance(); // Call the fetch function
   }, [id]); // Dependency array includes singleIssueId
   console.log(`complaint Data: ${complaintData}`);
-  
+
 
   const handleStatusChange = (e) => {
     setStatus(e.target.value);
@@ -69,17 +69,17 @@ const GrievanceView = () => {
     setRemarks("");
   };
 
-    // Formatting function for dates
-    const formatDate = (dateString) => {
-      const options = {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        // hour: "2-digit",
-        // minute: "2-digit",
-      };
-      return new Date(dateString).toLocaleDateString(undefined, options);
+  // Formatting function for dates
+  const formatDate = (dateString) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      // hour: "2-digit",
+      // minute: "2-digit",
     };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <h1 className="text-3xl font-bold text-center text-blue-700 mb-8">Grievance Detail</h1>
@@ -90,7 +90,7 @@ const GrievanceView = () => {
           <div className="mb-4">
             <h3 className="text-lg font-medium text-gray-700 mb-2">Complaints:</h3>
             <ul className="list-disc list-inside text-gray-600">
-            {complaintData?.complaint.map((item, index) => (
+              {complaintData?.complaint.map((item, index) => (
                 <li key={index} className="text-gray-700">
                   {item}
                 </li>
@@ -99,7 +99,7 @@ const GrievanceView = () => {
           </div>
           <div className="flex items-center justify-between bg-gray-100 p-4 rounded">
             <span className="text-lg font-medium text-gray-700">Status: {complaintData?.status}</span>
-            <select
+            {/* <select
               className="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={complaintData?.status}
               onChange={handleStatusChange}
@@ -108,7 +108,7 @@ const GrievanceView = () => {
               <option value="In Progress">In Progress</option>
               <option value="Urgent">Urgent</option>
               <option value="Resolved">Resolved</option>
-            </select>
+            </select> */}
           </div>
         </div>
       </div>
@@ -134,14 +134,14 @@ const GrievanceView = () => {
         <div className="p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Action Log</h2>
           <div className="space-y-4">
-              <div className="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium text-blue-600">{complaintData?.actionType}</span>
-                  <span className="text-sm text-gray-500">{formatDate(complaintData?.createdAt)}</span>
-                </div>
-                <div className="text-gray-600">Action by: {complaintData?.actionBy}</div>
-                {complaintData?.remarks && <div className="text-gray-600 mt-1">Remarks: {complaintData?.remarks}</div>}
+            <div className="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-medium text-blue-600">{complaintData?.actionType}</span>
+                <span className="text-sm text-gray-500">{formatDate(complaintData?.createdAt)}</span>
               </div>
+              <div className="text-gray-600">Action by: {complaintData?.actionBy}</div>
+              {complaintData?.remarks && <div className="text-gray-600 mt-1">Remarks: {complaintData?.remarks}</div>}
+            </div>
           </div>
         </div>
       </div>
@@ -160,9 +160,11 @@ const GrievanceView = () => {
                 value={status}
                 onChange={handleStatusChange}
               >
-                <option value="Not Processed">Not Processed</option>
+                <option value="Cancelled">Cancelled</option>
+                <option value="Pending">Pending</option>
                 <option value="In Progress">In Progress</option>
-                <option value="Resolved">Resolved</option>
+                <option value="Procced">Procced</option>
+
               </select>
             </div>
             <div className="mb-4">
