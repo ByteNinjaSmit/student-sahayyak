@@ -1,12 +1,17 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
+import {
+  FaEdit, FaTrash, FaEye, FaLock,
+  FaUser,
+  FaDoorOpen,
+  FaBuilding,
+  FaRegAddressCard,
+} from "react-icons/fa";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import AdminSidebar from "@/components/layout/admin/sidebar";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
-import { error } from "console";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -20,7 +25,7 @@ const UserManagement = () => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const itemsPerPage = 50; // Number of users to display per page
 
-const { admin } = useParams();
+  const { admin } = useParams();
   const notifications = [
     { id: 1, message: "New complaint received (GR005)" },
     { id: 2, message: "Urgent issue reported in Hostel Block A" },
@@ -71,10 +76,10 @@ const { admin } = useParams();
         const response = await fetch(`/api/admin/users/${userId}`, {
           method: "DELETE",
         });
-        if (!response.ok){
+        if (!response.ok) {
           toast.error("Faild To Delete error");
         }
-        if(response.ok){
+        if (response.ok) {
           fetchUsers(currentPage);
           toast.success(`User Successfully Deleted`);
         }
@@ -193,7 +198,7 @@ const { admin } = useParams();
         <main className="flex-1 overflow-auto p-4">
           <h1 className="text-2xl font-bold mb-4">User Management</h1>
           <Link href={`/admin/${admin}/hostellers/new-user`}>
-          <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add New Hosteller</button>
+            <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add New Hosteller</button>
           </Link>
 
           {/* Loading Fucntion Animation Spinner */}
@@ -232,12 +237,13 @@ const { admin } = useParams();
                     >
                       <FaEye />
                     </button> */}
-                    <button
-                      className="mr-2 text-green-600 hover:text-green-800"
-                      onClick={() => handleEdit(user)}
-                    >
-                      <FaEdit />
-                    </button>
+                    <Link href={`/admin/${admin}/hostellers/edit-profile/${user?._id}`}>
+                      <button
+                        className="mr-2 text-green-600 hover:text-green-800"
+                      >
+                        <FaEdit />
+                      </button>
+                    </Link>
                     <button
                       className="text-red-600 hover:text-red-800"
                       onClick={() => handleDelete(user?._id)}
@@ -276,10 +282,10 @@ const { admin } = useParams();
             <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
               <div className="bg-white rounded-lg p-4 w-1/2">
                 <h2 className="text-xl font-bold mb-2">User Details</h2>
-                <p><strong>ID:</strong> {selectedUser?._id}</p>
-                <p><strong>Username:</strong> {selectedUser?.username}</p>
-                <p><strong>Room Number:</strong> {selectedUser?.room}</p>
-                <p><strong>Hostel:</strong> {selectedUser?.hostelId}</p>
+                <p><FaRegAddressCard  className="inline mr-2" /><strong>ID:</strong> {selectedUser?._id}</p>
+                <p><FaUser className="inline mr-2 text-indigo-700" /><strong>Username:</strong> {selectedUser?.username}</p>
+                <p><FaDoorOpen className="inline mr-2 text-pink-700" /><strong>Room Number:</strong> {selectedUser?.room}</p>
+                <p><FaBuilding className="inline mr-2 text-purple-700" /><strong>Hostel:</strong> {selectedUser?.hostelId}</p>
                 <button
                   className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
                   onClick={() => setIsViewing(false)}
@@ -312,6 +318,24 @@ const { admin } = useParams();
                   </div>
                   <div className="mb-4">
                     <label className="block mb-1">Hostel:</label>
+                    <input
+                      type="text"
+                      value={selectedUser.hostelId}
+                      onChange={(e) => setSelectedUser({ ...selectedUser, hostel: e.target.value })}
+                      className="border rounded w-full px-2 py-1"
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="block mb-1">Room Number:</label>
+                    <input
+                      type="text"
+                      value={selectedUser.room}
+                      onChange={(e) => setSelectedUser({ ...selectedUser, hostel: e.target.value })}
+                      className="border rounded w-full px-2 py-1"
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="block mb-1">Password</label>
                     <input
                       type="text"
                       value={selectedUser.hostel}

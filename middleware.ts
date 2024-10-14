@@ -19,19 +19,19 @@ export function middleware(request: NextRequest) {
   const userPaths = [
     "/client/:path", // Match any path under a user's route
   ];
-  const adminPaths=[
+  const adminPaths = [
     "/admin/:path", // Match any path under an admin's route
-  ]
+  ];
 
   // Define protected API routes
-  const userAPIRoutes = ["/api/userdata/:path", "/issues/:path"];
+  const userAPIRoutes = ["/issues/:path"];
 
   // Get tokens from cookies
   const userToken = request.cookies.get("user-token")?.value || "";
   const adminToken = request.cookies.get("admin-token")?.value || "";
 
   // Redirect logic for public paths
-  if (publicPaths.includes(path) ) {
+  if (publicPaths.includes(path)) {
     if (userToken || adminToken) {
       // If user or admin is logged in, redirect them to the home page
       return NextResponse.redirect(new URL("/", request.url));
@@ -67,24 +67,24 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }
-    // Protect user-specific paths
-    if (path.startsWith("/admin/")) {
-      // Redirect to login if accessing client paths without a user token
-      if (!adminToken) {
-        if (request.nextUrl.pathname.startsWith("/api")) {
-          return NextResponse.json(
-            {
-              message: "Access Denied!!",
-              success: false,
-            },
-            {
-              status: 401,
-            }
-          );
-        }
-        return NextResponse.redirect(new URL("/login", request.url));
+  // Protect user-specific paths
+  if (path.startsWith("/admin/")) {
+    // Redirect to login if accessing client paths without a user token
+    if (!adminToken) {
+      if (request.nextUrl.pathname.startsWith("/api")) {
+        return NextResponse.json(
+          {
+            message: "Access Denied!!",
+            success: false,
+          },
+          {
+            status: 401,
+          }
+        );
       }
+      return NextResponse.redirect(new URL("/login", request.url));
     }
+  }
 
   // Protect API routes
   if (

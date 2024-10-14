@@ -28,7 +28,7 @@ import {
   Legend,
 } from "chart.js";
 import AdminSidebar from "@/components/layout/admin/sidebar";
-import Link from "next/link"; // Import the Link component for navigation
+import Link from "next/link"; 
 import { useSession } from "@/app/store/session";
 
 ChartJS.register(
