@@ -117,17 +117,33 @@ const HelpSupportPage = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-semibold">About Us</h3>
             <p>
-              Welcome to the Hostel Grievance System of Sanjivani College of Engineering.
-              Sanjivani College of Engineering is dedicated to fostering a supportive and enriching environment for our students. To enhance the hostel experience for both boys and girls, we have established the Hostel Grievance System—an online platform designed to address and resolve student concerns related to hostel facilities and services.
+            &nbsp;&nbsp;&nbsp;&nbsp; Welcome to the Hostel Grievance System of Sanjivani College of Engineering. 
+    Sanjivani College of Engineering is dedicated to fostering a supportive and enriching environment for our students. 
+    To enhance the hostel experience for both boys and girls, we have established the Hostel Grievance System—an online platform designed to address and resolve student concerns related to hostel facilities and services.
+</p>
 
-              Our Purpose
-              The Hostel Grievance System aims to provide a transparent and efficient way for students to voice their grievances. We believe that a comfortable living environment is essential for academic success and overall well-being. This system ensures that every concern is acknowledged and addressed in a timely manner.
+<h2><strong>Our Purpose</strong></h2>
+<p>
+&nbsp;&nbsp;&nbsp;&nbsp;The Hostel Grievance System aims to provide a transparent and efficient way for students to voice their grievances.<br></br> 
+&nbsp;&nbsp;&nbsp;&nbsp;We believe that a comfortable living environment is essential for academic success and overall well-being.<br></br> 
+&nbsp;&nbsp;&nbsp;&nbsp;This system ensures that every concern is acknowledged and addressed in a timely manner.
+</p>
 
-              Key Features
-              Simple Submission Process: Easily submit grievances through our user-friendly interface.
-              Confidential Handling: All submissions are treated with confidentiality to protect student privacy.
-              Timely Responses: Our dedicated team works diligently to ensure that grievances are resolved quickly and effectively.
-              At Sanjivani College of Engineering, your comfort is our priority. We encourage all students to utilize this system to help us create a better living experience for everyone. Thank you for being an integral part of our community!   </p>
+
+<h2><strong>Key Features</strong></h2>
+<ul>
+<li>&nbsp;&nbsp;&nbsp;&nbsp;<span>Simple Submission Process</span>: Easily submit grievances through our user-friendly interface.</li>
+<li>&nbsp;&nbsp;&nbsp;&nbsp;<span>Confidential Handling</span>: All submissions are treated with confidentiality to protect student privacy.</li>
+<li>&nbsp;&nbsp;&nbsp;&nbsp;<span>Timely Responses</span>: Our dedicated team works diligently to ensure that grievances are resolved quickly and effectively.</li>
+
+</ul>
+
+<p>
+    At Sanjivani College of Engineering, your comfort is our priority. 
+    We encourage all students to utilize this system to help us create a better living experience for everyone. 
+    Thank you for being an integral part of our community!
+</p>
+
             <div className="bg-gray-100 p-4 rounded-lg">
               <h4 className="font-semibold">Our Process:</h4>
               <ul className="list-disc list-inside mt-2">
