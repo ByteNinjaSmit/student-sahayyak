@@ -29,7 +29,7 @@ import {
   Legend,
 } from "chart.js";
 import AdminSidebar from "@/components/layout/admin/sidebar";
-import Link from "next/link"; 
+import Link from "next/link";
 import { useSession } from "@/app/store/session";
 
 ChartJS.register(
@@ -105,7 +105,7 @@ const AdminDashboard = () => {
       setComplaintData(data); // Set fetched complaints
     } catch (error) {
       console.error("Error fetching complaints:", error);
-    }finally{
+    } finally {
       setLoading(false);
     }
   };
@@ -149,7 +149,7 @@ const AdminDashboard = () => {
         (grievance) => grievance.status === "Not Processed"
       ).length,
       color: "bg-yellow-500",
-      progress: (pendingNumber/allComplaints)*100,
+      progress: (pendingNumber / allComplaints) * 100,
     },
     {
       title: "Resolved",
@@ -157,9 +157,9 @@ const AdminDashboard = () => {
         (grievance) => grievance.status === "Resolved"
       ).length,
       color: "bg-green-500",
-      progress: (resolvedNumber/allComplaints)*100,
+      progress: (resolvedNumber / allComplaints) * 100,
     },
-    { title: "Urgent Issues", value: urgentNumber, color: "bg-red-500", progress: (urgentNumber/allComplaints)*100 },
+    { title: "Urgent Issues", value: urgentNumber, color: "bg-red-500", progress: (urgentNumber / allComplaints) * 100 },
   ];
 
   // Line chart initial structure
@@ -184,7 +184,7 @@ const AdminDashboard = () => {
       complaintData.forEach(complaint => {
         const createdAt = new Date(complaint.createdAt); // Parse createdAt to Date object
         const month = createdAt.getMonth(); // Extract the month (0 = Jan, 11 = Dec)
-        
+
         // Increment the count for the respective month
         monthlyComplaints[month]++;
       });
@@ -202,12 +202,12 @@ const AdminDashboard = () => {
     }
   }, [complaintData]);
   const pieChartData = {
-    labels: ["Pending", "Resolved","Urgent"],
+    labels: ["Pending", "Resolved", "Urgent"],
     datasets: [
       {
-        data: [pendingNumber, resolvedNumber,urgentNumber],
-        backgroundColor: ["#FFCE56", "#22C55E","#EF4444"],
-        hoverBackgroundColor: ["#FFCE56", "#22C55E","#EF4444"],
+        data: [pendingNumber, resolvedNumber, urgentNumber],
+        backgroundColor: ["#FFCE56", "#22C55E", "#EF4444"],
+        hoverBackgroundColor: ["#FFCE56", "#22C55E", "#EF4444"],
       },
     ],
   };
@@ -368,10 +368,10 @@ const AdminDashboard = () => {
           <div className="container mx-auto px-6 py-8">
             <h3 className="text-3xl font-medium text-gray-700">Dashboard</h3>
             {loading && (
-            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-              <AiOutlineLoading3Quarters className="text-white text-4xl animate-spin" />
-            </div>
-          )}
+              <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+                <AiOutlineLoading3Quarters className="text-white text-4xl animate-spin" />
+              </div>
+            )}
             {/* Statistics Cards */}
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {statisticsData.map((stat, index) => (
@@ -453,7 +453,7 @@ const AdminDashboard = () => {
                   </thead>
                   <tbody>
                     {complaintData.length > 0 ? (
-                      complaintData.map((grievance, index) => (
+                      complaintData.slice(0, 5).map((grievance, index) => (
                         <tr
                           key={index}
                           className="border-b hover:bg-gray-50 bg-white"
@@ -463,24 +463,22 @@ const AdminDashboard = () => {
                           <td className="p-3">{grievance.user?.username}</td>
                           <td className="p-3">
                             <span
-                              className={`px-2 py-1 rounded text-xs font-semibold ${
-                                grievance.status === "Resolved"
+                              className={`px-2 py-1 rounded text-xs font-semibold ${grievance.status === "Resolved"
                                   ? "bg-green-200 text-green-800"
                                   : grievance.status === "Urgent"
-                                  ? "bg-red-200 text-red-800"
-                                  : "bg-yellow-200 text-yellow-800"
-                              }`}
+                                    ? "bg-red-200 text-red-800"
+                                    : "bg-yellow-200 text-yellow-800"
+                                }`}
                             >
                               {grievance.status}
                             </span>
                           </td>
                           <td className="p-3">
                             <Link href={`/admin/${userData?._id}/singleissue/${grievance?._id}`}>
-                            <button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition-colors duration-200">
-                              View
-                            </button>
+                              <button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition-colors duration-200">
+                                View
+                              </button>
                             </Link>
-
                           </td>
                         </tr>
                       ))
@@ -495,6 +493,7 @@ const AdminDashboard = () => {
                       </tr>
                     )}
                   </tbody>
+
                 </table>
               </div>
             </div>

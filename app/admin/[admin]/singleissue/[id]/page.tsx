@@ -17,7 +17,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { IoMdArrowRoundBack } from "react-icons/io";
 const GrievanceView = () => {
-  const { id,admin } = useParams();
+  const { id, admin } = useParams();
   const [status, setStatus] = useState("Not Processed");
   const [remarks, setRemarks] = useState("");
   const [error, setError] = useState(null);
@@ -30,7 +30,6 @@ const GrievanceView = () => {
       remarks: "Initial complaint submission",
     },
   ]);
-
   const [complaintData, setComplaintData] = useState(null);
   const [category, setCategory] = useState(null);
 
@@ -54,6 +53,8 @@ const GrievanceView = () => {
 
     fetchGrievance();
   }, [id]);
+
+
 
   const handleStatusChange = (e) => {
     setStatus(e.target.value);
@@ -85,6 +86,8 @@ const GrievanceView = () => {
       year: "numeric",
       month: "long",
       day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
@@ -151,13 +154,13 @@ const GrievanceView = () => {
         Grievance Detail
       </h1>
       <div className="flex justify-end items-center mr-2 mb-2">
-          <Link href={`/admin/${admin}/dashboard`}>
-            <button className="flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-300">
-              <IoMdArrowRoundBack className="mr-2" />
-              Back to User Panel
-            </button>
-          </Link>
-        </div>
+        <Link href={`/admin/${admin}/overview`}>
+          <button className="flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-300">
+            <IoMdArrowRoundBack className="mr-2" />
+            Back to Admin Overview
+          </button>
+        </Link>
+      </div>
 
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
@@ -250,10 +253,19 @@ const GrievanceView = () => {
                         {log.actionType}
                       </span>
                       <span className="text-sm text-gray-500">
-                        {formatDate(log.actionDate)}
+                        Created: {formatDate(complaintData.createdAt)}
+                      </span>
+
+                    </div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-gray-600">Action by: {log.actionBy}
+                      </div>
+
+                      <span className="text-sm text-gray-500">
+                        Updated: {formatDate(complaintData.updatedAt)}
                       </span>
                     </div>
-                    <div className="text-gray-600">Action by: {log.actionBy}</div>
+
                     {log.remarks && (
                       <div className="text-gray-600 mt-1">Remarks: {log.remarks}</div>
                     )}
@@ -280,10 +292,10 @@ const GrievanceView = () => {
                   <select
                     id="status"
                     className={`w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 transition-colors duration-200 ease-in-out ${status === "Cancelled"
-                        ? "bg-red-200 text-red-800 cursor-not-allowed"
-                        : status === "Not Resolved"
-                          ? "bg-yellow-200 text-yellow-800 cursor-not-allowed"
-                          : "bg-white text-black hover:bg-gray-100"
+                      ? "bg-red-200 text-red-800 cursor-not-allowed"
+                      : status === "Not Resolved"
+                        ? "bg-yellow-200 text-yellow-800 cursor-not-allowed"
+                        : "bg-white text-black hover:bg-gray-100"
                       }`}
                     value={status}
                     onChange={handleStatusChange}
@@ -293,8 +305,8 @@ const GrievanceView = () => {
                       <option
                         key={index}
                         value={option}
-                        disabled={(option === "Resolved" && status !== "Resolved") ||( option === "Not Processed") || option==="Urgent"}
-                        // className={`${getStatusStyles(option)}`}
+                        disabled={(option === "Resolved" && status !== "Resolved") || (option === "Not Processed") || option === "Urgent"}
+                      // className={`${getStatusStyles(option)}`}
                       >
                         {option}
                       </option>

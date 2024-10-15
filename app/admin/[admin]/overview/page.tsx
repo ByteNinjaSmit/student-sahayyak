@@ -4,10 +4,12 @@ import { FaSearch, FaFilter, FaSync, FaSort } from "react-icons/fa";
 import AdminSidebar from "@/components/layout/admin/sidebar";
 import { useParams } from "next/navigation";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import Link from "next/link";
 const GrievanceManagementSystem = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("All");
   const [status, setStatus] = useState("All");
+  const [hostel, setHostel] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -25,7 +27,7 @@ const GrievanceManagementSystem = () => {
   // ];
 
   // Function to fetch complaints
- 
+
   const getComplaints = async () => {
     setLoading(true);
     try {
@@ -37,7 +39,7 @@ const GrievanceManagementSystem = () => {
       setGrievances(data); // Set fetched complaints
     } catch (error) {
       console.error("Error fetching complaints:", error);
-    }finally{
+    } finally {
       setLoading(false);
     }
   };
@@ -52,6 +54,7 @@ const GrievanceManagementSystem = () => {
   const handleSearch = (e) => setSearchTerm(e.target.value);
   const handleCategoryChange = (e) => setCategory(e.target.value);
   const handleStatusChange = (e) => setStatus(e.target.value);
+  const handleHostelChange = (e) => setHostel(e.target.value);
   const handlePageChange = (page) => setCurrentPage(page);
 
   const filteredGrievances = grievances.filter((grievance) => {
@@ -59,7 +62,8 @@ const GrievanceManagementSystem = () => {
       (grievance._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         grievance.user?.username.toLowerCase().includes(searchTerm.toLowerCase())) &&
       (category === "All" || grievance.category === category) &&
-      (status === "All" || grievance.status === status)
+      (status === "All" || grievance.status === status) &&
+      (hostel === "All" || grievance.user.hostelId === hostel)
     );
   });
 
@@ -109,12 +113,12 @@ const GrievanceManagementSystem = () => {
         <div className="mx-auto mt-4 text-start justify-start">
           <h3 className="text-3xl font-medium text-gray-700 text-start">Grievance Management : Overview</h3>
         </div>
-        
+
         {loading && (
-            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-              <AiOutlineLoading3Quarters className="text-white text-4xl animate-spin" />
-            </div>
-          )}
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+            <AiOutlineLoading3Quarters className="text-white text-4xl animate-spin" />
+          </div>
+        )}
 
         <div className="flex-1 container mx-auto p-6">
           <div className="bg-white rounded-lg shadow-lg p-6">
@@ -158,6 +162,24 @@ const GrievanceManagementSystem = () => {
 
 
                 </select>
+                <select
+                  className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300"
+                  value={hostel}
+                  onChange={handleHostelChange}
+                >
+                  <option value="All">All Hostels</option>
+                  <option value="G1">G1</option>
+                  <option value="G2">G2</option>
+                  <option value="G3">G3</option>
+                  <option value="G4">G4</option>
+                  <option value="A1">A1</option>
+                  <option value="A2">A2</option>
+                  <option value="A3">A3</option>
+                  <option value="A4">A4</option>
+                  <option value="A5">A5</option>
+                  <option value="A6">A6</option>
+                  <option value="A7">A7</option>
+                </select>
                 <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center">
                   <FaFilter className="mr-2" /> Apply Filters
                 </button>
@@ -173,6 +195,7 @@ const GrievanceManagementSystem = () => {
                   <tr className="bg-gray-200">
                     <th className="px-4 py-2 text-left">Grievance ID <FaSort className="inline ml-1 cursor-pointer" /></th>
                     <th className="px-4 py-2 text-left">Category <FaSort className="inline ml-1 cursor-pointer" /></th>
+                    <th className="px-4 py-2 text-left">Hostel Id <FaSort className="inline ml-1 cursor-pointer" /></th>
                     <th className="px-4 py-2 text-left">User Name <FaSort className="inline ml-1 cursor-pointer" /></th>
                     <th className="px-4 py-2 text-left">Status <FaSort className="inline ml-1 cursor-pointer" /></th>
                     <th className="px-4 py-2 text-left">Action</th>
@@ -183,20 +206,23 @@ const GrievanceManagementSystem = () => {
                     <tr key={grievance._id} className="border-b hover:bg-gray-50">
                       <td className="px-4 py-2">{grievance._id}</td>
                       <td className="px-4 py-2">{grievance.category}</td>
+                      <td className="px-4 py-2">{grievance.user?.hostelId}</td>
                       <td className="px-4 py-2">{grievance.user?.username}</td>
                       <td className="px-4 py-2">
-                        <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                                grievance.status === "Resolved"
-                                  ? "bg-green-200 text-green-800"
-                                  : grievance.status === "Urgent"
-                                  ? "bg-red-200 text-red-800"
-                                  : "bg-yellow-200 text-yellow-800"
-                              }`}>
+                        <span className={`px-2 py-1 rounded text-xs font-semibold ${grievance.status === "Resolved"
+                            ? "bg-green-200 text-green-800"
+                            : grievance.status === "Urgent"
+                              ? "bg-red-200 text-red-800"
+                              : "bg-yellow-200 text-yellow-800"
+                          }`}>
                           {grievance.status}
                         </span>
                       </td>
                       <td className="px-4 py-2">
-                        <button className="text-blue-500 hover:text-blue-700">View</button>
+                      <Link href={`/admin/${admin}/singleissue/${grievance?._id}`}>
+
+                          <button className="text-blue-500 hover:text-blue-700">View</button>
+                        </Link>
                       </td>
                     </tr>
                   ))}
