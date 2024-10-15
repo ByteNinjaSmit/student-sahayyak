@@ -46,12 +46,64 @@ ChartJS.register(
 const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const toggleNotifications = () => setNotificationsOpen(!notificationsOpen);
   const { isLoggedIn, userData } = useSession();
   const [userId, setUserId] = useState(null);
   const [complaintData, setComplaintData] = useState([]);
+  const [complaintStats, setComplaintStats] = useState({
+    allComplaints: 0,
+    pendingNumber: 0,
+    resolvedNumber: 0,
+    urgentNumber: 0,
+    hostelNumber: 0,
+    messNumber: 0,
+    FacilitiesNumber: 0,
+    securityNumber: 0,
+  });
+
+
+  const allComplaints = complaintData.length;
+  const pendingNumber = complaintData.filter(
+    (grievance) => grievance?.status === "Not Processed"
+  ).length;
+  const resolvedNumber = complaintData.filter(
+    (grievance) => grievance?.status === "Resolved"
+  ).length
+  const urgentNumber = complaintData.filter(
+    (grievance) => grievance?.status === "Urgent"
+  ).length;
+
+  const hostelNumber = complaintData.filter(
+    (grievance) => grievance?.category === "Hostel"
+  ).length;
+  const messNumber = complaintData.filter(
+    (grievance) => grievance?.category === "Mess / Tiffin"
+  ).length;
+
+  const FacilitiesNumber = complaintData.filter(
+    (grievance) => grievance?.category === "Facility"
+  ).length;
+
+  const securityNumber = complaintData.filter(
+    (grievance) => grievance?.category === "Security"
+  ).length;
+
+  // const createdAtDate = new Date(complaintData.createdAt);
+  // const month = createdAtDate.getMonth();
+  // Function to fetch complaints
+  const getComplaints = async () => {
+    try {
+      const response = await fetch(`/api/issues/getissue/all`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch complaints");
+      }
+      const data = await response.json();
+      setComplaintData(data); // Set fetched complaints
+    } catch (error) {
+      console.error("Error fetching complaints:", error);
+    }
+  };
   useEffect(() => {
     // Set user data on component mount
     setUserId(userData?._id);
@@ -59,37 +111,10 @@ const AdminDashboard = () => {
     // Fetch complaints data from API when the user is available
     if (userId) {
       getComplaints();
+
+
     }
   }, [isLoggedIn, userId]);
-
-  const allComplaints = complaintData.length;
-  const pendingNumber = complaintData.filter(
-    (grievance) => grievance.status === "Not Processed"
-  ).length;
-  const resolvedNumber = complaintData.filter(
-    (grievance) => grievance.status === "Resolved"
-  ).length
-  const urgentNumber = complaintData.filter(
-    (grievance) => grievance.status === "Urgent"
-  ).length;
-
-  const hostelNumber = complaintData.filter(
-    (grievance) => grievance.category === "Hostel"
-  ).length;
-  const messNumber = complaintData.filter(
-    (grievance) => grievance.category === "Mess / Tiffin"
-  ).length;
-
-  const FacilitiesNumber = complaintData.filter(
-    (grievance) => grievance.category === "Facility"
-  ).length;
-
-  const securityNumber = complaintData.filter(
-    (grievance) => grievance.category === "Security"
-  ).length;
-
-  // const createdAtDate = new Date(complaintData.createdAt);
-  // const month = createdAtDate.getMonth();
 
   const sidebarItems = [
     { icon: <FaHome />, text: "Home" },
@@ -105,20 +130,6 @@ const AdminDashboard = () => {
     { icon: <FaQuestionCircle />, text: "FAQ" },
     { icon: <FaLifeRing />, text: "Help & Support" },
   ];
-
-  // Function to fetch complaints
-  const getComplaints = async () => {
-    try {
-      const response = await fetch(`/api/issues/getissue/all`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch complaints");
-      }
-      const data = await response.json();
-      setComplaintData(data); // Set fetched complaints
-    } catch (error) {
-      console.error("Error fetching complaints:", error);
-    }
-  };
 
   const statisticsData = [
     {
