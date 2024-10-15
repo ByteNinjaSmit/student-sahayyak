@@ -1,9 +1,23 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { FaCheckCircle, FaExclamationTriangle, FaSpinner } from "react-icons/fa";
-import { useParams, useRouter } from "next/navigation";
+import {
+  FaCheckCircle,
+  FaExclamationTriangle,
+  FaSpinner,
+  FaUser,
+  FaRegUserCircle,
+  FaDoorOpen,
+  FaBuilding,
+  FaRegAddressCard,
+  FaInfoCircle,
+  FaEdit,
+  FaCommentDots,
+} from "react-icons/fa";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import { IoMdArrowRoundBack } from "react-icons/io";
 const GrievanceView = () => {
-  const { admin, id } = useParams();
+  const { id,admin } = useParams();
   const [status, setStatus] = useState("Not Processed");
   const [remarks, setRemarks] = useState("");
   const [error, setError] = useState(null);
@@ -13,37 +27,33 @@ const GrievanceView = () => {
       actionType: "Complaint Filed",
       actionBy: "User",
       actionDate: "2023-06-01",
-      remarks: "Initial complaint submission"
-    }
+      remarks: "Initial complaint submission",
+    },
   ]);
 
   const [complaintData, setComplaintData] = useState(null);
   const [category, setCategory] = useState(null);
-  // Fetch data From 
-  // /api/issues/getissue/singleissue/${id}
+
   useEffect(() => {
     const fetchGrievance = async () => {
       try {
-        const response = await fetch(
-          `/api/issues/getissue/singleissue/${id}`
-        );
+        const response = await fetch(`/api/issues/getissue/singleissue/${id}`);
         if (!response.ok) {
           throw new Error("Failed to fetch grievance data");
         }
         const data = await response.json();
-        setComplaintData(data.document); // Set the fetched grievance data from document
+        setComplaintData(data.document);
+        setStatus(data.document.status);
         setCategory(data.category);
       } catch (err) {
-        setError(err.message); // Set error message if fetch fails
+        setError(err.message);
       } finally {
-        setLoading(false); // Set loading to false after fetch completes
+        setLoading(false);
       }
     };
 
-    fetchGrievance(); // Call the fetch function
-  }, [id]); // Dependency array includes singleIssueId
-  console.log(`complaint Data: ${complaintData}`);
-
+    fetchGrievance();
+  }, [id]);
 
   const handleStatusChange = (e) => {
     setStatus(e.target.value);
@@ -63,7 +73,7 @@ const GrievanceView = () => {
       actionType: `Status updated to ${status}`,
       actionBy: "Admin",
       actionDate: new Date().toISOString().split("T")[0],
-      remarks: remarks
+      remarks: remarks,
     };
     setActionLog([...actionLog, newAction]);
     setRemarks("");
@@ -75,120 +85,254 @@ const GrievanceView = () => {
       year: "numeric",
       month: "long",
       day: "numeric",
-      // hour: "2-digit",
-      // minute: "2-digit",
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
+
+  // Define status options based on the current status
+  const getStatusOptions = (currentStatus) => {
+    const statusHierarchy = [
+      "Not Processed",
+      "Urgent",
+      "Cancelled",
+      "Pending",
+      "In Progress",
+      "Proceeded",
+      "Not Resolved",
+      "Resolved",
+    ];
+
+    const getStatusStyles = (option) => {
+      switch (option) {
+        case "Cancelled":
+          return "bg-red-200 text-red-600";
+        case "Not Resolved":
+          return "bg-yellow-200 text-yellow-600";
+        case "Pending":
+          return "bg-orange-200 text-orange-600";
+        case "In Progress":
+          return "bg-blue-200 text-blue-600";
+        case "Proceeded":
+          return "bg-green-200 text-green-600";
+        case "Resolved":
+          return "bg-green-200 text-green-600";
+        default:
+          return "bg-gray-200 text-gray-600";
+      }
+    };
+    const currentIndex = statusHierarchy.indexOf(currentStatus);
+
+    // Return options based on current status, excluding invalid selections
+    return statusHierarchy.filter((option) => {
+      if (currentStatus === "Cancelled" || currentStatus === "Not Resolved") {
+        return false; // Block any status selection
+      }
+      if (option === "Resolved" && currentStatus !== "Resolved") {
+        return true; // Show in dropdown but not selectable
+      }
+      return option !== "Resolved"; // Exclude Resolved from dropdown if it is selected
+    });
+  };
+
+  // Determine if the action form should be visible
+  const isActionFormVisible = () => {
+    return !(status === "Cancelled" || status === "Not Resolved");
+  };
+
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-3xl font-bold text-center text-blue-700 mb-8">Grievance Detail</h1>
-
-      <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
-        <div className="p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Complaint ID: {`${complaintData?._id}`}</h2>
-          <div className="mb-4">
-            <h3 className="text-lg font-medium text-gray-700 mb-2">Complaints:</h3>
-            <ul className="list-disc list-inside text-gray-600">
-              {complaintData?.complaint.map((item, index) => (
-                <li key={index} className="text-gray-700">
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="flex items-center justify-between bg-gray-100 p-4 rounded">
-            <span className="text-lg font-medium text-gray-700">Status: {complaintData?.status}</span>
-            {/* <select
-              className="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={complaintData?.status}
-              onChange={handleStatusChange}
-            >
-              <option value="Not Processed">Not Processed</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Urgent">Urgent</option>
-              <option value="Resolved">Resolved</option>
-            </select> */}
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
-        <div className="p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">User Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-gray-600">
-              <span className="font-medium">Username:</span> {complaintData?.user?.username}
-            </div>
-            <div className="text-gray-600">
-              <span className="font-medium">Room Number:</span> {complaintData?.user?.room}
-            </div>
-            <div className="text-gray-600">
-              <span className="font-medium">Hostel ID:</span> {complaintData?.user?.hostelId}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
-        <div className="p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Action Log</h2>
-          <div className="space-y-4">
-            <div className="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0">
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-medium text-blue-600">{complaintData?.actionType}</span>
-                <span className="text-sm text-gray-500">{formatDate(complaintData?.createdAt)}</span>
-              </div>
-              <div className="text-gray-600">Action by: {complaintData?.actionBy}</div>
-              {complaintData?.remarks && <div className="text-gray-600 mt-1">Remarks: {complaintData?.remarks}</div>}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-        <div className="p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Admin Action</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label htmlFor="status" className="block text-gray-700 font-medium mb-2">
-                Update Status
-              </label>
-              <select
-                id="status"
-                className="w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={status}
-                onChange={handleStatusChange}
-              >
-                <option value="Cancelled">Cancelled</option>
-                <option value="Pending">Pending</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Procced">Procced</option>
-
-              </select>
-            </div>
-            <div className="mb-4">
-              <label htmlFor="remarks" className="block text-gray-700 font-medium mb-2">
-                Remarks
-              </label>
-              <textarea
-                id="remarks"
-                className="w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                rows="4"
-                value={remarks}
-                onChange={handleRemarksChange}
-                placeholder="Enter your remarks here..."
-              ></textarea>
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-300"
-            >
-              Submit Action
+    <div
+      className="container mx-auto px-4 py-8 max-w-4xl"
+      style={{
+        backgroundImage: "linear-gradient(to bottom, #f0f4f8, #d9e2ec)",
+      }}
+    >
+      <h1 className="text-3xl font-bold text-center text-blue-700 mb-8">
+        <FaInfoCircle className="inline mr-2" />
+        Grievance Detail
+      </h1>
+      <div className="flex justify-end items-center mr-2 mb-2">
+          <Link href={`/admin/${admin}/dashboard`}>
+            <button className="flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-300">
+              <IoMdArrowRoundBack className="mr-2" />
+              Back to User Panel
             </button>
-          </form>
+          </Link>
         </div>
-      </div>
+
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+
+      {complaintData && (
+        <>
+          <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
+            <div className="p-6">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                <FaRegAddressCard className="inline mr-2" />
+                Complaint ID: {`${complaintData._id}`}
+              </h2>
+              <div className="mb-4">
+                <h3 className="text-lg font-medium text-gray-700 mb-2">Complaints:</h3>
+                <ul className="list-disc list-inside text-gray-600">
+                  {complaintData.complaint.map((item, index) => (
+                    <li key={index} className="text-gray-700">
+                      <FaCommentDots className="inline mr-2 text-yellow-600" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="flex items-center justify-between bg-gray-100 p-4 rounded">
+                <span
+                  className={`text-lg font-semibold ${complaintData.status === "Not Processed"
+                    ? "text-yellow-500"
+                    : complaintData.status === "Urgent"
+                      ? "text-red-700"
+                      : complaintData.status === "In Progress"
+                        ? "text-blue-500"
+                        : complaintData.status === "Pending"
+                          ? "text-orange-600"
+                          : complaintData.status === "Not Resolved"
+                            ? "text-red-500"
+                            : complaintData.status === "Resolved"
+                              ? "text-green-600"
+                              : complaintData.status === "Proceeded"
+                                ? "text-green-500"
+                                : "text-gray-500"
+                    }`}
+                >
+                  <FaSpinner className="inline mr-1" />
+                  Status: {complaintData.status}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
+            <div className="p-6">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                <FaRegUserCircle className="inline mr-2 text-indigo-700" />
+                User Information
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="text-gray-600">
+                  <FaUser className="inline mr-2 text-indigo-700" />
+                  <span className="font-medium">Username:</span>{" "}
+                  {complaintData.user?.username}
+                </div>
+                <div className="text-gray-600">
+                  <FaDoorOpen className="inline mr-2 text-pink-700" />
+                  <span className="font-medium">Room Number:</span>{" "}
+                  {complaintData.user?.room}
+                </div>
+                <div className="text-gray-600">
+                  <FaBuilding className="inline mr-2 text-purple-700" />
+                  <span className="font-medium">Hostel ID:</span>{" "}
+                  {complaintData.user?.hostelId}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
+            <div className="p-6">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                <FaEdit className="inline mr-2 text-green-600" />
+                Action Log
+              </h2>
+              <div className="space-y-4">
+                {actionLog.map((log, index) => (
+                  <div
+                    key={index}
+                    className="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium text-blue-600">
+                        {log.actionType}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        {formatDate(log.actionDate)}
+                      </span>
+                    </div>
+                    <div className="text-gray-600">Action by: {log.actionBy}</div>
+                    {log.remarks && (
+                      <div className="text-gray-600 mt-1">Remarks: {log.remarks}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
+            <div className="p-6">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                <FaCheckCircle className="inline mr-2 text-blue-600" />
+                Admin Action
+              </h2>
+              <form onSubmit={handleSubmit}>
+                <div className="mb-4">
+                  <label
+                    htmlFor="status"
+                    className="block text-gray-700 font-medium mb-2"
+                  >
+                    Status
+                  </label>
+                  <select
+                    id="status"
+                    className={`w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 transition-colors duration-200 ease-in-out ${status === "Cancelled"
+                        ? "bg-red-200 text-red-800 cursor-not-allowed"
+                        : status === "Not Resolved"
+                          ? "bg-yellow-200 text-yellow-800 cursor-not-allowed"
+                          : "bg-white text-black hover:bg-gray-100"
+                      }`}
+                    value={status}
+                    onChange={handleStatusChange}
+                    disabled={status === "Cancelled" || status === "Not Resolved"}
+                  >
+                    {getStatusOptions(status).map((option, index) => (
+                      <option
+                        key={index}
+                        value={option}
+                        disabled={(option === "Resolved" && status !== "Resolved") ||( option === "Not Processed") || option==="Urgent"}
+                        // className={`${getStatusStyles(option)}`}
+                      >
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="mb-4">
+                  <label
+                    htmlFor="remarks"
+                    className="block text-gray-700 font-medium mb-2"
+                  >
+                    <FaCommentDots className="inline mr-2 text-blue-600" />
+                    Remarks
+                  </label>
+                  <textarea
+                    id="remarks"
+                    rows="4"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    value={remarks}
+                    onChange={handleRemarksChange}
+                    required
+                  ></textarea>
+                </div>
+
+                <button
+                  type="submit"
+                  className={`w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none ${(status === "Cancelled" || status === "Not Resolved") ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                  disabled={status === "Cancelled" || status === "Not Resolved"}
+                >
+                  Submit Action
+                </button>
+              </form>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

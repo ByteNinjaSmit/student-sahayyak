@@ -15,6 +15,7 @@ import {
   FaLifeRing,
 } from "react-icons/fa";
 import { Line, Pie, Bar } from "react-chartjs-2";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -28,7 +29,7 @@ import {
   Legend,
 } from "chart.js";
 import AdminSidebar from "@/components/layout/admin/sidebar";
-import Link from "next/link"; // Import the Link component for navigation
+import Link from "next/link"; 
 import { useSession } from "@/app/store/session";
 
 ChartJS.register(
@@ -46,12 +47,68 @@ ChartJS.register(
 const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const toggleNotifications = () => setNotificationsOpen(!notificationsOpen);
   const { isLoggedIn, userData } = useSession();
+  const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState(null);
   const [complaintData, setComplaintData] = useState([]);
+  const [complaintStats, setComplaintStats] = useState({
+    allComplaints: 0,
+    pendingNumber: 0,
+    resolvedNumber: 0,
+    urgentNumber: 0,
+    hostelNumber: 0,
+    messNumber: 0,
+    FacilitiesNumber: 0,
+    securityNumber: 0,
+  });
+
+
+  const allComplaints = complaintData.length;
+  const pendingNumber = complaintData.filter(
+    (grievance) => grievance?.status === "Not Processed"
+  ).length;
+  const resolvedNumber = complaintData.filter(
+    (grievance) => grievance?.status === "Resolved"
+  ).length
+  const urgentNumber = complaintData.filter(
+    (grievance) => grievance?.status === "Urgent"
+  ).length;
+
+  const hostelNumber = complaintData.filter(
+    (grievance) => grievance?.category === "Hostel"
+  ).length;
+  const messNumber = complaintData.filter(
+    (grievance) => grievance?.category === "Mess / Tiffin"
+  ).length;
+
+  const FacilitiesNumber = complaintData.filter(
+    (grievance) => grievance?.category === "Facility"
+  ).length;
+
+  const securityNumber = complaintData.filter(
+    (grievance) => grievance?.category === "Security"
+  ).length;
+
+  // const createdAtDate = new Date(complaintData.createdAt);
+  // const month = createdAtDate.getMonth();
+  // Function to fetch complaints
+  const getComplaints = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/issues/getissue/all`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch complaints");
+      }
+      const data = await response.json();
+      setComplaintData(data); // Set fetched complaints
+    } catch (error) {
+      console.error("Error fetching complaints:", error);
+    }finally{
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     // Set user data on component mount
     setUserId(userData?._id);
@@ -59,37 +116,10 @@ const AdminDashboard = () => {
     // Fetch complaints data from API when the user is available
     if (userId) {
       getComplaints();
+
+
     }
   }, [isLoggedIn, userId]);
-
-  const allComplaints = complaintData.length;
-  const pendingNumber = complaintData.filter(
-    (grievance) => grievance.status === "Not Processed"
-  ).length;
-  const resolvedNumber = complaintData.filter(
-    (grievance) => grievance.status === "Resolved"
-  ).length
-  const urgentNumber = complaintData.filter(
-    (grievance) => grievance.status === "Urgent"
-  ).length;
-
-  const hostelNumber = complaintData.filter(
-    (grievance) => grievance.category === "Hostel"
-  ).length;
-  const messNumber = complaintData.filter(
-    (grievance) => grievance.category === "Mess / Tiffin"
-  ).length;
-
-  const FacilitiesNumber = complaintData.filter(
-    (grievance) => grievance.category === "Facility"
-  ).length;
-
-  const securityNumber = complaintData.filter(
-    (grievance) => grievance.category === "Security"
-  ).length;
-
-  // const createdAtDate = new Date(complaintData.createdAt);
-  // const month = createdAtDate.getMonth();
 
   const sidebarItems = [
     { icon: <FaHome />, text: "Home" },
@@ -105,20 +135,6 @@ const AdminDashboard = () => {
     { icon: <FaQuestionCircle />, text: "FAQ" },
     { icon: <FaLifeRing />, text: "Help & Support" },
   ];
-
-  // Function to fetch complaints
-  const getComplaints = async () => {
-    try {
-      const response = await fetch(`/api/issues/getissue/all`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch complaints");
-      }
-      const data = await response.json();
-      setComplaintData(data); // Set fetched complaints
-    } catch (error) {
-      console.error("Error fetching complaints:", error);
-    }
-  };
 
   const statisticsData = [
     {
@@ -351,7 +367,11 @@ const AdminDashboard = () => {
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
           <div className="container mx-auto px-6 py-8">
             <h3 className="text-3xl font-medium text-gray-700">Dashboard</h3>
-
+            {loading && (
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+              <AiOutlineLoading3Quarters className="text-white text-4xl animate-spin" />
+            </div>
+          )}
             {/* Statistics Cards */}
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {statisticsData.map((stat, index) => (

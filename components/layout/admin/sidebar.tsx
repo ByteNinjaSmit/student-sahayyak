@@ -28,8 +28,8 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen, toggleSidebar 
   const { admin } = useParams();
   const sidebarItems = [
     { icon: <FaHome />, text: "Home", href: `/admin/${admin}/dashboard` },
-    { icon: <FaChartBar />, text: "Overview", href: "/admin/overview" },
-    { icon: <FaUser />, text: "Profile", href: "/admin/profile" },
+    { icon: <FaChartBar />, text: "Overview", href:  `/admin/${admin}/overview` },
+    { icon: <FaUser />, text: "Profile", href: `/admin/${admin}/profile/edit-profile` },
     { icon: <FaUsers />, text: "Students", href: `/admin/${admin}/hostellers` },
     { icon: <FaBed />, text: "Hostel Issues", href: "/admin/hostel-issues" },
     { icon: <FaUtensils />, text: "Mess/Tiffin Issues", href: "/admin/mess-issues" },

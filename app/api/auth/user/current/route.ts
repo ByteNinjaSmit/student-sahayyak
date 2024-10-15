@@ -15,7 +15,7 @@ export async function GET(request: Request) {
   try {
     // Connect to the database
     await connectToDatabase();
-    
+
     // Check for available tokens in the cookies
     const userToken = cookies().get("user-token")?.value;
     const adminToken = cookies().get("admin-token")?.value;
@@ -35,17 +35,25 @@ export async function GET(request: Request) {
       role = "admin";
     } else {
       // If no token is found, return an error response
-      return NextResponse.json({ error: "Authentication token not found" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Authentication token not found" },
+        { status: 401 }
+      );
     }
 
     // Ensure the secret key is a string
     const jwtSecretKey = process.env.JWT_SECRET_KEY as string;
 
     // Verify the JWT token and cast the payload to ensure userID is treated as a string
-    const data = jwt.verify(userAuthToken, jwtSecretKey) as JwtPayloadWithUserID;
+    const data = jwt.verify(
+      userAuthToken,
+      jwtSecretKey
+    ) as JwtPayloadWithUserID;
 
     // Find the user/admin by their ID, exclude the password field
-    const userOrAdmin = await model.findById({ _id: data.userID }).select("-password");
+    const userOrAdmin = await model
+      .findById({ _id: data.userID })
+      .select("-password");
 
     // If the user/admin is not found, return an error response
     if (!userOrAdmin) {
@@ -54,9 +62,11 @@ export async function GET(request: Request) {
 
     // Return the user/admin data as a response without the password
     return NextResponse.json(userOrAdmin);
-
   } catch (error) {
     // Handle JWT verification or any other error
-    return NextResponse.json({ error: "Invalid token or server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Invalid token or server error" },
+      { status: 500 }
+    );
   }
 }

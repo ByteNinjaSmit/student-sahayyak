@@ -3,16 +3,10 @@ import { connectToDatabase } from "@/database/dbConn";
 import User from "@/database/models/user-model";
 import { NextRequest, NextResponse } from "next/server";
 
-// Ensure the database connection is established before processing requests
-
-
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest,{ params }: { params: { id: string } }) {
   try {
     await connectToDatabase();
-    // Parse the request body
-    const reqBody = await request.json();
-    const { id } = reqBody;
-
+    const id = params.id;
     // Validate that the ID is provided
     if (!id) {
       return NextResponse.json(
@@ -22,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Find the user by ID and exclude the password field
-    const userDetails = await User.findById(id).select('-password'); 
+    const userDetails = await User.find({_id:id}).select("-password");
 
     // Check if the user exists
     if (!userDetails) {
@@ -34,7 +28,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       msg: "User details fetched successfully",
-      user: userDetails, 
+      data: userDetails,
       status: 200,
     });
   } catch (error) {

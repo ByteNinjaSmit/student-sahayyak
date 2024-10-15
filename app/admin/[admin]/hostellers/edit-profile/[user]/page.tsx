@@ -1,17 +1,10 @@
 "use client";
-import React, { useState } from "react";
-import {
-    FaEye,
-    FaEyeSlash,
-    FaLock,
-    FaUser,
-    FaHome,
-    FaBuilding,
-} from "react-icons/fa";
-import { toast } from 'react-toastify';
-import { useRouter } from "next/navigation"; // For client-side routing
+import React, { useState, useEffect } from "react";
+import { FaEye, FaEyeSlash, FaLock, FaUser, FaHome, FaBuilding } from "react-icons/fa";
+import { toast } from "react-toastify";
+import { useParams, useRouter } from "next/navigation"; // For client-side routing
 import Link from "next/link";
-import { useSession } from "@/app/store/session";
+
 const EditUserFromAdmin = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -19,64 +12,74 @@ const EditUserFromAdmin = () => {
     const [roomNumber, setRoomNumber] = useState("");
     const [hostel, setHostel] = useState("");
     const [password, setPassword] = useState("");
-    const { userData } = useSession();
     const [confirmPassword, setConfirmPassword] = useState("");
-    const router = useRouter(); // Navigation hook to redirect on successful registration
+    const router = useRouter(); // Navigation hook to redirect on successful update
+    const { admin, user } = useParams();
+    const [userData, setUserData] = useState(null);
 
-    const togglePasswordVisibility = (field) => {
-        switch (field) {
-            case "password":
-                setShowPassword(!showPassword);
-                break;
-            case "confirm":
-                setShowConfirmPassword(!showConfirmPassword);
-                break;
-            default:
-                break;
-        }
+    // Toggle password visibility
+    const togglePasswordVisibility = (field: string) => {
+        if (field === "password") setShowPassword(!showPassword);
+        if (field === "confirm") setShowConfirmPassword(!showConfirmPassword);
     };
 
-    const handleRegister = async (e) => {
+    // Fetch user data on component mount
+    useEffect(() => {
+        const getUser = async () => {
+            try {
+                const response = await fetch(`/api/userdata/userinfo/${user}`);
+                if (!response.ok) {
+                    toast.error("Failed To Fetch Data Of User");
+                    return;
+                }
+                const data = await response.json();
+                setUserData(data.data);
+
+                // Pre-populate the form fields with fetched data
+                setUsername(data.data[0]?.username || "");
+                setRoomNumber(data.data[0]?.room || "");
+                setHostel(data.data[0]?.hostelId || "");
+            } catch (error) {
+                toast.error("An error occurred while fetching user data.");
+            }
+        };
+
+        getUser();
+    }, [user]);
+
+    // Handle Edit (PATCH request)
+    const handleEdit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validate password fields
         if (password !== confirmPassword) {
             toast.error("Password and confirm password do not match.");
             return;
         }
 
         try {
-            const response = await fetch(
-                `/api/auth/user/register`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        username,
-                        password,
-                        roomNumber,
-                        hostelName: hostel,
-                    }),
-                }
-            );
+            const response = await fetch(`/api/admin/users/${user}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    username,
+                    password,
+                    room: roomNumber,
+                    hostelId: hostel,
+                }),
+            });
 
             if (!response.ok) {
-                toast.error("Failed to register new user");
+                toast.error("Failed to update user information.");
                 return;
             }
 
             const data = await response.json();
-            toast.success(data.msg || "Registration Successful");
-            setUsername("");
-            setRoomNumber("");
-            setHostel("");
-            setPassword("");
-            setConfirmPassword("");
-            router.push(`/admin/${userData?._id}/hostellers`);
+            toast.success(data.msg || "User updated successfully");
+            router.push(`/admin/${admin}/hostellers`);
         } catch (error) {
-            toast.error(error || "An error occurred during registration.");
+            toast.error("An error occurred during the update.");
         }
     };
 
@@ -84,13 +87,13 @@ const EditUserFromAdmin = () => {
         <div className="min-h-screen bg-gradient-to-br from-purple-300 via-pink-300 to-red-300 flex items-center justify-center p-4">
             <div className="max-w-xl w-full bg-white bg-opacity-50 backdrop-filter backdrop-blur-lg rounded-2xl shadow-2xl p-8">
                 <h1 className="text-4xl font-bold text-center mb-2 text-indigo-800">
-                    Register New User
+                    Edit User
                 </h1>
                 <p className="text-gray-600 text-center mb-8">
-                    Create a new account by filling in the information below.
+                    Edit user information by filling in the fields below.
                 </p>
 
-                <form onSubmit={handleRegister}>
+                <form onSubmit={handleEdit}>
                     <div className="space-y-6">
                         <div className="bg-indigo-100 p-4 rounded-lg">
                             <label
@@ -106,7 +109,7 @@ const EditUserFromAdmin = () => {
                                 className="w-full px-3 py-2 border border-indigo-300 rounded-md bg-white text-indigo-800"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                                placeholder="Enter your username"
+                                placeholder="Enter the username"
                             />
                         </div>
 
@@ -124,7 +127,7 @@ const EditUserFromAdmin = () => {
                                 className="w-full px-3 py-2 border border-pink-300 rounded-md bg-white text-pink-800"
                                 value={roomNumber}
                                 onChange={(e) => setRoomNumber(e.target.value)}
-                                placeholder="Enter your room number"
+                                placeholder="Enter the room number"
                             />
                         </div>
 
@@ -142,7 +145,7 @@ const EditUserFromAdmin = () => {
                                 className="w-full px-3 py-2 border border-purple-300 rounded-md bg-white text-purple-800"
                                 value={hostel}
                                 onChange={(e) => setHostel(e.target.value)}
-                                placeholder="Enter your hostel"
+                                placeholder="Enter the hostel"
                             />
                         </div>
 
@@ -218,21 +221,19 @@ const EditUserFromAdmin = () => {
                         </div>
                     </div>
 
-                    <div className="mt-8 flex justify-end space-x-4">
-                        <Link href={`/admin/${userData?._id}/hostellers`}>
-                            <button
-                                type="button"
-                                className="px-6 py-3 border border-gray-300 rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
-                            >
-                                Cancel
-                            </button>
-                        </Link>
+                    <div className="flex justify-center space-x-4 mt-8">
                         <button
                             type="submit"
-                            className="px-6 py-3 border border-red-500 rounded-full text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
+                            className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition duration-200"
                         >
-                            Register
+                            Submit Changes
                         </button>
+                        <Link
+                            href={`/admin/${admin}/hostellers`}
+                            className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition duration-200"
+                        >
+                            Cancel
+                        </Link>
                     </div>
                 </form>
             </div>
