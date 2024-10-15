@@ -15,6 +15,7 @@ import {
   FaLifeRing,
 } from "react-icons/fa";
 import { Line, Pie, Bar } from "react-chartjs-2";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -49,6 +50,7 @@ const AdminDashboard = () => {
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const toggleNotifications = () => setNotificationsOpen(!notificationsOpen);
   const { isLoggedIn, userData } = useSession();
+  const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState(null);
   const [complaintData, setComplaintData] = useState([]);
   const [complaintStats, setComplaintStats] = useState({
@@ -93,6 +95,7 @@ const AdminDashboard = () => {
   // const month = createdAtDate.getMonth();
   // Function to fetch complaints
   const getComplaints = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`/api/issues/getissue/all`);
       if (!response.ok) {
@@ -102,6 +105,8 @@ const AdminDashboard = () => {
       setComplaintData(data); // Set fetched complaints
     } catch (error) {
       console.error("Error fetching complaints:", error);
+    }finally{
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -362,7 +367,11 @@ const AdminDashboard = () => {
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
           <div className="container mx-auto px-6 py-8">
             <h3 className="text-3xl font-medium text-gray-700">Dashboard</h3>
-
+            {loading && (
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+              <AiOutlineLoading3Quarters className="text-white text-4xl animate-spin" />
+            </div>
+          )}
             {/* Statistics Cards */}
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {statisticsData.map((stat, index) => (

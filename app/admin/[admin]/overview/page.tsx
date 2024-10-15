@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { FaSearch, FaFilter, FaSync, FaSort } from "react-icons/fa";
 import AdminSidebar from "@/components/layout/admin/sidebar";
 import { useParams } from "next/navigation";
-
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 const GrievanceManagementSystem = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("All");
@@ -12,6 +12,7 @@ const GrievanceManagementSystem = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [grievances, setGrievances] = useState([]);
+  const [loading, setLoading] = useState(false);
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
   const toggleNotifications = () => setNotificationsOpen((prev) => !prev);
   const { admin } = useParams();
@@ -26,6 +27,7 @@ const GrievanceManagementSystem = () => {
   // Function to fetch complaints
  
   const getComplaints = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`/api/issues/getissue/all`);
       if (!response.ok) {
@@ -35,6 +37,8 @@ const GrievanceManagementSystem = () => {
       setGrievances(data); // Set fetched complaints
     } catch (error) {
       console.error("Error fetching complaints:", error);
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -105,6 +109,13 @@ const GrievanceManagementSystem = () => {
         <div className="mx-auto mt-4 text-start justify-start">
           <h3 className="text-3xl font-medium text-gray-700 text-start">Grievance Management : Overview</h3>
         </div>
+        
+        {loading && (
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+              <AiOutlineLoading3Quarters className="text-white text-4xl animate-spin" />
+            </div>
+          )}
+
         <div className="flex-1 container mx-auto p-6">
           <div className="bg-white rounded-lg shadow-lg p-6">
             <div className="flex justify-between items-center mb-4">
