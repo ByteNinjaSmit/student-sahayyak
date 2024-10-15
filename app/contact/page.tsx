@@ -10,6 +10,11 @@ const HelpSupportPage = () => {
       case "form":
         return (
           <div className="space-y-4">
+              <img
+              src="https://media.istockphoto.com/photos/complaint-picture-id475991835?k=6&m=475991835&s=170667a&w=0&h=g6cSyjh5iSgBFxqdVTytnvXuHXP888W0Lkv-OAFT178="
+              alt="Filling form"
+              className="w-full h-48 object-cover rounded-lg"
+            />
             <h3 className="text-xl font-semibold">How to Fill the Grievance Form</h3>
             <ol className="list-decimal list-inside space-y-2">
               <li>Log in to your student portal</li>
@@ -19,11 +24,7 @@ const HelpSupportPage = () => {
               <li>Upload any supporting images if necessary</li>
               <li>Review your submission and click "Submit"</li>
             </ol>
-            <img
-              src="https://media.istockphoto.com/photos/complaint-picture-id475991835?k=6&m=475991835&s=170667a&w=0&h=g6cSyjh5iSgBFxqdVTytnvXuHXP888W0Lkv-OAFT178="
-              alt="Filling form"
-              className="w-full h-48 object-cover rounded-lg"
-            />
+          
           </div>
         );
       case "track":
@@ -116,6 +117,11 @@ const HelpSupportPage = () => {
         return (
           <div className="space-y-4">
             <h3 className="text-xl font-semibold">About Us</h3>
+            <img
+              src="https://media.istockphoto.com/vectors/young-man-outside-hostel-flat-vector-illustration-vector-id1191236486?k=6&m=1191236486&s=612x612&w=0&h=HAMwVDNKK6p9h5sYD5HMTsBjHdq0wyZK1499r52gZTw="
+              alt="College campus"
+              className="w-full h-75 object-cover rounded-lg"
+            />
             <p>
             &nbsp;&nbsp;&nbsp;&nbsp; Welcome to the Hostel Grievance System of Sanjivani College of Engineering. 
     Sanjivani College of Engineering is dedicated to fostering a supportive and enriching environment for our students. 
@@ -153,11 +159,7 @@ const HelpSupportPage = () => {
                 <li>Follow up with students</li>
               </ul>
             </div>
-            <img
-              src="https://media.istockphoto.com/vectors/young-man-outside-hostel-flat-vector-illustration-vector-id1191236486?k=6&m=1191236486&s=612x612&w=0&h=HAMwVDNKK6p9h5sYD5HMTsBjHdq0wyZK1499r52gZTw="
-              alt="College campus"
-              className="w-full h-75 object-cover rounded-lg"
-            />
+         
           </div>
         );
       case "troubleshoot":
