@@ -9,11 +9,10 @@ export function middleware(request: NextRequest) {
   const publicVisitsPath = ["/contact", "/faq", "/rule-regulations"];
   const publicApiPath = [
     "/api/auth/user/login",
-    "/api/auth/user/register",
     "/api/auth/admin/login",
     "/api/auth/logout",
-    "/api/auth/admin/register",
   ];
+
 
   // Define user-specific paths
   const userPaths = [
@@ -24,11 +23,50 @@ export function middleware(request: NextRequest) {
   ];
 
   // Define protected API routes
-  const userAPIRoutes = ["/issues/:path"];
+  const userAPIRoutes = ["/api/issues/:path"];
+  const adminAPIRoutes = ["/api/admin/:path*","/api/auth/user/register","/api/userdata/userinfo/:path*","/api/issues/:path*","/api/auth/admin/users"];
 
   // Get tokens from cookies
   const userToken = request.cookies.get("user-token")?.value || "";
   const adminToken = request.cookies.get("admin-token")?.value || "";
+
+  // Verify Token
+  //   try {
+//     // Verify the JWT token
+//     const isVerified = jwt.verify(token, secretKey);
+
+//     // Connect to the database
+//     await connectToDatabase();
+
+//     // Fetch user data excluding the password
+//     const userData = await User.findOne({ email: isVerified.email }).select({
+//       password: 0,
+//     });
+
+//     if (!userData) {
+//       return NextResponse.json(
+//         { message: 'Unauthorized, User not found' },
+//         { status: 404 }
+//       );
+//     }
+
+//     // Attach user data and token to the request object (Next.js way)
+//     req.user = userData;
+//     req.token = token;
+//     req.userID = userData._id;
+
+//     return NextResponse.next(); // Allow the request to continue
+//   } catch (error) {
+//     console.error('Error verifying token:', error);
+//     return NextResponse.json(
+//       { message: 'Unauthorized. Invalid Token.' },
+//       { status: 401 }
+//     );
+//   }
+// }
+
+
+
 
   // Redirect logic for public paths
   if (publicPaths.includes(path)) {
@@ -71,7 +109,7 @@ export function middleware(request: NextRequest) {
   if (path.startsWith("/admin/")) {
     // Redirect to login if accessing client paths without a user token
     if (!adminToken) {
-      if (request.nextUrl.pathname.startsWith("/api")) {
+      if ((request.nextUrl.pathname.startsWith("/api"))) {
         return NextResponse.json(
           {
             message: "Access Denied!!",
@@ -92,6 +130,16 @@ export function middleware(request: NextRequest) {
       path.startsWith(route.replace(/:\w+/g, ""))
     ) &&
     !userToken
+  ) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  // Admin Protect API Routes
+  if (
+    adminAPIRoutes.some((route) =>
+      path.startsWith(route.replace(/:\w+/g, ""))
+    ) &&
+    !adminToken
   ) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
