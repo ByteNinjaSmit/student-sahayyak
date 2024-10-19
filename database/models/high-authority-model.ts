@@ -20,6 +20,9 @@ const facultySchema = new Schema({
     type: String,
     required: true,
   },
+  hostelId:{
+    type:String,
+  },
   isHighAuth: {
     type: Boolean,
     default: false,

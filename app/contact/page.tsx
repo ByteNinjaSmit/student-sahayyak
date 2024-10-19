@@ -1,16 +1,38 @@
 "use client";
 import React, { useState } from "react";
 import { FaQuestionCircle, FaFileAlt, FaSearch, FaPhoneAlt, FaInfoCircle, FaCog } from "react-icons/fa";
-
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 const HelpSupportPage = () => {
   const [activeTab, setActiveTab] = useState("form");
+  const router = useRouter(); // Router instance for navigation
+  const [trackId, setTrackId] = useState(""); // State to store complaint ID
+
+  // Function to handle "Track" button click
+  const handleTrackComplaint = async () => {
+    if (!trackId) {
+      toast.error("Please enter a valid complaint ID");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/public/track-issue/valid/${trackId}`);
+      if (response.ok) {
+        router.push(`/contact/track-complaint/${trackId}`);
+      } else {
+        toast.error("Please enter a valid complaint ID.");
+      }
+    } catch (error) {
+      toast.error("An error occurred while tracking the complaint.");
+    }
+  };
 
   const renderContent = () => {
     switch (activeTab) {
       case "form":
         return (
           <div className="space-y-4">
-              <img
+            <img
               src="https://media.istockphoto.com/photos/complaint-picture-id475991835?k=6&m=475991835&s=170667a&w=0&h=g6cSyjh5iSgBFxqdVTytnvXuHXP888W0Lkv-OAFT178="
               alt="Filling form"
               className="w-full h-48 object-cover rounded-lg"
@@ -24,7 +46,7 @@ const HelpSupportPage = () => {
               <li>Upload any supporting images if necessary</li>
               <li>Review your submission and click "Submit"</li>
             </ol>
-          
+
           </div>
         );
       case "track":
@@ -36,9 +58,14 @@ const HelpSupportPage = () => {
               <input
                 type="text"
                 placeholder="Complaint ID"
+                value={trackId} // Bind the input to the state
+                onChange={(e) => setTrackId(e.target.value)} // Update state on input change
                 className="flex-grow px-4 py-2 border rounded-lg"
               />
-              <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                onClick={handleTrackComplaint} // Handle track button click
+              >
                 Track
               </button>
             </div>
@@ -123,32 +150,32 @@ const HelpSupportPage = () => {
               className="w-full h-75 object-cover rounded-lg"
             />
             <p>
-            &nbsp;&nbsp;&nbsp;&nbsp; Welcome to the Hostel Grievance System of Sanjivani College of Engineering. 
-    Sanjivani College of Engineering is dedicated to fostering a supportive and enriching environment for our students. 
-    To enhance the hostel experience for both boys and girls, we have established the Hostel Grievance System—an online platform designed to address and resolve student concerns related to hostel facilities and services.
-</p>
+              &nbsp;&nbsp;&nbsp;&nbsp; Welcome to the Hostel Grievance System of Sanjivani College of Engineering.
+              Sanjivani College of Engineering is dedicated to fostering a supportive and enriching environment for our students.
+              To enhance the hostel experience for both boys and girls, we have established the Hostel Grievance System—an online platform designed to address and resolve student concerns related to hostel facilities and services.
+            </p>
 
-<h2><strong>Our Purpose</strong></h2>
-<p>
-&nbsp;&nbsp;&nbsp;&nbsp;The Hostel Grievance System aims to provide a transparent and efficient way for students to voice their grievances.<br></br> 
-&nbsp;&nbsp;&nbsp;&nbsp;We believe that a comfortable living environment is essential for academic success and overall well-being.<br></br> 
-&nbsp;&nbsp;&nbsp;&nbsp;This system ensures that every concern is acknowledged and addressed in a timely manner.
-</p>
+            <h2><strong>Our Purpose</strong></h2>
+            <p>
+              &nbsp;&nbsp;&nbsp;&nbsp;The Hostel Grievance System aims to provide a transparent and efficient way for students to voice their grievances.<br></br>
+              &nbsp;&nbsp;&nbsp;&nbsp;We believe that a comfortable living environment is essential for academic success and overall well-being.<br></br>
+              &nbsp;&nbsp;&nbsp;&nbsp;This system ensures that every concern is acknowledged and addressed in a timely manner.
+            </p>
 
 
-<h2><strong>Key Features</strong></h2>
-<ul>
-<li>&nbsp;&nbsp;&nbsp;&nbsp;<span>Simple Submission Process</span>: Easily submit grievances through our user-friendly interface.</li>
-<li>&nbsp;&nbsp;&nbsp;&nbsp;<span>Confidential Handling</span>: All submissions are treated with confidentiality to protect student privacy.</li>
-<li>&nbsp;&nbsp;&nbsp;&nbsp;<span>Timely Responses</span>: Our dedicated team works diligently to ensure that grievances are resolved quickly and effectively.</li>
+            <h2><strong>Key Features</strong></h2>
+            <ul>
+              <li>&nbsp;&nbsp;&nbsp;&nbsp;<span>Simple Submission Process</span>: Easily submit grievances through our user-friendly interface.</li>
+              <li>&nbsp;&nbsp;&nbsp;&nbsp;<span>Confidential Handling</span>: All submissions are treated with confidentiality to protect student privacy.</li>
+              <li>&nbsp;&nbsp;&nbsp;&nbsp;<span>Timely Responses</span>: Our dedicated team works diligently to ensure that grievances are resolved quickly and effectively.</li>
 
-</ul>
+            </ul>
 
-<p>
-    At Sanjivani College of Engineering, your comfort is our priority. 
-    We encourage all students to utilize this system to help us create a better living experience for everyone. 
-    Thank you for being an integral part of our community!
-</p>
+            <p>
+              At Sanjivani College of Engineering, your comfort is our priority.
+              We encourage all students to utilize this system to help us create a better living experience for everyone.
+              Thank you for being an integral part of our community!
+            </p>
 
             <div className="bg-gray-100 p-4 rounded-lg">
               <h4 className="font-semibold">Our Process:</h4>
@@ -159,7 +186,7 @@ const HelpSupportPage = () => {
                 <li>Follow up with students</li>
               </ul>
             </div>
-         
+
           </div>
         );
       case "troubleshoot":

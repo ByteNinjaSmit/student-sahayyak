@@ -185,15 +185,6 @@ export default function Login() {
             <p className="mt-4 text-red-500 text-center lg:text-lg">{error}</p>
           )}
 
-          {/* Links for Forgot Password and Sign Up */}
-          <div className="mt-6 flex justify-between text-sm lg:text-base text-gray-600">
-            <Link href="/forgot-password" className="hover:text-indigo-500">
-              Forgot Password?
-            </Link>
-            <Link href="/register" className="hover:text-indigo-500">
-              Sign Up
-            </Link>
-          </div>
         </div>
       </div>
     </div>

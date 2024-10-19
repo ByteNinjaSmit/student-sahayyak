@@ -52,8 +52,17 @@ const GrievanceView = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const handleResolve =async () => {
-    
+  // Assuming `grievance.createdAt` is in a valid date format like ISO string
+  const isOlderThanTwoDays = () => {
+    const grievanceDate = new Date(grievance.createdAt);
+    const currentDate = new Date();
+    const timeDifference = currentDate - grievanceDate;
+    const twoDaysInMilliseconds = 2 * 24 * 60 * 60 * 1000; // Two days in milliseconds
+    return timeDifference >= twoDaysInMilliseconds;
+  };
+
+  const handleResolve = async () => {
+
     const confirmed = window.confirm(
       "Are you sure you want to Resolved this grievance?"
     );
@@ -64,7 +73,7 @@ const GrievanceView = () => {
           `/api/issues/getissue/singleissue/${singleIssueId}`,
           {
             method: "PATCH",
-            body:JSON.stringify({status:"Resolved"})
+            body: JSON.stringify({ status: "Resolved" })
           }
         );
 
@@ -73,7 +82,7 @@ const GrievanceView = () => {
         }
 
         // Optionally, redirect or update state after deletion
-        setGrievance({ ...grievance, status: "Resolved" }); 
+        setGrievance({ ...grievance, status: "Resolved" });
         toast.success("Grievance Resolved successfully!");
         router.push(`/client/${user}/dashboard`); // Redirect to grievances list or home page
       } catch (error) {
@@ -94,7 +103,7 @@ const GrievanceView = () => {
           `/api/issues/getissue/singleissue/${singleIssueId}`,
           {
             method: "PATCH",
-            body:JSON.stringify({status:"Urgent"})
+            body: JSON.stringify({ status: "Urgent" })
           }
         );
 
@@ -203,13 +212,12 @@ const GrievanceView = () => {
 
           <div className="mb-6">
             <span
-              className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
-                grievance.status === "Resolved"
-                  ? "bg-green-200 text-green-800"
-                  : grievance.status === "Not Processed"
+              className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${grievance.status === "Resolved"
+                ? "bg-green-200 text-green-800"
+                : grievance.status === "Not Processed"
                   ? "bg-yellow-200 text-yellow-800"
                   : "bg-blue-200 text-blue-800"
-              }`}
+                }`}
             >
               {grievance.status}
             </span>
@@ -218,18 +226,21 @@ const GrievanceView = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <button
               onClick={handleResolve}
-              className="flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out"
+              className={`flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white ${grievance.status !== "Procced" ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out`}
               aria-label="Resolve Grievance"
+              disabled={grievance.status !== "Procced"}
             >
               <FaCheck className="mr-2" /> Resolve Grievance
             </button>
             <button
               onClick={handleEscalate}
-              className="flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition duration-150 ease-in-out"
+              className={`flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white ${isOlderThanTwoDays() && grievance?.status === "Not Processed" ? "bg-yellow-600 hover:bg-yellow-700" : "bg-gray-400 cursor-not-allowed"} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition duration-150 ease-in-out`}
               aria-label="Escalate Grievance"
+              disabled={!(isOlderThanTwoDays() && grievance?.status === "Not Processed")}
             >
               <FaExclamationTriangle className="mr-2" /> Escalate Grievance
             </button>
+
             <button
               onClick={handleAddComment}
               className="flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out"
@@ -239,11 +250,14 @@ const GrievanceView = () => {
             </button>
             <button
               onClick={handleDelete}
-              className="flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150 ease-in-out"
+              className={`flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white ${grievance.status !== "Not Processed" ? "bg-gray-400 cursor-not-allowed" : "bg-red-600 hover:bg-red-700"} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150 ease-in-out`}
               aria-label="Delete Grievance"
+              disabled={grievance.status !== "Not Processed"}
             >
               <FaTrash className="mr-2" /> Delete Grievance
             </button>
+
+
           </div>
         </div>
       </div>

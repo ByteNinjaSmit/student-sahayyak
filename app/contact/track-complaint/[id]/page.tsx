@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import {
   FaExclamationTriangle,
@@ -11,26 +12,39 @@ import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import Link from "next/link";
 
-const GrievanceView = () => {
+type GrievanceType = {
+  _id: string;
+  complaint: string[];
+  user: { _id: string };
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type GrievanceData = {
+  document: GrievanceType;
+  category: string;
+};
+
+const GrievanceView: React.FC = () => {
   const { id } = useParams(); // Get the single issue ID from the URL params
   const router = useRouter(); // Initialize router for navigation
-  const [grievance, setGrievance] = useState(null); // Initialize state to hold grievance data
+  const [grievance, setGrievance] = useState<GrievanceType | null>(null); // State to hold grievance data
+  const [category, setCategory] = useState<string | null>(null); // State for category
   const [loading, setLoading] = useState(true); // State for loading status
-  const [error, setError] = useState(null); // State for error handling
-  const [category, setCategory] = useState(null);
+  const [error, setError] = useState<string | null>(null); // State for error handling
+
   useEffect(() => {
     const fetchGrievance = async () => {
       try {
-        const response = await fetch(
-          `/api/issues/getissue/singleissue/${id}`
-        );
+        const response = await fetch(`/api/public/track-issue/${id}`);
         if (!response.ok) {
           throw new Error("Failed to fetch grievance data");
         }
-        const data = await response.json();
-        setGrievance(data.document); // Set the fetched grievance data from document
-        setCategory(data.category);
-      } catch (err) {
+        const data: GrievanceData = await response.json();
+        setGrievance(data.document); // Set fetched grievance data
+        setCategory(data.category); // Set category
+      } catch (err: any) {
         setError(err.message); // Set error message if fetch fails
       } finally {
         setLoading(false); // Set loading to false after fetch completes
@@ -38,11 +52,11 @@ const GrievanceView = () => {
     };
 
     fetchGrievance(); // Call the fetch function
-  }, [id]); // Dependency array includes singleIssueId
+  }, [id]); // Dependency array includes the issue ID
 
   // Formatting function for dates
-  const formatDate = (dateString) => {
-    const options = {
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -51,12 +65,27 @@ const GrievanceView = () => {
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
+
+  // Check if the grievance is older than two days
+  const isOlderThanTwoDays = () => {
+    if (!grievance) return false;
+    const grievanceDate = new Date(grievance.createdAt);
+    const currentDate = new Date();
+    const timeDifference = currentDate.getTime() - grievanceDate.getTime();
+    const twoDaysInMilliseconds = 2 * 24 * 60 * 60 * 1000; // Two days in milliseconds
+    return timeDifference >= twoDaysInMilliseconds;
+  };
+
   if (loading) {
     return <div>Loading...</div>; // Show loading state
   }
 
   if (error) {
     return <div>Error: {error}</div>; // Show error message if fetch fails
+  }
+
+  if (!grievance) {
+    return <div>No grievance found.</div>; // Fallback if no grievance is fetched
   }
 
   return (
@@ -69,21 +98,19 @@ const GrievanceView = () => {
         </header>
         <div className="mb-6 text-center bg-yellow-200">
           <p className="text-2xl p-2 text-black font-bold ">
-            Category:- {category}
+            Category: {category}
           </p>
         </div>
         <div className="flex justify-end items-center mr-2">
           <Link href={`/`}>
             <button className="flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-300">
               <IoMdArrowRoundBack className="mr-2" />
-              Back to Home
+              Back to Home Page
             </button>
           </Link>
         </div>
         <div className="p-6">
-          <p className="text-sm text-gray-500 mb-4">
-            Grievance ID: {grievance._id}
-          </p>
+          <p className="text-sm text-gray-500 mb-4">Grievance ID: {grievance._id}</p>
 
           <div className="mb-6">
             <h2 className="text-xl font-semibold mb-2">Complaints:</h2>

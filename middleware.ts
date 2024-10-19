@@ -6,11 +6,12 @@ export function middleware(request: NextRequest) {
 
   // Define public paths
   const publicPaths = ["/login", "/register"];
-  const publicVisitsPath = ["/contact", "/faq", "/rule-regulations"];
+  const publicVisitsPath = ["/contact", "/faq", "/rule-regulations","/contact"];
   const publicApiPath = [
     "/api/auth/user/login",
     "/api/auth/admin/login",
     "/api/auth/logout",
+    "/api/public/:path*",
   ];
 
   // Define user-specific paths
@@ -70,6 +71,12 @@ export function middleware(request: NextRequest) {
   //     );
   //   }
   // }
+
+  // Public API
+  if (path.startsWith("/api/public/")) {
+    // Do not check tokens, allow access without affecting the request
+    return NextResponse.next();
+  }
 
   // Redirect logic for public paths
   if (publicPaths.includes(path)) {
@@ -158,5 +165,6 @@ export const config = {
     "/api/:path*", // Apply middleware to all API routes
     "/client/:path*", // Apply middleware to all client-specific routes
     "/admin/:path*",
+    "/api/public/:path*",
   ],
 };

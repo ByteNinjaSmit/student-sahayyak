@@ -71,16 +71,24 @@ const GrievanceForm: React.FC = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const handleCheckboxChange = (section: keyof FormData, option: string) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [section]: prevState[section].includes(option)
-        ? prevState[section].filter((item) => item !== option)
-        : [...prevState[section], option],
-    }));
-  };
+    setFormData((prevState) => {
+      const isOptionSelected = prevState[section].includes(option);
+      const selectedCount = prevState[section].length;
 
+      // Allow selection only if less than 2 options are currently selected
+      if (!isOptionSelected && selectedCount >= 2) {
+        return prevState; // Do not update state if limit is reached
+      }
+
+      return {
+        ...prevState,
+        [section]: isOptionSelected
+          ? prevState[section].filter((item) => item !== option)
+          : [...prevState[section], option],
+      };
+    });
+  };
   const handleOtherInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     section: keyof FormData
@@ -314,7 +322,7 @@ const GrievanceForm: React.FC = () => {
                   </h3>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {(section.options && section.stateKey !== "foodowner") ||
-                    section.stateKey === "foodquality" ? (
+                      section.stateKey === "foodquality" ? (
                       <>
                         {section.options.map((option) => (
                           <div key={option} className="flex items-start">
@@ -323,12 +331,8 @@ const GrievanceForm: React.FC = () => {
                                 id={`${section.stateKey}-${option}`}
                                 name={`${section.stateKey}-${option}`}
                                 type="checkbox"
-                                checked={formData[section.stateKey].includes(
-                                  option
-                                )}
-                                onChange={() =>
-                                  handleCheckboxChange(section.stateKey, option)
-                                }
+                                checked={formData[section.stateKey].includes(option)}
+                                onChange={() => handleCheckboxChange(section.stateKey, option)}
                                 className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
                               />
                             </div>
@@ -388,38 +392,38 @@ const GrievanceForm: React.FC = () => {
 
                     {(section.stateKey === "foodowner" ||
                       section.stateKey === "foodquality") && (
-                      <div>
-                        <label
-                          htmlFor="foodServiceType"
-                          className="block text-sm font-medium text-gray-700"
-                        >
-                          Food Service Type
-                        </label>
-                        <select
-                          id="foodServiceType"
-                          value={formData.foodServiceType}
-                          onChange={(e) =>
-                            handleInputChange(e, "foodServiceType")
-                          }
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                          required
-                        >
-                          <option value="">Select Type</option>
-                          {/* Render options1 if stateKey is foodquality, otherwise render section.options */}
-                          {section.stateKey === "foodquality"
-                            ? section.options1.map((options1) => (
+                        <div>
+                          <label
+                            htmlFor="foodServiceType"
+                            className="block text-sm font-medium text-gray-700"
+                          >
+                            Food Service Type
+                          </label>
+                          <select
+                            id="foodServiceType"
+                            value={formData.foodServiceType}
+                            onChange={(e) =>
+                              handleInputChange(e, "foodServiceType")
+                            }
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            required
+                          >
+                            <option value="">Select Type</option>
+                            {/* Render options1 if stateKey is foodquality, otherwise render section.options */}
+                            {section.stateKey === "foodquality"
+                              ? section.options1.map((options1) => (
                                 <option key={options1} value={options1}>
                                   {options1}
                                 </option>
                               ))
-                            : section.options.map((option) => (
+                              : section.options.map((option) => (
                                 <option key={option} value={option}>
                                   {option}
                                 </option>
                               ))}
-                        </select>
-                      </div>
-                    )}
+                          </select>
+                        </div>
+                      )}
                   </div>
                 </motion.div>
               ))}
@@ -448,9 +452,8 @@ const GrievanceForm: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-                  isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+                className={`inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
               >
                 {isSubmitting ? "Submitting..." : "Submit"}
               </button>
