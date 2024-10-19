@@ -9,6 +9,7 @@ import {
 import { motion } from "framer-motion";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { relative } from "path";
 // Define the interface for the form data
 interface FormData {
   room: string[];
@@ -135,36 +136,63 @@ const GrievanceForm: React.FC = () => {
     if (otherConcernsValue && !relevantData.includes(otherConcernsValue)) {
       relevantData.push(otherConcernsValue);
     }
+    console.log(`other concern ${relevantData}`);
+    
+    if (relevantData.every(item => item.length < 2)) {
+      toast.error("Select complaint");
+    }
+    else {
+      if (sectionKey === params.issue) {
+        try {
+          const response = await fetch(
+            `/api/issues/${params.user}/${params.issue}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                relevantData,
+                ...(params.issue === "foodquality" || params.issue === "foodowner" ? {
+                  foodownerName: formData.foodownerName,
+                  foodServiceType: formData.foodServiceType,
+                } : {})
+              })
+            }
+          );
 
-    if (sectionKey === params.issue) {
-      try {
-        const response = await fetch(
-          `/api/issues/${params.user}/${params.issue}`,
-          {
-            method: "POST", // Use POST instead of GET
-            headers: {
-              "Content-Type": "application/json",
-              //Authorization: `Bearer ${token}`, // Include the token if needed
-            },
-            body: JSON.stringify({
-              relevantData, // Pass relevantData directly
-              ...(params.issue === "foodquality" || params.issue === "foodowner" ? {
-                foodownerName: formData.foodownerName,
-                foodServiceType: formData.foodServiceType,
-              } : {})
-            })  // Pass userId in the request body
+          const data = await response.json(); // Capture the response data
+
+          if (!response.ok) {
+            // Handle error messages returned from the server
+            toast.error(data.error || "Grievances Raise Failed"); // Display specific error message from backend
+            return; // Exit if there's an error
           }
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch user details");
+
+          // Success case: Show success message
+          toast.success(data.msg); // Use the success message from the response
+
+          // Only navigate if the response is successful
+          if (response.status === 200) {
+            if (data.msg) {
+              router.push(`/client/${params.user}/dashboard`); // Redirect only on success
+            }
+            else {
+              toast.error(data.error || "Grievances Raise Failed");
+            }
+
+          }
+
+        } catch (error) {
+          console.error("Error Grievances Raise Failed details:", error);
+          toast.error("Grievances Raise Failed");
         }
-        toast.success("Grievances Raised");
-        router.push(`/client/${params.user}/dashboard`);
-      } catch (error) {
-        console.error("Error Grievances Raise Failed details:", error);
-        toast.error("Grievances Raise Failed");
+
+
+
       }
     }
+
 
     console.log(`Relevant Data: ${relevantData}`);
     console.log(`Food Owner Name: ${formData.foodownerName}`);
