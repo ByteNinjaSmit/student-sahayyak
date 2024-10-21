@@ -39,7 +39,7 @@ export async function GET(
 
     // Try to fetch data from each model and return the first found document
     for (const { model, category } of models) {
-      foundDocument = await model.findById(issueid).populate("user", "-password").exec();
+      foundDocument = await model.findById({_id:issueid}).populate("user", "-password").exec();
       if (foundDocument) {
         foundCategory = category; // Save the found category
         break; // Exit loop once a document is found

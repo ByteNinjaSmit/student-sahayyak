@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
       await connectToDatabase();
       // Parse request body
       const reqBody = await request.json();
-      const { username, email, phone, password } = reqBody;
+      const { username, email, hostelId,phone, password } = reqBody;
   
       // Validate that all fields are provided
       if (!username || !email || !phone || !password) {
@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
       const userCreated = await Faculty.create({
         username,
         email,
+        hostelId,
         phone,
         password
       });

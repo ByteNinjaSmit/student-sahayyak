@@ -207,6 +207,18 @@ const GrievanceView = () => {
                   Status: {complaintData.status}
                 </span>
               </div>
+              {
+                complaintData?.image && (
+                  <div className="mb-4">
+                    <h2 className="text-lg font-semibold mb-2">Complaint Image:</h2>
+                    <img
+                      src={complaintData?.image}
+                      alt="Image Preview"
+                      className="w-full h-auto rounded-lg border border-gray-300"
+                    />
+                  </div>
+                )
+              }
             </div>
           </div>
 

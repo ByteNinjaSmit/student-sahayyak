@@ -1,6 +1,9 @@
 import mongoose, { Schema,model } from "mongoose";
 
 const actionSchema = new Schema({
+    complaintId:{
+        type: mongoose.Schema.Types.ObjectId, 
+    },
     message:{
         type:String,
         required:true,

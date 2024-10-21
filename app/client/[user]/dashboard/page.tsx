@@ -19,12 +19,13 @@ import {
   FaDoorOpen,
 } from "react-icons/fa";
 import Link from "next/link";
-
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 const Dashboard = () => {
   const { isLoggedIn, userData } = useSession();
   const router = useRouter();
   const [userId, setUserId] = useState(null);
   const [user, setUser] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [complaintData, setComplaintData] = useState([]);
   const params = useParams<{ user: string }>();
 
@@ -41,6 +42,7 @@ const Dashboard = () => {
 
   // Function to fetch complaints
   const getComplaints = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`/api/issues/getissue/${userId}/all`);
       if (!response.ok) {
@@ -50,6 +52,8 @@ const Dashboard = () => {
       setComplaintData(data); // Set fetched complaints
     } catch (error) {
       console.error("Error fetching complaints:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -102,28 +106,28 @@ const Dashboard = () => {
       icon: <FaCheckCircle />,
       name: "Track Complaint",
       description: "Click to check the status of your complaint.",
-      link: "/grievance/track",
+      link: "/contact?case=track",
       buttonText: "Track",
     },
     {
       icon: <FaBook />,
       name: "About Us",
       description: "Click to see about us.",
-      link: "/contact",
+      link: "/contact?case=about",
       buttonText: "View",
     },
     {
       icon: <FaQuestionCircle />,
       name: "Faq",
       description: "Click to see frequently asked questions.",
-      link: "/faq",
+      link: "/contact?case=faq",
       buttonText: "View",
     },
     {
       icon: <FaHeadset />,
       name: "Help and Support",
       description: "Click to get help.",
-      link: "/contact",
+      link: "/contact?case=contact",
       buttonText: "View",
     },
   ];
@@ -188,6 +192,12 @@ const Dashboard = () => {
         </div>
       </header>
 
+      {/* Loading component */}
+      {loading && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+          <AiOutlineLoading3Quarters className="text-white text-4xl animate-spin" />
+        </div>
+      )}
       <section className="mb-12">
         <h2 className="text-2xl font-semibold mb-4 text-blue-800">
           Grievance Categories
@@ -269,14 +279,13 @@ const Dashboard = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`px-2 inline-flex text-sm leading-5 font-semibold rounded-full ${
-                          grievance.status === "Resolved"
+                        className={`px-2 inline-flex text-sm leading-5 font-semibold rounded-full ${grievance.status === "Resolved"
                             ? "bg-green-100 text-green-800"
                             : grievance.status === "Urgent"
-                                  ? "bg-red-200 text-red-800"
-                            : "bg-yellow-100 text-yellow-800"
-                            
-                        }`}
+                              ? "bg-red-200 text-red-800"
+                              : "bg-yellow-100 text-yellow-800"
+
+                          }`}
                       >
                         {grievance.status}
                       </span>

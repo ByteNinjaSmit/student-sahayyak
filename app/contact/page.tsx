@@ -1,14 +1,22 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaQuestionCircle, FaFileAlt, FaSearch, FaPhoneAlt, FaInfoCircle, FaCog } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import {useParams,useSearchParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 const HelpSupportPage = () => {
   const [activeTab, setActiveTab] = useState("form");
   const router = useRouter(); // Router instance for navigation
   const [trackId, setTrackId] = useState(""); // State to store complaint ID
 
-  // Function to handle "Track" button click
+  // Access search parameters
+  const searchParams = useSearchParams();
+  const caseType = searchParams.get('case'); // Renamed from `case` to `caseType`
+  
+  useEffect(() => {
+    if (caseType) {
+      setActiveTab(caseType);
+    }
+  }, [caseType]);
   const handleTrackComplaint = async () => {
     if (!trackId) {
       toast.error("Please enter a valid complaint ID");
@@ -26,6 +34,8 @@ const HelpSupportPage = () => {
       toast.error("An error occurred while tracking the complaint.");
     }
   };
+
+
 
   const renderContent = () => {
     switch (activeTab) {

@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useParams, useRouter } from "next/navigation";
+import { BsFileImage } from "react-icons/bs";
 import { toast } from "react-toastify";
 import { relative } from "path";
 // Define the interface for the form data
@@ -35,7 +36,64 @@ const GrievanceForm: React.FC = () => {
     categories: string;
     issue: string;
   }>();
-  console.log(params);
+  // console.log(params);
+  const [image, setImage] = useState<File | null>(null);
+  const resizeImage = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        img.src = reader.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          const maxWidth = 800;
+          const maxHeight = 800;
+          let width = img.width;
+          let height = img.height;
+
+          // Calculate new dimensions
+          if (width > height) {
+            if (width > maxWidth) {
+              height *= maxWidth / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width *= maxHeight / height;
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx?.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL(file.type));
+        };
+      };
+
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const file = event.target.files[0];
+      if (file.size > 250 * 1024) {
+        const resizedImage = await resizeImage(file);
+        setImage(resizedImage);
+      } else {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImage(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
+
 
   useEffect(() => {
     // Check if
@@ -90,6 +148,9 @@ const GrievanceForm: React.FC = () => {
       };
     });
   };
+  console.log(image);
+
+
   const handleOtherInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     section: keyof FormData
@@ -136,13 +197,14 @@ const GrievanceForm: React.FC = () => {
     if (otherConcernsValue && !relevantData.includes(otherConcernsValue)) {
       relevantData.push(otherConcernsValue);
     }
-    console.log(`other concern ${relevantData}`);
-    
+    // console.log(`other concern ${relevantData}`);
+
     if (relevantData.every(item => item.length < 2)) {
       toast.error("Select complaint");
     }
     else {
       if (sectionKey === params.issue) {
+
         try {
           const response = await fetch(
             `/api/issues/${params.user}/${params.issue}`,
@@ -156,7 +218,10 @@ const GrievanceForm: React.FC = () => {
                 ...(params.issue === "foodquality" || params.issue === "foodowner" ? {
                   foodownerName: formData.foodownerName,
                   foodServiceType: formData.foodServiceType,
-                } : {})
+                } : {}),
+                ...(params.issue === "corridor" ? {
+                  image: image,
+                } : {}),
               })
             }
           );
@@ -194,9 +259,9 @@ const GrievanceForm: React.FC = () => {
     }
 
 
-    console.log(`Relevant Data: ${relevantData}`);
-    console.log(`Food Owner Name: ${formData.foodownerName}`);
-    console.log(`Food Service Type: ${formData.foodServiceType}`);
+    // console.log(`Relevant Data: ${relevantData}`);
+    // console.log(`Food Owner Name: ${formData.foodownerName}`);
+    // console.log(`Food Service Type: ${formData.foodServiceType}`);
 
     // Ideally, submit the data to your API here
     // await submitData(relevantData);
@@ -417,6 +482,32 @@ const GrievanceForm: React.FC = () => {
                         />
                       </div>
                     )}
+                    {section.stateKey === "corridor" && (
+                      <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md">
+                        <h1 className="text-xl font-semibold text-gray-800 flex items-center">
+                          <BsFileImage className="mr-2 text-blue-600" />
+                          Upload Image
+                        </h1>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          required
+                          className="mt-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                    )}
+                    {(section.stateKey === "corridor" && !!image) && (
+                      <div className="mb-4">
+                        <h2 className="text-lg font-semibold mb-2">Image Preview:</h2>
+                        <img
+                          src={image}
+                          alt="Image Preview"
+                          className="w-full h-auto rounded-lg border border-gray-300"
+                        />
+                      </div>
+                    )}
+
 
                     {(section.stateKey === "foodowner" ||
                       section.stateKey === "foodquality") && (

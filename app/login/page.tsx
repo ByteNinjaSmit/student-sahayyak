@@ -38,8 +38,8 @@ export default function Login() {
           // document.cookie = "isLoggedIn=true; path=/; max-age=7200"; // Setting login status
           document.cookie = "isLoggedIn=true; path=/;";
           storeTokenInLS(res_data.token);
+          router.push("/"); // Redirect t the home page
           toast.success("Login Successful");
-          router.push("/"); // Redirect to the home page
         } else {
           setError(res_data.error || "Login failed");
           toast.error(res_data.error || "Login failed");
@@ -66,8 +66,10 @@ export default function Login() {
           document.cookie = "isLoggedIn=true; path=/;";
           storeTokenInLS(res_data.token);
           router.push("/"); // Redirect to the home page
+          toast.success("Login Successful");
         } else {
           setError(res_data.error || "Login failed");
+          toast.error(res_data.error || "Login failed");
         }
       } catch (error) {
         setError("An unexpected error occurred. Please try again.");

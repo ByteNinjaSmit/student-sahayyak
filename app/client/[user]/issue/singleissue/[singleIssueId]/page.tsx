@@ -209,7 +209,18 @@ const GrievanceView = () => {
               </p>
             </div>
           </div>
-
+          {
+            grievance?.image &&(
+              <div className="mb-4">
+                        <h2 className="text-lg font-semibold mb-2">Complaint Image:</h2>
+                        <img
+                          src={grievance?.image}
+                          alt="Image Preview"
+                          className="w-full h-auto rounded-lg border border-gray-300"
+                        />
+                      </div>
+            )
+          }
           <div className="mb-6">
             <span
               className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${grievance.status === "Resolved"

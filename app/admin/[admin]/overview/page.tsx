@@ -5,8 +5,11 @@ import AdminSidebar from "@/components/layout/admin/sidebar";
 import { useParams } from "next/navigation";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import Link from "next/link";
+import { useSession } from "@/app/store/session";
+
 const GrievanceManagementSystem = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const { userData, isLoggedIn } = useSession();
   const [category, setCategory] = useState("All");
   const [status, setStatus] = useState("All");
   const [hostel, setHostel] = useState("All");
@@ -18,6 +21,7 @@ const GrievanceManagementSystem = () => {
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
   const toggleNotifications = () => setNotificationsOpen((prev) => !prev);
   const { admin } = useParams();
+  const [isRector, setIsRector] = useState(false);
   // Dummy data for demonstration
   // const grievances = [
   //   { id: "GR001", category: "Technical", userName: "John Doe", status: "Open" },
@@ -27,6 +31,22 @@ const GrievanceManagementSystem = () => {
   // ];
 
   // Function to fetch complaints
+
+  // Set userId and isAdmin when user data changes
+  useEffect(() => {
+    if (isLoggedIn && userData) {
+      // Check if the user is an admin
+      if (userData.isRector || userData.isHighAuth) {
+        if (userData.isRector) {
+          setIsRector(true);
+          // console.log("this is Rector");
+        }
+      }
+    } else {
+      setIsRector(false); // Clear admin status if not logged in
+    }
+  }, [isLoggedIn, userData]);
+
 
   const getComplaints = async () => {
     setLoading(true);
@@ -48,6 +68,9 @@ const GrievanceManagementSystem = () => {
     getComplaints();
   }, [admin]);
 
+  console.log(`This is Rector HostelId: ${userData?.hostelId}`);
+
+
   const itemsPerPage = 50;
   const totalPages = Math.ceil(grievances.length / itemsPerPage);
 
@@ -66,6 +89,14 @@ const GrievanceManagementSystem = () => {
       (hostel === "All" || grievance.user.hostelId === hostel)
     );
   });
+
+  const isOlderThanTwoDaysGrivinces = (grievance) => {
+    const grievanceDate = new Date(grievance.createdAt);
+    const currentDate = new Date();
+    const timeDifference = currentDate - grievanceDate;
+    const twoDaysInMilliseconds = 2 * 24 * 60 * 60 * 1000; // Two days in milliseconds
+    return timeDifference >= twoDaysInMilliseconds;
+  };
 
   const paginatedGrievances = filteredGrievances.slice(
     (currentPage - 1) * itemsPerPage,
@@ -162,24 +193,28 @@ const GrievanceManagementSystem = () => {
 
 
                 </select>
-                <select
-                  className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300"
-                  value={hostel}
-                  onChange={handleHostelChange}
-                >
-                  <option value="All">All Hostels</option>
-                  <option value="G1">G1</option>
-                  <option value="G2">G2</option>
-                  <option value="G3">G3</option>
-                  <option value="G4">G4</option>
-                  <option value="A1">A1</option>
-                  <option value="A2">A2</option>
-                  <option value="A3">A3</option>
-                  <option value="A4">A4</option>
-                  <option value="A5">A5</option>
-                  <option value="A6">A6</option>
-                  <option value="A7">A7</option>
-                </select>
+                {
+                  !isRector && (
+                    <select
+                      className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300"
+                      value={hostel}
+                      onChange={handleHostelChange}
+                    >
+                      <option value="All">All Hostels</option>
+                      <option value="G1">G1</option>
+                      <option value="G2">G2</option>
+                      <option value="G3">G3</option>
+                      <option value="G4">G4</option>
+                      <option value="A1">A1</option>
+                      <option value="A2">A2</option>
+                      <option value="A3">A3</option>
+                      <option value="A4">A4</option>
+                      <option value="A5">A5</option>
+                      <option value="A6">A6</option>
+                      <option value="A7">A7</option>
+                    </select>
+                  )
+                }
                 <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center">
                   <FaFilter className="mr-2" /> Apply Filters
                 </button>
@@ -195,38 +230,64 @@ const GrievanceManagementSystem = () => {
                   <tr className="bg-gray-200">
                     <th className="px-4 py-2 text-left">Grievance ID <FaSort className="inline ml-1 cursor-pointer" /></th>
                     <th className="px-4 py-2 text-left">Category <FaSort className="inline ml-1 cursor-pointer" /></th>
-                    <th className="px-4 py-2 text-left">Hostel Id <FaSort className="inline ml-1 cursor-pointer" /></th>
+                    {!isRector && (
+                      <th className="px-4 py-2 text-left">Hostel Id <FaSort className="inline ml-1 cursor-pointer" /></th>
+                    )}
+                    {isRector && (
+                      <th className="px-4 py-2 text-left">Room No <FaSort className="inline ml-1 cursor-pointer" /></th>
+                    )}
                     <th className="px-4 py-2 text-left">User Name <FaSort className="inline ml-1 cursor-pointer" /></th>
                     <th className="px-4 py-2 text-left">Status <FaSort className="inline ml-1 cursor-pointer" /></th>
                     <th className="px-4 py-2 text-left">Action</th>
                   </tr>
                 </thead>
+
                 <tbody>
-                  {paginatedGrievances.map((grievance) => (
-                    <tr key={grievance._id} className="border-b hover:bg-gray-50">
+                  {(isRector
+                    ? paginatedGrievances.filter(grievance => {
+                      // const isOlderThanTwoDays = new Date(grievance?.createdAt) > new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+                      const isOlderThanTwoDays = isOlderThanTwoDaysGrivinces(grievance);
+                      const hostelIdMatch = grievance.user?.hostelId === userData?.hostelId;
+                      const shouldShow =
+                        (grievance?.status === "Not Processed" && isOlderThanTwoDays) || grievance?.status === "Resolved" || grievance?.status === "Urgent" ;
+                      const match = shouldShow && hostelIdMatch;
+                      return match;
+                    })
+                    : paginatedGrievances
+                  ).map((grievance, index) => (
+                    <tr key={index} className="border-b hover:bg-gray-50">
                       <td className="px-4 py-2">{grievance._id}</td>
                       <td className="px-4 py-2">{grievance.category}</td>
-                      <td className="px-4 py-2">{grievance.user?.hostelId}</td>
+                      {
+                        !isRector && (
+                          <td className="px-4 py-2">{grievance.user?.hostelId}</td>
+                        )
+                      }
+                      {
+                        isRector && (
+                          <td className="px-4 py-2">{grievance.user?.room}</td>
+                        )
+                      }
                       <td className="px-4 py-2">{grievance.user?.username}</td>
                       <td className="px-4 py-2">
                         <span className={`px-2 py-1 rounded text-xs font-semibold ${grievance.status === "Resolved"
-                            ? "bg-green-200 text-green-800"
-                            : grievance.status === "Urgent"
-                              ? "bg-red-200 text-red-800"
-                              : "bg-yellow-200 text-yellow-800"
+                          ? "bg-green-200 text-green-800"
+                          : grievance.status === "Urgent"
+                            ? "bg-red-200 text-red-800"
+                            : "bg-yellow-200 text-yellow-800"
                           }`}>
                           {grievance.status}
                         </span>
                       </td>
                       <td className="px-4 py-2">
-                      <Link href={`/admin/${admin}/singleissue/${grievance?._id}`}>
-
+                        <Link href={`/admin/${admin}/singleissue/${grievance?._id}`}>
                           <button className="text-blue-500 hover:text-blue-700">View</button>
                         </Link>
                       </td>
                     </tr>
                   ))}
                 </tbody>
+
               </table>
             </div>
 

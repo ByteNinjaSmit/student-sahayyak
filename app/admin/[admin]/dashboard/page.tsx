@@ -91,6 +91,40 @@ const AdminDashboard = () => {
     (grievance) => grievance?.category === "Security"
   ).length;
 
+
+  // Calculating Number Of complaints Hostel Wise 
+  const A1Hostel = complaintData.filter(
+    (grievance) => grievance?.user?.hostelId === "A1"
+  ).length;
+  const A2Hostel = complaintData.filter(
+    (grievance) => grievance?.user?.hostelId === "A2"
+  ).length;
+  const A3Hostel = complaintData.filter(
+    (grievance) => grievance?.user?.hostelId === "A3"
+  ).length;
+  const A4Hostel = complaintData.filter(
+    (grievance) => grievance?.user?.hostelId === "A4"
+  ).length;
+  const A5Hostel = complaintData.filter(
+    (grievance) => grievance?.user?.hostelId === "A5"
+  ).length;
+  const A6Hostel = complaintData.filter(
+    (grievance) => grievance?.user?.hostelId === "A6"
+  ).length;
+  const A7Hostel = complaintData.filter(
+    (grievance) => grievance?.user?.hostelId === "A7"
+  ).length;
+  const G1Hostel = complaintData.filter(
+    (grievance) => grievance?.user?.hostelId === "G1"
+  ).length;
+  const G2Hostel = complaintData.filter(
+    (grievance) => grievance?.user?.hostelId === "G2"
+  ).length;
+  const G3Hostel = complaintData.filter(
+    (grievance) => grievance?.user?.hostelId === "G3"
+  ).length;
+
+
   // const createdAtDate = new Date(complaintData.createdAt);
   // const month = createdAtDate.getMonth();
   // Function to fetch complaints
@@ -227,6 +261,79 @@ const AdminDashboard = () => {
         ],
       },
     ],
+  };
+  const barChartDataHostels = {
+    labels: ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "G1", "G2", "G3"],
+    datasets: [
+      {
+        label: "Hostels",
+        data: [
+          A1Hostel,
+          A2Hostel,
+          A3Hostel,
+          A4Hostel,
+          A5Hostel,
+          A6Hostel,
+          A7Hostel,
+          G1Hostel,
+          G2Hostel,
+          G3Hostel
+        ],
+        backgroundColor: [
+          "#FF6384",  // Color for A1
+          "#36A2EB",  // Color for A2
+          "#FFCE56",  // Color for A3
+          "#4BC0C0",  // Color for A4
+          "#9966FF",  // Color for A5
+          "#FF9F40",  // Color for A6
+          "#8E44AD",  // Color for A7
+          "#3498DB",  // Color for G1
+          "#2ECC71",  // Color for G2
+          "#E74C3C",  // Color for G3
+        ],
+        hoverBackgroundColor: [
+          "#FF6384",  // Hover color for A1
+          "#36A2EB",  // Hover color for A2
+          "#FFCE56",  // Hover color for A3
+          "#4BC0C0",  // Hover color for A4
+          "#9966FF",  // Hover color for A5
+          "#FF9F40",  // Hover color for A6
+          "#8E44AD",  // Hover color for A7
+          "#3498DB",  // Hover color for G1
+          "#2ECC71",  // Hover color for G2
+          "#E74C3C",  // Hover color for G3
+        ],
+      },
+    ],
+  };
+
+// Options to customize the bar chart
+const optionsHostel = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: true,
+      position: 'top',
+      labels: {
+        font: {
+          size: 14,
+        },
+      },
+    },
+    tooltip: {
+      callbacks: {
+        label: function (tooltipItem) {
+          return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`; // Customize tooltip display
+        },
+      },
+    },
+  },
+};
+  const handleBarClick = (elements) => {
+    if (elements.length > 0) {
+      const { index } = elements[0]; // Get the index of the clicked bar
+      console.log(`Clicked on: ${barChartDataHostels.labels[index]} with data: ${barChartDataHostels.datasets[0].data[index]}`);
+    }
   };
 
   // const barChartData = {
@@ -435,6 +542,11 @@ const AdminDashboard = () => {
                 <h4 className="text-xl font-semibold mb-4">Top Categories</h4>
                 <Bar data={barChartData} />
               </div>
+              <div className="bg-white rounded-lg shadow-md p-6 lg:col-span-2">
+                <h4 className="text-xl font-semibold mb-4">Hostel Wise</h4>
+                <Bar data={barChartDataHostels} options={optionsHostel}
+                  onElementsClick={handleBarClick} />
+              </div>
             </div>
 
             {/* Recent Grievances Table */}
@@ -464,10 +576,10 @@ const AdminDashboard = () => {
                           <td className="p-3">
                             <span
                               className={`px-2 py-1 rounded text-xs font-semibold ${grievance.status === "Resolved"
-                                  ? "bg-green-200 text-green-800"
-                                  : grievance.status === "Urgent"
-                                    ? "bg-red-200 text-red-800"
-                                    : "bg-yellow-200 text-yellow-800"
+                                ? "bg-green-200 text-green-800"
+                                : grievance.status === "Urgent"
+                                  ? "bg-red-200 text-red-800"
+                                  : "bg-yellow-200 text-yellow-800"
                                 }`}
                             >
                               {grievance.status}

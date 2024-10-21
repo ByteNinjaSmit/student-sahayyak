@@ -9,30 +9,37 @@ import FoodOwner from "@/database/models/food-owner-model";
 import NetworkConn from "@/database/models/network-model";
 import Safety from "@/database/models/safety-model";
 import { NextRequest, NextResponse } from "next/server";
-
+import multer from 'multer';
+// import nextConnect from "next-connect";
 // Database Connection
 // Ensure the database connection is established before processing requests
-
+const upload = multer({
+  storage: multer.memoryStorage(), // Store image in memory for processing
+});
 export async function POST(
   request: NextRequest,
   { params }: { params: { user: string; issue: string } }
 ) {
-  await connectToDatabase();  
+  await connectToDatabase();
 
   // Helper function to validate relevantData
   const isValidComplaint = (relevantData: string[] | undefined) => {
-    return Array.isArray(relevantData) && relevantData.length > 0 && relevantData.every(item => item.length >= 2);
+    return (
+      Array.isArray(relevantData) &&
+      relevantData.length > 0 &&
+      relevantData.every((item) => item.length >= 2)
+    );
   };
-  const isValidOwner = (foodownerName: string | undefined) => {
-    return foodownerName && foodownerName.length >= 2;
-  }
-  const isValidFoodServiceType= (foodServiceType: string | undefined) => {
-    return foodServiceType && foodServiceType.length >= 2;
-  }
+  // const isValidOwner = (foodownerName: string | undefined) => {
+  //   return foodownerName && foodownerName.length >= 2;
+  // }
+  // const isValidFoodServiceType= (foodServiceType: string | undefined) => {
+  //   return foodServiceType && foodServiceType.length >= 2;
+  // }
 
   // Parse the request body
   const reqBody = await request.json();
-  const { relevantData, foodownerName, foodServiceType } = reqBody;
+  const { relevantData, foodownerName, foodServiceType, image } = reqBody;
 
   // Validate relevantData
   if (!isValidComplaint(relevantData)) {
@@ -41,19 +48,25 @@ export async function POST(
       status: 400,
     });
   }
-  if (!isValidOwner(foodownerName)) {
-    return NextResponse.json({
-      error: "Please enter a valid Owner Name.",
-      status: 400,
-    });
-  }
-  if (!isValidFoodServiceType(foodServiceType)) {
-    return NextResponse.json({
-      error: "Please Select Valid Service.",
-      status: 400,
-    });
-  }
-  
+  // if (!isValidOwner(foodownerName)) {
+  //   return NextResponse.json({
+  //     error: "Please enter a valid Owner Name.",
+  //     status: 400,
+  //   });
+  // }
+  // if (!isValidFoodServiceType(foodServiceType)) {
+  //   return NextResponse.json({
+  //     error: "Please Select Valid Service.",
+  //     status: 400,
+  //   });
+  // }
+
+  //  Image Handeling
+
+  // const handler = nextConnect();
+  // const file = image.get('image') as File;
+  // const buffer = await file.arrayBuffer();
+  // const imageUrl = `data:${file.type};base64,${Buffer.from(buffer).toString('base64')}`;
 
   // Process the complaints based on the issue type
   try {
@@ -70,7 +83,11 @@ export async function POST(
         break;
 
       case "corridor":
-        await Corridor.create({ complaint: relevantData, user: params.user });
+        await Corridor.create({
+          complaint: relevantData,
+          user: params.user,
+          image: image,
+        });
         msg = "Corridor Raised Grievance.";
         break;
 
@@ -100,7 +117,10 @@ export async function POST(
         break;
 
       case "wifiissues":
-        await NetworkConn.create({ complaint: relevantData, user: params.user });
+        await NetworkConn.create({
+          complaint: relevantData,
+          user: params.user,
+        });
         msg = "Network Issue Raised Grievance.";
         break;
 
@@ -110,14 +130,19 @@ export async function POST(
         break;
 
       default:
-        return NextResponse.json({ error: "Not Found Your Issue.", status: 404 });
+        return NextResponse.json({
+          error: "Not Found Your Issue.",
+          status: 404,
+        });
     }
 
     // If the grievance is successfully created, send a success response
     return NextResponse.json({ msg, status: 200 });
-
   } catch (error) {
     console.error("Error To Raise Grievance:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
