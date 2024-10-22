@@ -37,7 +37,11 @@ const GrievanceForm: React.FC = () => {
     issue: string;
   }>();
   // console.log(params);
+  const [progress, setProgress] = useState(0);
+
   const [image, setImage] = useState<File | null>(null);
+
+  // Image Resize code
   const resizeImage = (file: File): Promise<string> => {
     return new Promise((resolve) => {
       const img = new Image();
@@ -93,7 +97,6 @@ const GrievanceForm: React.FC = () => {
       }
     }
   };
-
 
   useEffect(() => {
     // Check if
@@ -204,7 +207,12 @@ const GrievanceForm: React.FC = () => {
     }
     else {
       if (sectionKey === params.issue) {
+        const progressInterval = setInterval(() => {
+          setProgress((prev) => (prev < 90 ? prev + 10 : prev));
+        }, 100);
 
+        const xhr = new XMLHttpRequest();
+        const url = `/api/issues/${params.user}/${params.issue}`;
         try {
           const response = await fetch(
             `/api/issues/${params.user}/${params.issue}`,
@@ -223,9 +231,25 @@ const GrievanceForm: React.FC = () => {
                   image: image,
                 } : {}),
               })
+            }, {
+            // Track the progress of the upload
+            onUploadProgress: (progressEvent) => {
+              const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+              setProgress(percentCompleted);  // Update progress state
             }
+          }
           );
+          xhr.open('POST', url, true);
+          xhr.setRequestHeader('Content-Type', 'application/json');
 
+
+          // Track upload progress
+          xhr.upload.onprogress = (event) => {
+            if (event.lengthComputable) {
+              const percentCompleted = Math.round((event.loaded * 100) / event.total);
+              setProgress(percentCompleted);
+            }
+          };
           const data = await response.json(); // Capture the response data
 
           if (!response.ok) {
@@ -251,6 +275,9 @@ const GrievanceForm: React.FC = () => {
         } catch (error) {
           console.error("Error Grievances Raise Failed details:", error);
           toast.error("Grievances Raise Failed");
+        } finally {
+          clearInterval(progressInterval);
+          setProgress(100);
         }
 
 
@@ -567,6 +594,15 @@ const GrievanceForm: React.FC = () => {
             </motion.div>
 
             {/* Submit Button */}
+            <div className="my-4">
+              <div className="w-full bg-gray-300 h-4 rounded">
+                <div
+                  className="bg-green-500 h-4 rounded"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <p className="text-sm text-gray-600 mt-2">{progress}% completed</p>
+            </div>
             <div className="flex justify-center">
               <button
                 type="submit"

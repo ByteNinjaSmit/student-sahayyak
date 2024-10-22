@@ -231,7 +231,7 @@ const Dashboard = () => {
         <h2 className="text-2xl font-semibold mb-4 text-blue-800">
           Recent Grievances
         </h2>
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-white rounded-lg shadow-md overflow-x-auto">
           <table className="w-full">
             <thead className="bg-blue-50">
               <tr>
