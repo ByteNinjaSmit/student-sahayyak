@@ -104,9 +104,9 @@ export default function Login() {
           {/* Logo */}
           <div className="flex justify-center mb-8">
             <img
-              src="https://play-lh.googleusercontent.com/AcdeDA1mvOZafTjhbaaAk1gEzu16fT2-n9y7Q3MghB3Q2tIeVnjcl28w-8Y-ygkzG77n"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4JIbjdos9HQaTUn3Xm9CBB5fCBxvsOBlTjA&s"
               alt="Logo"
-              className="w-24 h-24 lg:w-32 lg:h-32"
+              className="w-24 h-24 lg:w-36 lg:h-36"
             />
           </div>
 

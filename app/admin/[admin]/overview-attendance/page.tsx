@@ -92,6 +92,7 @@ export default function HostelAttendanceOverview() {
         };
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
+    console.log(attendanceData);
 
 
 
@@ -243,12 +244,17 @@ export default function HostelAttendanceOverview() {
                                             <td className="py-2 px-3 sm:px-4 whitespace-nowrap text-sm">{entry?.students?.filter(s => s.status === 'Late').length}</td>
                                             <td className="py-2 px-3 sm:px-4 whitespace-nowrap text-sm">
                                                 <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-                                                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs flex items-center justify-center transition duration-300 ease-in-out">
-                                                        <FaEye className="mr-1" /> View
-                                                    </button>
+                                                    <Link href={`/admin/${admin}/overview-attendance/view/${entry?._id}`}>
+                                                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs flex items-center justify-center transition duration-300 ease-in-out">
+                                                            <FaEye className="mr-1" /> View
+                                                        </button>
+                                                    </Link>
+                                                    <Link href={`/admin/${admin}/overview-attendance/edit/${entry?._id}`}>
                                                     <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-xs flex items-center justify-center transition duration-300 ease-in-out">
                                                         <FaEdit className="mr-1" /> Edit
                                                     </button>
+                                                    </Link>
+
                                                 </div>
                                             </td>
                                         </tr>
