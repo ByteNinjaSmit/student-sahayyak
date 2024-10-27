@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import {
   FaEdit, FaTrash, FaEye, FaLock,
+  FaIdCardAlt ,
   FaUser,
   FaDoorOpen,
   FaBuilding,
@@ -283,6 +284,7 @@ const UserManagement = () => {
               <div className="bg-white rounded-lg p-4 w-1/2">
                 <h2 className="text-xl font-bold mb-2">User Details</h2>
                 <p><FaRegAddressCard  className="inline mr-2" /><strong>ID:</strong> {selectedUser?._id}</p>
+                <p><FaIdCardAlt className="inline mr-2 text-indigo-700" /><strong>Name:</strong> {selectedUser?.name}</p>
                 <p><FaUser className="inline mr-2 text-indigo-700" /><strong>Username:</strong> {selectedUser?.username}</p>
                 <p><FaDoorOpen className="inline mr-2 text-pink-700" /><strong>Room Number:</strong> {selectedUser?.room}</p>
                 <p><FaBuilding className="inline mr-2 text-purple-700" /><strong>Hostel:</strong> {selectedUser?.hostelId}</p>

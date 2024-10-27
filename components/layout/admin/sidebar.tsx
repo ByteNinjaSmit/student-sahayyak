@@ -12,6 +12,7 @@ import {
   FaClipboardCheck,
   FaListAlt,
   FaInfoCircle,
+  FaCalendarAlt,
   FaQuestionCircle,
   FaLifeRing, FaUsers,
   FaTimes, // Import the close (times) icon
@@ -62,6 +63,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ sidebarOpen, toggleSidebar 
     { icon: <FaChartBar />, text: "Overview", href: `/admin/${admin}/overview` },
     { icon: <FaUser />, text: "Profile", href: `/admin/${admin}/profile/edit-profile` },
     { icon: <FaUsers />, text: "Students", href: `/admin/${admin}/hostellers` },
+    { icon: <FaCalendarAlt />, text: "Attendance", href: `/admin/${admin}/overview-attendance` },
     // { icon: <FaBed />, text: "Hostel Issues", href: "/admin/hostel-issues" },
     // { icon: <FaUtensils />, text: "Mess/Tiffin Issues", href: "/admin/mess-issues" },
     // { icon: <FaToolbox />, text: "Facilities Issues", href: "/admin/facilities-issues" },

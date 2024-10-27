@@ -68,7 +68,7 @@ const GrievanceManagementSystem = () => {
     getComplaints();
   }, [admin]);
 
-  console.log(`This is Rector HostelId: ${userData?.hostelId}`);
+  // console.log(`This is Rector HostelId: ${userData?.hostelId}`);
 
 
   const itemsPerPage = 50;

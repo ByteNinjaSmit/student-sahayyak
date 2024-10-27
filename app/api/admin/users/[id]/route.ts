@@ -50,7 +50,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
     try {
         const userId = params.id as String;
-        const { username, room, hostelId, password } = await request.json();
+        const { name,username, room, hostelId, password } = await request.json();
 
         // Check if the ID is valid
         if (!userId) {
@@ -66,6 +66,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         const updateData: any = {};
 
         // Add fields to updateData only if provided in the request body
+        if (name) updateData.name = name;
         if (username) updateData.username = username;
         if (room) updateData.room = room;
         if (hostelId) updateData.hostelId = hostelId;

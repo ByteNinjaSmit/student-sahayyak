@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { FaEye, FaEyeSlash, FaLock, FaUser, FaHome, FaBuilding } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaLock, FaUser, FaIdCardAlt, FaHome, FaBuilding } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useParams, useRouter } from "next/navigation"; // For client-side routing
 import Link from "next/link";
@@ -9,6 +9,7 @@ const EditUserFromAdmin = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [username, setUsername] = useState("");
+    const [name, setName] = useState("");
     const [roomNumber, setRoomNumber] = useState("");
     const [hostel, setHostel] = useState("");
     const [password, setPassword] = useState("");
@@ -36,6 +37,7 @@ const EditUserFromAdmin = () => {
                 setUserData(data.data);
 
                 // Pre-populate the form fields with fetched data
+                setName(data.data[0]?.name || "");
                 setUsername(data.data[0]?.username || "");
                 setRoomNumber(data.data[0]?.room || "");
                 setHostel(data.data[0]?.hostelId || "");
@@ -63,6 +65,7 @@ const EditUserFromAdmin = () => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
+                    name,
                     username,
                     password,
                     room: roomNumber,
@@ -95,6 +98,23 @@ const EditUserFromAdmin = () => {
 
                 <form onSubmit={handleEdit}>
                     <div className="space-y-6">
+                        <div className="bg-indigo-100 p-4 rounded-lg">
+                            <label
+                                htmlFor="name"
+                                className="block text-sm font-medium text-indigo-700 mb-1"
+                            >
+                                <FaIdCardAlt className="inline mr-2" /> Username
+                            </label>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                className="w-full px-3 py-2 border border-indigo-300 rounded-md bg-white text-indigo-800"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="Enter Your Name.."
+                            />
+                        </div>
                         <div className="bg-indigo-100 p-4 rounded-lg">
                             <label
                                 htmlFor="username"

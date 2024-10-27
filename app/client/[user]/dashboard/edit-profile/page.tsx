@@ -6,11 +6,12 @@ import {
   FaLock,
   FaUser,
   FaHome,
+  FaIdCardAlt,
   FaBuilding,
 } from "react-icons/fa";
 import { useSession } from "@/app/store/session";
 import { toast } from 'react-toastify';
-import { useRouter,useParams } from "next/navigation"; // For client-side routing
+import { useRouter, useParams } from "next/navigation"; // For client-side routing
 import Link from "next/link";
 
 const EditProfilePage = () => {
@@ -72,7 +73,7 @@ const EditProfilePage = () => {
       }
       if (response.ok) {
         const data = await response.json();
-        toast.success(data.msg ||"Login Successful");
+        toast.success(data.msg || "Login Successful");
         // Optionally, reset the form or perform other actions
         setOldPassword("");
         setNewPassword("");
@@ -96,6 +97,22 @@ const EditProfilePage = () => {
 
         <form onSubmit={handleUpdateProfile}>
           <div className="space-y-6">
+            <div className="bg-indigo-100 p-4 rounded-lg">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-indigo-700 mb-1"
+              >
+                <FaIdCardAlt className="inline mr-2" /> Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                className="w-full px-3 py-2 border border-indigo-300 rounded-md bg-white text-indigo-800"
+                value={userData?.name}
+                disabled
+              />
+            </div>
             <div className="bg-indigo-100 p-4 rounded-lg">
               <label
                 htmlFor="username"
@@ -252,12 +269,12 @@ const EditProfilePage = () => {
 
           <div className="mt-8 flex justify-end space-x-4">
             <Link href={`/client/${userData?.username}/dashboard`}>
-            <button
-              type="button"
-              className="px-6 py-3 border border-gray-300 rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
-            >
-              Cancel
-            </button>
+              <button
+                type="button"
+                className="px-6 py-3 border border-gray-300 rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
+              >
+                Cancel
+              </button>
             </Link>
             <button
               type="submit"
