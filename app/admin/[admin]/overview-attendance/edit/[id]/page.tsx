@@ -57,8 +57,8 @@ export default function Component() {
                     const data = await response.json();
                     setAttendanceData(data);
                     const initialStatusData = {};
-                    data.students.forEach(student => {
-                        initialStatusData[student._id] = student.status; // populate with existing statuses
+                    data.students.forEach(students => {
+                        initialStatusData[students?.student?._id] = students.status; // populate with existing statuses
                     });
                     setAttUpdatedData(initialStatusData);
                 }
@@ -86,7 +86,7 @@ export default function Component() {
 
         return (
             isInSelectedRoom &&
-            (student.student.name.toLowerCase().includes(searchQuery.toLowerCase()) || student.student.room.includes(searchQuery)) &&
+            (student?.student?.name?.toLowerCase().includes(searchQuery.toLowerCase()) || student?.student?.room?.includes(searchQuery)) &&
             isStatusMatch
         );
     }) || [];
@@ -103,7 +103,7 @@ export default function Component() {
     const handleBulkAction = (status: string) => {
         const updatedData = {};
         filteredStudents.forEach(student => {
-            updatedData[student._id] = status;
+            updatedData[student?.student._id] = status;
         });
         setAttUpdatedData(prev => ({
             ...prev,
@@ -114,7 +114,7 @@ export default function Component() {
     const handleClearAll = () => {
         const clearedData = {};
         filteredStudents.forEach(student => {
-            clearedData[student._id] = '';
+            clearedData[student?.student?._id] = '';
         });
         setAttUpdatedData(prev => ({
             ...prev,
@@ -149,6 +149,9 @@ export default function Component() {
             [status]: prev[status] + 1, // Increment new status count
         }));
     };
+    console.log(attendanceData);
+    console.log(attUpdatedData);
+
 
     // const summary = calculateSummary()
     //   When click on submit log data in console
@@ -162,6 +165,7 @@ export default function Component() {
             date: selectedDate,
             attendanceList: attendanceArray,
         };
+
 
         console.log(attendanceLog);
 
@@ -357,9 +361,9 @@ export default function Component() {
                                         <td className="py-3 pr-4">{student?.student?.room}</td>
                                         <td className="px-4 py-2">
                                             <select
-                                                value={attUpdatedData[student._id] || student.status} // Show updated value or initial value
-                                                onChange={(e) => handleAttendanceChange(student._id, e.target.value)}
-                                                className={`rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ${getStatusColor( attUpdatedData[student._id]|| student?.status )} `}
+                                                value={attUpdatedData[student?.student?._id] || student.status} // Show updated value or initial value
+                                                onChange={(e) => handleAttendanceChange(student?.student?._id, e.target.value)}
+                                                className={`rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ${getStatusColor(attUpdatedData[student?.student?._id] || student?.status)} `}
                                             >
                                                 <option value="">Select Status</option>
                                                 {statusOptions.map(option => (

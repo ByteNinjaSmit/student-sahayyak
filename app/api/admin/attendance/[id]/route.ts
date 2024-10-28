@@ -57,9 +57,9 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
     // Find the attendance record by ID and update the students field
     const updatedAttendance = await Attendance.findByIdAndUpdate(
-      {_id:id},
-      { students }, // Set the new students array
-      { new: true, runValidators: true } // Options to return updated document and run validators
+      id,
+      { students },
+      { new: true, runValidators: true }
     );
 
     // If attendance record is not found, return a 404 response
