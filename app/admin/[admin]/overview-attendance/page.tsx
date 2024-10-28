@@ -7,11 +7,13 @@ import { useParams } from "next/navigation";
 import Link from 'next/link';
 import { useSession } from "@/app/store/session";
 import { toast } from 'react-toastify';
-
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { fileURLToPath } from 'url';
 
 export default function HostelAttendanceOverview() {
     const [date, setDate] = useState<Date | null>(null);
     const [hostel, setHostel] = useState<string>('All');
+    const [availableHostels, setAvailableHostels] = useState<string[]>([]);
     const [showCalendar, setShowCalendar] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -19,17 +21,11 @@ export default function HostelAttendanceOverview() {
     const [attendanceData, setAttendanceData] = useState(null);
     const { userData, isLoggedIn } = useSession();
     const [loading, setLoading] = useState(false);
-
+    const [isAttendanceTakenToday, setIsAttendanceTakenToday] = useState(false);
     const [isRector, setIsRector] = useState(false);
     const toggleSidebar = () => setSidebarOpen((prev) => !prev);
     const toggleNotifications = () => setNotificationsOpen((prev) => !prev);
-    // Mock data for demonstration
-    // const attendanceData = [
-    //     { id: 1, date: '2023-10-26', hostel: 'A1', present: 45, absent: 5, leave: 2, late: 3 },
-    //     { id: 2, date: '2023-10-26', hostel: 'A2', present: 50, absent: 2, leave: 1, late: 2 },
-    //     { id: 3, date: '2023-10-25', hostel: 'A1', present: 48, absent: 3, leave: 1, late: 3 },
-    //     { id: 4, date: '2023-10-25', hostel: 'A2', present: 49, absent: 3, leave: 2, late: 1 },
-    // ];
+    // const [isEditable, setIsEditable] = useState(false);
 
     // Fetch data From API
     const getAllAttendance = async () => {
@@ -92,8 +88,42 @@ export default function HostelAttendanceOverview() {
         };
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
-    console.log(attendanceData);
 
+    // Check Current is Avalable or not 
+    useEffect(() => {
+        const checkAttendanceForToday = () => {
+            if (!attendanceData || !userData?.hostelId) return;
+
+            const today = new Date().toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
+
+            // Check if there's an attendance record for today and user's hostel
+            const hasTodayAttendance = attendanceData?.some(
+                (record) =>
+                    record?.hostel === userData?.hostelId && record.date.startsWith(today)
+            );
+
+            setIsAttendanceTakenToday(hasTodayAttendance);
+        };
+
+        checkAttendanceForToday();
+    }, [attendanceData, userData?.hostelId]);
+
+    // Setting Unique Hostel Only Those Are present 
+    useEffect(() => {
+        // Extract unique hostel names from attendanceData
+        const uniqueHostels = Array.from(
+            new Set(attendanceData?.map((record) => record.hostel))
+        );
+        setAvailableHostels(uniqueHostels);
+    }, [attendanceData]);
+
+    // Edit Limit
+    const isEditable = (createdAt: string): boolean => {
+        const createdAtDate = new Date(createdAt);
+        const currentTime = new Date();
+        const timeDifference = (currentTime.getTime() - createdAtDate.getTime()) / (1000 * 60 * 60); // difference in hours
+        return timeDifference <= 2;
+    };
 
 
     return (
@@ -135,19 +165,26 @@ export default function HostelAttendanceOverview() {
                 <header className="mx-auto mt-4 text-start justify-start">
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-4">Hostel Attendance Overview</h1>
                     <p className="text-sm sm:text-base text-center text-gray-600">Manage and view attendance for all hostels.</p>
+                    {loading && (
+                        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+                            <AiOutlineLoading3Quarters className="text-white text-4xl animate-spin" />
+                        </div>
+                    )}
                 </header>
-                {
-                    !!isRector && (<div className="mb-6 sm:mb-8 lg:mb-12 p-4">
-
-                        <Link href={`/admin/${admin}/overview-attendance/attendance`}>
-                            <button className="w-full sm:w-auto bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded flex items-center justify-center transition duration-300 ease-in-out transform hover:scale-105">
+                {isRector && (
+                    <div className="mb-6 sm:mb-8 lg:mb-12 p-4">
+                        <Link href={`/admin/${admin}/overview-attendance/attendance`} passHref>
+                            <button
+                                disabled={isAttendanceTakenToday}
+                                className={`w-full sm:w-auto bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded flex items-center justify-center transition duration-300 ease-in-out transform hover:scale-105
+              ${isAttendanceTakenToday ? "opacity-50 cursor-not-allowed" : ""}`}
+                            >
                                 <FaCalendarAlt className="mr-2" />
-                                Take Today's Attendance
+                                {isAttendanceTakenToday ? "Attendance Already Taken" : "Take Today's Attendance"}
                             </button>
                         </Link>
-
-                    </div>)
-                }
+                    </div>
+                )}
 
 
                 <div className="mb-6 sm:mb-8 lg:mb-12 space-y-4 sm:space-y-0 sm:flex sm:items-end sm:space-x-4 p-6 ">
@@ -162,9 +199,11 @@ export default function HostelAttendanceOverview() {
                                     onChange={(e) => setHostel(e.target.value)}
                                 >
                                     <option value="All">All Hostels</option>
-                                    <option value="A1">A1</option>
-                                    <option value="A2">A2</option>
-                                    <option value="A3">A3</option>
+                                    {availableHostels.map((hostelName) => (
+                                        <option key={hostelName} value={hostelName}>
+                                            {hostelName}
+                                        </option>
+                                    ))}
                                 </select>
                                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                                     <FaChevronDown className="h-4 w-4" />
@@ -225,40 +264,58 @@ export default function HostelAttendanceOverview() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {filteredData?.length === 0 ? (
-                                    <tr>
-                                        <td colSpan={isRector ? 6 : 7} className="py-4 px-3 sm:px-4 text-center text-sm text-gray-500">
-                                            No data available.
+                                {(isRector
+                                    ? filteredData?.filter(entry => entry.hostel === userData?.hostelId)
+                                    : filteredData
+                                )?.map((entry, index) => (
+                                    <tr key={index}>
+                                        <td className="py-2 px-3 sm:px-4 whitespace-nowrap text-sm">
+                                            {formatDate(entry.date)}
                                         </td>
-                                    </tr>
-                                ) : (
-                                    filteredData?.map((entry, index) => (
-                                        <tr key={index}>
-                                            <td className="py-2 px-3 sm:px-4 whitespace-nowrap text-sm">{formatDate(entry.date)}</td>
-                                            {!isRector && (
-                                                <td className="py-2 px-3 sm:px-4 whitespace-nowrap text-sm">{entry.hostel}</td>
-                                            )}
-                                            <td className="py-2 px-3 sm:px-4 whitespace-nowrap text-sm">{entry?.students?.filter(s => s.status === 'Present').length}</td>
-                                            <td className="py-2 px-3 sm:px-4 whitespace-nowrap text-sm">{entry?.students?.filter(s => s.status === 'Absent').length}</td>
-                                            <td className="py-2 px-3 sm:px-4 whitespace-nowrap text-sm">{entry?.students?.filter(s => s.status === 'Leave').length}</td>
-                                            <td className="py-2 px-3 sm:px-4 whitespace-nowrap text-sm">{entry?.students?.filter(s => s.status === 'Late').length}</td>
+
+                                        {/* Show hostel column only if user is not a rector */}
+                                        {!isRector && (
                                             <td className="py-2 px-3 sm:px-4 whitespace-nowrap text-sm">
-                                                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-                                                    <Link href={`/admin/${admin}/overview-attendance/view/${entry?._id}`}>
-                                                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs flex items-center justify-center transition duration-300 ease-in-out">
-                                                            <FaEye className="mr-1" /> View
-                                                        </button>
-                                                    </Link>
-                                                    <Link href={`/admin/${admin}/overview-attendance/edit/${entry?._id}`}>
-                                                    <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-xs flex items-center justify-center transition duration-300 ease-in-out">
+                                                {entry.hostel}
+                                            </td>
+                                        )}
+
+                                        <td className="py-2 px-3 sm:px-4 whitespace-nowrap text-sm">
+                                            {entry?.students?.filter(s => s.status === 'Present').length}
+                                        </td>
+                                        <td className="py-2 px-3 sm:px-4 whitespace-nowrap text-sm">
+                                            {entry?.students?.filter(s => s.status === 'Absent').length}
+                                        </td>
+                                        <td className="py-2 px-3 sm:px-4 whitespace-nowrap text-sm">
+                                            {entry?.students?.filter(s => s.status === 'Leave').length}
+                                        </td>
+                                        <td className="py-2 px-3 sm:px-4 whitespace-nowrap text-sm">
+                                            {entry?.students?.filter(s => s.status === 'Late').length}
+                                        </td>
+
+                                        <td className="py-2 px-3 sm:px-4 whitespace-nowrap text-sm">
+                                            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                                                {/* View Button */}
+                                                <Link href={`/admin/${admin}/overview-attendance/view/${entry?._id}`}>
+                                                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs flex items-center justify-center transition duration-300 ease-in-out">
+                                                        <FaEye className="mr-1" /> View
+                                                    </button>
+                                                </Link>
+
+                                                {/* Edit Button with conditional disabling */}
+                                                <Link href={`/admin/${admin}/overview-attendance/edit/${entry._id}`} passHref>
+                                                    <button
+                                                        disabled={!isEditable(entry.createdAt)}
+                                                        className={`bg-green-500 text-white font-bold py-1 px-2 rounded text-xs flex items-center justify-center transition duration-300 ease-in-out ${!isEditable(entry.createdAt) ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700"}`}
+                                                    >
                                                         <FaEdit className="mr-1" /> Edit
                                                     </button>
-                                                    </Link>
+                                                </Link>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
 
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    )))}
                             </tbody>
                         </table>
                     </div>

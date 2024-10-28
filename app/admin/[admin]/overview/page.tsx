@@ -249,7 +249,7 @@ const GrievanceManagementSystem = () => {
                       const isOlderThanTwoDays = isOlderThanTwoDaysGrivinces(grievance);
                       const hostelIdMatch = grievance.user?.hostelId === userData?.hostelId;
                       const shouldShow =
-                        (grievance?.status === "Not Processed" && isOlderThanTwoDays) || grievance?.status === "Resolved" || grievance?.status === "Urgent" ;
+                        (grievance?.status === "Not Processed" && isOlderThanTwoDays) || grievance?.status === "Resolved" || grievance?.status === "Urgent";
                       const match = shouldShow && hostelIdMatch;
                       return match;
                     })
@@ -287,7 +287,6 @@ const GrievanceManagementSystem = () => {
                     </tr>
                   ))}
                 </tbody>
-
               </table>
             </div>
 

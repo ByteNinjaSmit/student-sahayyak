@@ -149,8 +149,6 @@ export default function Component() {
             [status]: prev[status] + 1, // Increment new status count
         }));
     };
-    console.log(attendanceData);
-    console.log(attUpdatedData);
 
 
     // const summary = calculateSummary()
@@ -167,7 +165,6 @@ export default function Component() {
         };
 
 
-        console.log(attendanceLog);
 
         try {
             const response = await fetch(`/api/admin/attendance/${id}`, {
