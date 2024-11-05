@@ -5,6 +5,7 @@ import {
   FaEyeSlash,
   FaLock,
   FaUser,
+  FaIdCardAlt,
   FaHome,
   FaBuilding,
 } from "react-icons/fa";
@@ -16,6 +17,7 @@ const AddNewUser = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
   const [hostel, setHostel] = useState("");
   const [password, setPassword] = useState("");
@@ -54,10 +56,11 @@ const AddNewUser = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            name,
             username,
             password,
             roomNumber,
-            hostelName:hostel,
+            hostelName: hostel,
           }),
         }
       );
@@ -92,6 +95,23 @@ const AddNewUser = () => {
 
         <form onSubmit={handleRegister}>
           <div className="space-y-6">
+            <div className="bg-indigo-100 p-4 rounded-lg">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-indigo-700 mb-1"
+              >
+                <FaIdCardAlt className="inline mr-2" /> Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                className="w-full px-3 py-2 border border-indigo-300 rounded-md bg-white text-indigo-800"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your username"
+              />
+            </div>
             <div className="bg-indigo-100 p-4 rounded-lg">
               <label
                 htmlFor="username"

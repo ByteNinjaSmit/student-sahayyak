@@ -1,4 +1,4 @@
-"use client";
+ "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link"; // Import Link for navigation
 import { useSession } from "../store/session"; // Ensure this is the correct path to the auth context
