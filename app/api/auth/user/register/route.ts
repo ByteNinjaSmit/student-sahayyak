@@ -10,10 +10,10 @@ export async function POST(request: NextRequest) {
     await connectToDatabase();
     // Parse request body
     const reqBody = await request.json();
-    const { username, roomNumber, hostelName, password } = reqBody;
+    const { name, username, roomNumber, hostelName, password } = reqBody;
 
     // Validate that all fields are provided
-    if (!username || !roomNumber || !hostelName || !password) {
+    if (!username || !roomNumber || !name|| !hostelName || !password) {
       return NextResponse.json(
         { error: "All fields are required" },
         { status: 400 }
@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
     //const hashedPassword = await bcrypt.hash(password, 10);
 
     const userCreated = await User.create({
+      name,
       username,
       room:roomNumber,
       hostelId:hostelName,
