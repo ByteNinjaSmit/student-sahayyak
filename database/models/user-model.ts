@@ -62,7 +62,7 @@ userSchema.methods.generateToken = async function () {
         expiresIn: "30d",
       }
     );
-  } catch (error) {
+  } catch (error) { 
     console.error(error);
   }
 };

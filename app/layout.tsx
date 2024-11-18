@@ -5,7 +5,7 @@ import MainNavbar from "@/components/layout/navbar/page";
 import { NextUIProvider } from "@nextui-org/system";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 // import { AuthProvider } from "./store/auth";
-import  SessionProvider  from "./store/session";
+import SessionProvider from "./store/session";
 import MainFooter from "@/components/layout/footer/page";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -22,29 +22,31 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body id="Layout">
-        <NextUIProvider>
-          <NextThemesProvider attribute="class" defaultTheme="light">
-            <SessionProvider>
-              <MainNavbar />
-              <main>{children}</main>
-              <MainFooter />
-            </SessionProvider>
-            <ToastContainer
-              position="top-right"
-              autoClose={2000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="colored"
-              bodyClassName="toastBody"
-            />
-          </NextThemesProvider>
-        </NextUIProvider>
+      <body >
+        <div className="App">
+          <NextUIProvider>
+            <NextThemesProvider attribute="class" defaultTheme="light">
+              <SessionProvider>
+                <MainNavbar />
+                <main>{children}</main>
+                <MainFooter />
+              </SessionProvider>
+              <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                bodyClassName="toastBody"
+              />
+            </NextThemesProvider>
+          </NextUIProvider>
+        </div>
       </body>
     </html>
   );
