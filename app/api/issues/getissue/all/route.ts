@@ -113,7 +113,7 @@ export async function GET(request: NextRequest) {
     const response = NextResponse.json(combinedData);
 
     // Explicitly disable caching by setting Cache-Control header
-    response.headers.set("Cache-Control", "no-cache, no-store, must-revalidate");  // Ensures no caching at all
+    response.headers.set("Cache-Control", "no-cache, no-store, must-revalidate,proxy-revalidate");  // Ensures no caching at all
 
     return response;
   } catch (error) {

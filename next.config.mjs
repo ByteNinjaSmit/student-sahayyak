@@ -12,7 +12,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'no-store',  // Prevent caching at Vercel edge
+            value: 'no-store, must-revalidate',  // Prevent caching at Vercel edge
           },
         ],
       },
