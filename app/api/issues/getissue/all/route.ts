@@ -8,7 +8,7 @@ import FoodQuality from "@/database/models/food-quality-model";
 import FoodOwner from "@/database/models/food-owner-model";
 import NetworkConn from "@/database/models/network-model";
 import Safety from "@/database/models/safety-model";
-import User from "@/database/models/user-model";  // Ensure User model is imported
+import User from "@/database/models/user-model"; // Ensure User model is imported
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -18,83 +18,109 @@ export async function GET(request: NextRequest) {
     // Fetch data from all models and populate the `user` field with `strictPopulate: false`
     const drinkWaterData = await DrinkWater.find().populate({
       path: "user",
-      model: 'User', // Ensure you explicitly use the User model
+      model: "User", // Ensure you explicitly use the User model
       select: "-password",
-      options: { strictPopulate: false }
+      options: { strictPopulate: false },
     });
 
     const roomData = await Room.find().populate({
       path: "user",
-      model: 'User',
+      model: "User",
       select: "-password",
-      options: { strictPopulate: false }
+      options: { strictPopulate: false },
     });
 
     const commonAreaData = await CommonArea.find().populate({
       path: "user",
-      model: 'User',
+      model: "User",
       select: "-password",
-      options: { strictPopulate: false }
+      options: { strictPopulate: false },
     });
 
     const corridorData = await Corridor.find().populate({
       path: "user",
-      model: 'User',
+      model: "User",
       select: "-password",
-      options: { strictPopulate: false }
+      options: { strictPopulate: false },
     });
 
     const foodQualityData = await FoodQuality.find().populate({
       path: "user",
-      model: 'User',
+      model: "User",
       select: "-password",
-      options: { strictPopulate: false }
+      options: { strictPopulate: false },
     });
 
     const foodOwnerData = await FoodOwner.find().populate({
       path: "user",
-      model: 'User',
+      model: "User",
       select: "-password",
-      options: { strictPopulate: false }
+      options: { strictPopulate: false },
     });
 
     const networkData = await NetworkConn.find().populate({
       path: "user",
-      model: 'User',
+      model: "User",
       select: "-password",
-      options: { strictPopulate: false }
+      options: { strictPopulate: false },
     });
 
     const safetyData = await Safety.find().populate({
       path: "user",
-      model: 'User',
+      model: "User",
       select: "-password",
-      options: { strictPopulate: false }
+      options: { strictPopulate: false },
     });
 
     // Combine all the arrays into one with categories
     const combinedData = [
-      ...drinkWaterData.map(doc => ({ ...doc.toObject(), category: 'Hostel' })),
-      ...roomData.map(doc => ({ ...doc.toObject(), category: 'Hostel' })),
-      ...commonAreaData.map(doc => ({ ...doc.toObject(), category: 'Hostel' })),
-      ...corridorData.map(doc => ({ ...doc.toObject(), category: 'Hostel' })),
-      ...foodQualityData.map(doc => ({ ...doc.toObject(), category: 'Mess / Tiffin' })),
-      ...foodOwnerData.map(doc => ({ ...doc.toObject(), category: 'Mess / Tiffin' })),
-      ...networkData.map(doc => ({ ...doc.toObject(), category: 'Facility' })),
-      ...safetyData.map(doc => ({ ...doc.toObject(), category: 'Security' })),
+      ...drinkWaterData.map((doc) => ({
+        ...doc.toObject(),
+        category: "Hostel",
+      })),
+      ...roomData.map((doc) => ({ ...doc.toObject(), category: "Hostel" })),
+      ...commonAreaData.map((doc) => ({
+        ...doc.toObject(),
+        category: "Hostel",
+      })),
+      ...corridorData.map((doc) => ({ ...doc.toObject(), category: "Hostel" })),
+      ...foodQualityData.map((doc) => ({
+        ...doc.toObject(),
+        category: "Mess / Tiffin",
+      })),
+      ...foodOwnerData.map((doc) => ({
+        ...doc.toObject(),
+        category: "Mess / Tiffin",
+      })),
+      ...networkData.map((doc) => ({
+        ...doc.toObject(),
+        category: "Facility",
+      })),
+      ...safetyData.map((doc) => ({ ...doc.toObject(), category: "Security" })),
     ];
 
-    const headers = new Headers({
-      "Cache-Control": "no-store", // Disable caching
-    });
+    // const headers = new Headers({
+    //   "Cache-Control": "no-store", // Disable caching
+    // });
 
     // Sort the combined data by `createdAt` in descending order
-    combinedData.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    combinedData.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
 
-    // Return the sorted combined data
-    return NextResponse.json(combinedData,{ headers });
+    // Return the sorted combined data and disable cache by setting Cache-Control header
+    const response = NextResponse.json(combinedData);
+
+    // Explicitly disable caching by setting Cache-Control header
+    response.headers.set("Cache-Control", "no-store");
+
+    return response;
   } catch (error) {
     console.error("Error fetching data:", error);
-    return NextResponse.json({ error: "Failed to fetch user data" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch user data" },
+      { status: 500 }
+    );
   }
 }
