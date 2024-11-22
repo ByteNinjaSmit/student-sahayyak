@@ -168,6 +168,9 @@ const AdminDashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(`/api/issues/getissue/all`,{
+        next:{
+          revalidate:5000
+        },
         cache: "no-store",
       });
       if (!response.ok) {
