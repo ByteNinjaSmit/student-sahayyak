@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
       options: { strictPopulate: false },
     });
 
-    const corridorData = await Corridor.find().populate({
+    const corridorData = await Corridor.find({},"-image").populate({
       path: "user",
       model: "User",
       select: "-password -image",
@@ -113,8 +113,13 @@ export async function GET(request: NextRequest) {
     const response = NextResponse.json(combinedData);
 
     // Explicitly disable caching by setting Cache-Control header
-    response.headers.set("Cache-Control", "no-cache, no-store, must-revalidate,proxy-revalidate");  // Ensures no caching at all
-
+    response.headers.set(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate"
+    );
+    response.headers.set("Expires", "0");
+    response.headers.set("Pragma", "no-cache");
+    
     return response;
   } catch (error) {
     console.error("Error fetching data:", error);
