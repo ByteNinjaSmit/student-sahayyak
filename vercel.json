@@ -1,38 +1,20 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "app/api/issues/getissue/all.ts",
-        "use": "@vercel/node"
-      },
-      {
-        "src": "app/**/*.{js,ts}",
-        "use": "@vercel/next"
-      }
-    ],
-    "functions": {
-      "api/issues/getissue/all.ts": {
-        "maxDuration": 10, 
-        "memory": 512, 
-        "cache": false
-      }
-    },
-    "routes": [
-      {
-        "src": "/api/issues/getissue/all",
-        "dest": "/app/api/issues/getissue/all.ts"
-      }
-    ],
-    "headers": [
-      {
-        "source": "/api/issues/getissue/all",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "no-store, must-revalidate, proxy-revalidate"
-          }
-        ]
-      }
-    ]
-  }
-  
+  "functions": {
+    "api/issues/getissue/all.ts": {
+      "maxDuration": 10,
+      "memory": 512,
+      "cache": false
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, must-revalidate, proxy-revalidate"
+        }
+      ]
+    }
+  ]
+}
