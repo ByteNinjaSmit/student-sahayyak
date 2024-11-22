@@ -6,15 +6,9 @@
       "memory": 512
     }
   },
-  "routes": [
-    {
-      "src": "/api/issues/getissue/all",
-      "dest": "/api/issues/getissue/all"
-    }
-  ],
   "headers": [
     {
-      "source": "/api/issues/getissue/all",
+      "source": "/api/:path*",
       "headers": [
         {
           "key": "Cache-Control",
