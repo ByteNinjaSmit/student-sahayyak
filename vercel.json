@@ -2,8 +2,7 @@
   "functions": {
     "api/issues/getissue/all.ts": {
       "maxDuration": 10,
-      "memory": 512,
-      "cache": false
+      "memory": 512
     }
   },
   "headers": [
