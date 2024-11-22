@@ -1,17 +1,24 @@
 {
+  "version": 2,
   "functions": {
     "api/issues/getissue/all.ts": {
       "maxDuration": 10,
       "memory": 512
     }
   },
+  "routes": [
+    {
+      "src": "/api/issues/getissue/all",
+      "dest": "/api/issues/getissue/all"
+    }
+  ],
   "headers": [
     {
-      "source": "/api/:path*",
+      "source": "/api/issues/getissue/all",
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "no-store, must-revalidate, proxy-revalidate"
+          "value": "no-store, no-cache, must-revalidate, proxy-revalidate"
         }
       ]
     }
