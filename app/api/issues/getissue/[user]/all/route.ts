@@ -21,14 +21,14 @@ export async function GET(
     const { user } = params;
     
     // Fetch data from all models where `user` matches the provided user
-    const drinkWaterData = await DrinkWater.find({ user: user }).lean();
-    const roomData = await Room.find({ user: user }).lean();
-    const commonAreaData = await CommonArea.find({ user: user }).lean();
-    const corridorData = await Corridor.find({ user: user }).lean();
-    const foodQualityData = await FoodQuality.find({ user: user }).lean();
-    const foodOwnerData = await FoodOwner.find({ user: user }).lean();
-    const networkData = await NetworkConn.find({ user: user }).lean();
-    const safetyData = await Safety.find({ user: user }).lean();
+    const drinkWaterData = await DrinkWater.find({ user: user });
+    const roomData = await Room.find({ user: user });
+    const commonAreaData = await CommonArea.find({ user: user });
+    const corridorData = await Corridor.find({ user: user });
+    const foodQualityData = await FoodQuality.find({ user: user });
+    const foodOwnerData = await FoodOwner.find({ user: user });
+    const networkData = await NetworkConn.find({ user: user });
+    const safetyData = await Safety.find({ user: user });
 
     // Combine all the arrays into one with categories
     const combinedData = [
