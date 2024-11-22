@@ -10,11 +10,12 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import Link from "next/link";
+import Image from 'next/image';
 
 const GrievanceView = () => {
   const { singleIssueId, user } = useParams(); // Get the single issue ID from the URL params
   const router = useRouter(); // Initialize router for navigation
-  const [grievance, setGrievance] = useState(null); // Initialize state to hold grievance data
+  const [grievance, setGrievance] = useState<any>(null); // Initialize state to hold grievance data
   const [loading, setLoading] = useState(true); // State for loading status
   const [error, setError] = useState(null); // State for error handling
   const [category, setCategory] = useState(null);
@@ -30,8 +31,8 @@ const GrievanceView = () => {
         const data = await response.json();
         setGrievance(data.document); // Set the fetched grievance data from document
         setCategory(data.category);
-      } catch (err) {
-        setError(err.message); // Set error message if fetch fails
+      } catch (error:any) {
+        setError(error.message); // Set error message if fetch fails
       } finally {
         setLoading(false); // Set loading to false after fetch completes
       }
@@ -41,7 +42,7 @@ const GrievanceView = () => {
   }, [singleIssueId]); // Dependency array includes singleIssueId
 
   // Formatting function for dates
-  const formatDate = (dateString) => {
+  const formatDate = (dateString:any) => {
     const options = {
       year: "numeric",
       month: "long",
@@ -49,14 +50,14 @@ const GrievanceView = () => {
       hour: "2-digit",
       minute: "2-digit",
     };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    return new Date(dateString).toLocaleDateString(undefined, options as any);
   };
 
   // Assuming `grievance.createdAt` is in a valid date format like ISO string
   const isOlderThanTwoDays = () => {
-    const grievanceDate = new Date(grievance.createdAt);
-    const currentDate = new Date();
-    const timeDifference = currentDate - grievanceDate;
+    const grievanceDate:any = new Date(grievance.createdAt);
+    const currentDate:any = new Date();
+    const timeDifference:any = currentDate - grievanceDate;
     const twoDaysInMilliseconds = 2 * 24 * 60 * 60 * 1000; // Two days in milliseconds
     return timeDifference >= twoDaysInMilliseconds;
   };
@@ -85,7 +86,7 @@ const GrievanceView = () => {
         setGrievance({ ...grievance, status: "Resolved" });
         toast.success("Grievance Resolved successfully!");
         router.push(`/client/${user}/dashboard`); // Redirect to grievances list or home page
-      } catch (error) {
+      } catch (error:any) {
         toast.error(`Error: ${error.message}`);
       }
     }
@@ -114,7 +115,7 @@ const GrievanceView = () => {
         // Optionally, redirect or update state after deletion
         toast.success("Grievance Escalate successfully!");
         router.push(`/client/${user}/dashboard`); // Redirect to grievances list or home page
-      } catch (error) {
+      } catch (error:any) {
         toast.error(`Error: ${error.message}`);
       }
     }
@@ -145,7 +146,7 @@ const GrievanceView = () => {
         // Optionally, redirect or update state after deletion
         toast.success("Grievance deleted successfully!");
         router.push(`/client/${user}/dashboard`); // Redirect to grievances list or home page
-      } catch (error) {
+      } catch (error:any) {
         toast.error(`Error: ${error.message}`);
       }
     }
@@ -188,7 +189,7 @@ const GrievanceView = () => {
           <div className="mb-6">
             <h2 className="text-xl font-semibold mb-2">Complaints:</h2>
             <ul className="list-disc pl-5">
-              {grievance.complaint.map((item, index) => (
+              {grievance.complaint.map((item:any, index:any) => (
                 <li key={index} className="text-gray-700">
                   {item}
                 </li>
@@ -213,7 +214,7 @@ const GrievanceView = () => {
             grievance?.image &&(
               <div className="mb-4">
                         <h2 className="text-lg font-semibold mb-2">Complaint Image:</h2>
-                        <img
+                        <Image
                           src={grievance?.image}
                           alt="Image Preview"
                           className="w-full h-auto rounded-lg border border-gray-300"

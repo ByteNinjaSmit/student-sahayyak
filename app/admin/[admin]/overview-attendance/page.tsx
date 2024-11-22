@@ -9,6 +9,21 @@ import { useSession } from "@/app/store/session";
 import { toast } from 'react-toastify';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { fileURLToPath } from 'url';
+interface Student {
+    status: 'Present' | 'Absent' | 'Leave' | 'Late';
+
+    // other properties related to student
+}
+
+type AttendanceRecord = {
+    hostel: string;
+    date: string;
+    students: Student[];
+    _id:string;
+    createdAt:string;
+    // Add other fields if necessary
+  };
+  
 
 export default function HostelAttendanceOverview() {
     const [date, setDate] = useState<Date | null>(null);
@@ -18,7 +33,7 @@ export default function HostelAttendanceOverview() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const { admin } = useParams();
-    const [attendanceData, setAttendanceData] = useState(null);
+    const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
     const { userData, isLoggedIn } = useSession();
     const [loading, setLoading] = useState(false);
     const [isAttendanceTakenToday, setIsAttendanceTakenToday] = useState(false);
@@ -51,7 +66,7 @@ export default function HostelAttendanceOverview() {
             setAttendanceData(data);
         } catch (error) {
             console.error("Error fetching attendance data:", error);
-            toast.error(error.message);
+            // toast.error(error.message);
         } finally {
             setLoading(false);
         }
@@ -59,7 +74,7 @@ export default function HostelAttendanceOverview() {
     useEffect(() => {
         getAllAttendance();
     }, []);
-    const filteredData = attendanceData?.filter(entry =>
+    const filteredData = attendanceData?.filter((entry:any) =>
         (hostel === 'All' || entry.hostel === hostel) &&
         (!date || entry.date === format(date, 'yyyy-MM-dd'))
     );
@@ -78,7 +93,7 @@ export default function HostelAttendanceOverview() {
         }
     }, [isLoggedIn, userData]);
 
-    const formatDate = (dateString) => {
+    const formatDate = (dateString:any) => {
         const options = {
             year: "numeric",
             month: "long",
@@ -86,7 +101,7 @@ export default function HostelAttendanceOverview() {
             //   hour: "2-digit",
             //   minute: "2-digit",
         };
-        return new Date(dateString).toLocaleDateString(undefined, options);
+        return new Date(dateString).toLocaleDateString(undefined, options as any);
     };
 
     // Check Current is Avalable or not 
@@ -265,9 +280,9 @@ export default function HostelAttendanceOverview() {
                             </thead>
                             <tbody className="divide-y divide-gray-200">
                                 {(isRector
-                                    ? filteredData?.filter(entry => entry.hostel === userData?.hostelId)
+                                    ? filteredData?.filter((entry:AttendanceRecord) => entry?.hostel === userData?.hostelId)
                                     : filteredData
-                                )?.map((entry, index) => (
+                                )?.map((entry:AttendanceRecord, index) => (
                                     <tr key={index}>
                                         <td className="py-2 px-3 sm:px-4 whitespace-nowrap text-sm">
                                             {formatDate(entry.date)}

@@ -24,14 +24,14 @@ export async function GET(
 
     // Array of models and their respective category names
     const models = [
-      { model: DrinkWater, category: "Hostel" },
-      { model: Room, category: "Hostel" },
-      { model: CommonArea, category: "Hostel" },
-      { model: Corridor, category: "Hostel" },
-      { model: FoodQuality, category: "Mess / Tiffin" },
-      { model: FoodOwner, category: "Mess / Tiffin" },
-      { model: NetworkConn, category: "Facility" },
-      { model: Safety, category: "Security" },
+      { model: DrinkWater, category: "Hostel" } as any,
+      { model: Room, category: "Hostel" } as any,
+      { model: CommonArea, category: "Hostel" } as any,
+      { model: Corridor, category: "Hostel" } as any,
+      { model: FoodQuality, category: "Mess / Tiffin" } as any,
+      { model: FoodOwner, category: "Mess / Tiffin" } as any,
+      { model: NetworkConn, category: "Facility" } as any,
+      { model: Safety, category: "Security" } as any,
     ];
 
     let foundDocument = null;
@@ -73,7 +73,7 @@ export async function DELETE(
     const { issueid } = params;
 
     // Try to delete the document from each model and return response
-    const models = [
+    const models:any = [
       DrinkWater,
       Room,
       CommonArea,
@@ -119,7 +119,7 @@ export async function PATCH(
     }
 
     // Array of models
-    const models = [
+    const models:any = [
       DrinkWater,
       Room,
       CommonArea,

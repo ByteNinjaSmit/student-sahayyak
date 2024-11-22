@@ -1,6 +1,26 @@
-import mongoose, { Schema, model } from "mongoose";
+import mongoose, { Schema, model, Document, Types } from "mongoose";
 
-const hostelotherSchema = new Schema(
+// Define the interface for ActionLog
+interface ActionLog {
+  action: string;
+  actionTakenBy: string;
+  actionDate: Date;
+  remarks?: string;
+}
+
+// Define the interface for the HostelOther document
+interface HostelOtherDocument extends Document {
+  _id:string;
+  complaint: string[];
+  status: string;
+  user?: string;
+  actionLog: ActionLog[];
+  createdAt:string;
+  updatedAt:string;
+}
+
+// Define the HostelOther schema
+const hostelotherSchema = new Schema<HostelOtherDocument>(
   {
     complaint: {
       type: [String],
@@ -11,7 +31,7 @@ const hostelotherSchema = new Schema(
       default: "Not Processed",
     },
     user: {
-      type: mongoose.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User", // Reference to the user who submitted the complaint
     },
     actionLog: [
@@ -21,7 +41,7 @@ const hostelotherSchema = new Schema(
           required: true, // Example: "Processed", "Resolved", "In Progress"
         },
         actionTakenBy: {
-          type: mongoose.Types.ObjectId,
+          type: mongoose.Schema.Types.ObjectId,
           ref: "User", // Reference to the admin who took the action
           required: true,
         },
@@ -38,15 +58,13 @@ const hostelotherSchema = new Schema(
   { timestamps: true } // Automatically adds createdAt and updatedAt fields
 );
 
+// Singleton pattern for model definition to ensure it's compiled only once
 const HostelOther = (() => {
   try {
-    // Return the existing model if it is already compiled
-    return model("HostelOther");
+    return model<HostelOtherDocument>("HostelOther"); // Return the existing model if it's already compiled
   } catch {
-    // Otherwise, define and return the new model
-    return model("HostelOther", hostelotherSchema);
+    return model<HostelOtherDocument>("HostelOther", hostelotherSchema); // Otherwise, define and return the new model
   }
 })();
 
-// const HostelOther = model('HostelOther',hostelotherSchema);
 export default HostelOther;

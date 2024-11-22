@@ -1,12 +1,27 @@
-import mongoose, { Schema,model } from "mongoose";
+import mongoose, { Schema,model,Document  } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const facultySchema = new Schema({
+
+// Define the interface for the Faculty document
+interface FacultyDocument extends Document {
+  _id:string;
+  username: string;
+  email: string;
+  isRector: boolean;
+  phone: string;
+  hostelId?: string;
+  isHighAuth: boolean;
+  password: string;
+
+  comparePassword(password: string): Promise<boolean>;
+  generateToken(): Promise<string>;
+}
+
+const facultySchema = new Schema<FacultyDocument>({
   username: {
     type: String,
     required: true,
-    unique: true,
   },
   email: {
     type: String,
@@ -35,7 +50,7 @@ const facultySchema = new Schema({
 
 // secure the password
 facultySchema.pre("save", async function (next) {
-  const user = this;
+  const user = this as FacultyDocument;
 
   if (!user.isModified("password")) {
     console.log("Password is not modified");
@@ -82,16 +97,14 @@ facultySchema.methods.generateToken = async function () {
     }
   };
 
-  const Faculty = (() => {
-    try {
-      // Return the existing model if it is already compiled
-      return model("Faculty");
-    } catch {
-      // Otherwise, define and return the new model
-      return model("Faculty", facultySchema);
-    }
-  })();
 
+// Singleton pattern to ensure model is compiled only once
+const Faculty = (() => {
+  try {
+    return model<FacultyDocument>("Faculty"); // Return the existing model if it exists
+  } catch {
+    return model<FacultyDocument>("Faculty", facultySchema); // Otherwise, create and return a new model
+  }
+})();
 
-// const Faculty =model("Faculty", facultySchema);
 export default Faculty;

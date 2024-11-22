@@ -25,7 +25,7 @@ const AddNewUser = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const router = useRouter(); // Navigation hook to redirect on successful registration
 
-  const togglePasswordVisibility = (field) => {
+  const togglePasswordVisibility = (field : any) => {
     switch (field) {
       case "password":
         setShowPassword(!showPassword);
@@ -38,7 +38,7 @@ const AddNewUser = () => {
     }
   };
 
-  const handleRegister = async (e) => {
+  const handleRegister = async (e:any) => {
     e.preventDefault();
 
     // Validate password fields
@@ -79,7 +79,7 @@ const AddNewUser = () => {
       setConfirmPassword("");
       router.push(`/admin/${userData?._id}/hostellers`);
     } catch (error) {
-      toast.error(error || "An error occurred during registration.");
+      toast.error("An error occurred during registration.");
     }
   };
 

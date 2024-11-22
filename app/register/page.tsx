@@ -15,7 +15,7 @@ export default function Register() {
   const router = useRouter();
   const { isLoggedIn } = useSession();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:any) => {
     e.preventDefault(); // Prevent default form submission
     setError(''); 
 

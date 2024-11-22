@@ -25,9 +25,10 @@ export async function PATCH(request: NextRequest) {
     const user = await User.findOneAndUpdate(
       { _id: id },
       { password: hash_password },
+      { new: true } // This returns the updated user document
     );
-    await user.save(); // Save the updated user document this function is available in my user-model 
-    // in that save function having hashing
+    // await user.save(); // Save the updated user document this function is available in my user-model 
+    // // in that save function having hashing
 
     if (!user) {
       return NextResponse.json(

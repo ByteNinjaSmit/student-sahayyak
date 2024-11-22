@@ -26,7 +26,7 @@ const EditProfilePage = () => {
   const params = useParams<{
     user: string;
   }>();
-  const togglePasswordVisibility = (field) => {
+  const togglePasswordVisibility = (field:any) => {
     switch (field) {
       case "old":
         setShowOldPassword(!showOldPassword);
@@ -42,7 +42,7 @@ const EditProfilePage = () => {
     }
   };
 
-  const handleUpdateProfile = async (e) => {
+  const handleUpdateProfile = async (e:any) => {
     e.preventDefault();
 
     // Validate password fields
@@ -61,8 +61,8 @@ const EditProfilePage = () => {
           },
           body: JSON.stringify({
             newpassword: newPassword,
-            username: userData.username,
-            id: userData._id,
+            username: userData?.username,
+            id: userData?._id,
           }),
         }
       );
@@ -81,7 +81,7 @@ const EditProfilePage = () => {
         router.push(`/${params.user}/dashboard`);
       }
     } catch (error) {
-      toast.error(error || "An error occurred while updating the password.");
+      toast.error("An error occurred while updating the password.");
     }
   };
 

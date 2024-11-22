@@ -1,42 +1,51 @@
-import mongoose, { Schema,model } from "mongoose";
+import mongoose, { Schema, model, Document } from "mongoose";
 
-const foodownerSchema = new Schema({
-    foodOwner:{
-        type:String,
-        required:true,
+// Define the interface for the FoodOwner document
+interface FoodOwnerDocument extends Document {
+  _id:string;
+  foodOwner: string;
+  service: string;
+  complaint: string[];
+  status: string;
+  user?: string;
+  createdAt:string;
+  updatedAt:string;
+}
+
+// Define the FoodOwner schema
+const foodownerSchema = new Schema<FoodOwnerDocument>(
+  {
+    foodOwner: {
+      type: String,
+      required: true,
     },
-    service:{
-        type:String,
-        required:true,
+    service: {
+      type: String,
+      required: true,
     },
-    complaint:{
-        type:[String],
-        required:true,
-        // It is Array
+    complaint: {
+      type: [String],
+      required: true, // It is an array of complaints
     },
-    status:{
-        type:String,
-        default:"Not Processed",
+    status: {
+      type: String,
+      default: "Not Processed",
     },
     user: {
-        type: mongoose.Types.ObjectId,
-        ref: "User",
+      type: mongoose.Types.ObjectId,
+      ref: "User", // Reference to the User model
     },
-
-},
-{ timestamps: true }
+  },
+  { timestamps: true } // Automatically add createdAt and updatedAt fields
 );
 
+// Singleton pattern to ensure the model is compiled only once
 const FoodOwner = (() => {
-    try {
-      // Return the existing model if it is already compiled
-      return model('FoodOwner');
-    } catch {
-      // Otherwise, define and return the new model
-      return model('FoodOwner',foodownerSchema);
-    }
-  })();
+  try {
+    return model<FoodOwnerDocument>("FoodOwner"); // Return the existing model if it exists
+  } catch {
+    return model<FoodOwnerDocument>("FoodOwner", foodownerSchema); // Otherwise, create and return a new model
+  }
+})();
 
-
-// const FoodOwner = model('FoodOwner',foodownerSchema);
 export default FoodOwner;

@@ -16,7 +16,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const attendanceRecord = await Attendance.findById(id).populate({
       path: 'students.student',
       select: '-password', // Exclude the password field
-    });
+    }).exec();
 
     // Check if the attendance record exists
     if (!attendanceRecord) {
@@ -60,7 +60,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       id,
       { students },
       { new: true, runValidators: true }
-    );
+    ).exec();
 
     // If attendance record is not found, return a 404 response
     if (!updatedAttendance) {

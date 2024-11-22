@@ -5,18 +5,18 @@ import { useSession } from "../store/session"; // Ensure this is the correct pat
 import { useRouter } from "next/navigation"; // For client-side routing
 import { Spinner } from "@nextui-org/react"; // Using Spinner for loading state
 import { toast } from 'react-toastify';
-
+import Image from "next/image";
 export default function Login() {
   const [role, setRole] = useState(""); // Stores the selected role (student, rector, higher authority)
-  const [username, setUsername] = useState(""); // Stores the input username
-  const [password, setPassword] = useState(""); // Stores the input password
-  const [loading, setLoading] = useState(false); // Tracks the loading state during login
-  const { isLoggedIn,storeTokenInLS } = useSession(); // Custom hook from AuthContext
-  const [error, setError] = useState(""); // Stores any login errors
+  const [username, setUsername] = useState<any>(""); // Stores the input username
+  const [password, setPassword] = useState<any>(""); // Stores the input password
+  const [loading, setLoading] = useState<any>(false); // Tracks the loading state during login
+  const {storeTokenInLS } = useSession(); // Custom hook from AuthContext
+  const [error, setError] = useState<any>(""); // Stores any login errors
   const router = useRouter(); // Navigation hook to redirect on successful login
 
   // Handle form submission for login
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:any) => {
     e.preventDefault(); // Prevent default form submission
     setError(''); 
   
@@ -37,7 +37,9 @@ export default function Login() {
           // document.cookie = "user-token=" + res_data.token + "; path=/; max-age=7200"; // assuming you get the token from res_data
           // document.cookie = "isLoggedIn=true; path=/; max-age=7200"; // Setting login status
           document.cookie = "isLoggedIn=true; path=/;";
-          storeTokenInLS(res_data.token);
+          if (storeTokenInLS) {
+            storeTokenInLS(res_data?.token);
+          }
           router.push("/"); // Redirect t the home page
           toast.success("Login Successful");
         } else {
@@ -64,7 +66,9 @@ export default function Login() {
     
         if (response.ok) {
           document.cookie = "isLoggedIn=true; path=/;";
-          storeTokenInLS(res_data.token);
+          if (storeTokenInLS) {
+            storeTokenInLS(res_data?.token);
+          }
           router.push("/"); // Redirect to the home page
           toast.success("Login Successful");
         } else {

@@ -23,10 +23,10 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 const Dashboard = () => {
   const { isLoggedIn, userData } = useSession();
   const router = useRouter();
-  const [userId, setUserId] = useState(null);
-  const [user, setUser] = useState([]);
+  const [userId, setUserId] = useState<any>(null);
+  const [user, setUser] = useState<any>([]);
   const [loading, setLoading] = useState(false);
-  const [complaintData, setComplaintData] = useState([]);
+  const [complaintData, setComplaintData] = useState<any>([]);
   const params = useParams<{ user: string }>();
 
   useEffect(() => {
@@ -141,14 +141,14 @@ const Dashboard = () => {
     {
       label: "Resolved",
       value: complaintData.filter(
-        (grievance) => grievance.status === "Resolved"
+        (grievance:any) => grievance.status === "Resolved"
       ).length,
       icon: <FaCheckCircle />,
     },
     {
       label: "Pending",
       value: complaintData.filter(
-        (grievance) => grievance.status === "Not Processed"
+        (grievance:any) => grievance.status === "Not Processed"
       ).length,
       icon: <FaPencilAlt />,
     },
@@ -254,7 +254,7 @@ const Dashboard = () => {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {complaintData.length > 0 ? (
-                complaintData.map((grievance, index) => (
+                complaintData.map((grievance:any, index:any) => (
                   <tr
                     key={index}
                     className="hover:bg-gray-100 transition-colors duration-200"
@@ -265,7 +265,7 @@ const Dashboard = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-700">
                       {Array.isArray(grievance.complaint) ? (
                         <ul className="list-disc list-inside">
-                          {grievance.complaint.map((item, idx) => (
+                          {grievance.complaint.map((item:any, idx:any) => (
                             <li key={idx} className="text-gray-700">
                               {item}
                             </li>

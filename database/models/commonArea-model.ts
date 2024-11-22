@@ -1,6 +1,23 @@
-import mongoose, { Schema, model } from "mongoose";
+import mongoose, { Schema, model, Document } from "mongoose";
 
-const commonareaSchema = new Schema(
+// Define the interface for the CommonArea document
+interface CommonAreaDocument extends Document {
+  _id:string;
+  complaint: string[];
+  status: string;
+  user?: string;
+  actionLog: Array<{
+    action: string;
+    actionTakenBy: string;
+    actionDate: Date;
+    remarks?: string;
+  }>;
+  createdAt:string;
+  updatedAt:string;
+}
+
+// Define the CommonArea schema
+const commonareaSchema = new Schema<CommonAreaDocument>(
   {
     complaint: {
       type: [String],
@@ -35,17 +52,16 @@ const commonareaSchema = new Schema(
       },
     ],
   },
-  { timestamps: true } // Automatically adds createdAt and updatedAt fields
+  { timestamps: true } // Automatically add createdAt and updatedAt fields
 );
 
+// Singleton pattern to ensure the model is compiled only once
 const CommonArea = (() => {
   try {
-    // Return the existing model if it is already compiled
-    return model("CommonArea");
+    return model<CommonAreaDocument>("CommonArea"); // Return the existing model if it exists
   } catch {
-    // Otherwise, define and return the new model
-    return model("CommonArea", commonareaSchema);
+    return model<CommonAreaDocument>("CommonArea", commonareaSchema); // Otherwise, create and return a new model
   }
 })();
-// const CommonArea = model('CommonArea',commonareaSchema);
+
 export default CommonArea;

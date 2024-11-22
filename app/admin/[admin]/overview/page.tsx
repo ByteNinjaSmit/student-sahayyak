@@ -7,17 +7,31 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import Link from "next/link";
 import { useSession } from "@/app/store/session";
 
+
+// Define grievance type
+interface Grievance {
+  _id: string;
+  category: string;
+  status: string;
+  createdAt: string;
+  user?: {
+    username: string;
+    room:string;
+    hostelId: string;
+  };
+}
+
 const GrievanceManagementSystem = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const { userData, isLoggedIn } = useSession();
-  const [category, setCategory] = useState("All");
-  const [status, setStatus] = useState("All");
-  const [hostel, setHostel] = useState("All");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [category, setCategory] = useState<string>("All");
+  const [status, setStatus] = useState<string>("All");
+  const [hostel, setHostel] = useState<string>("All");
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [grievances, setGrievances] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [grievances, setGrievances] = useState<Grievance[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
   const toggleNotifications = () => setNotificationsOpen((prev) => !prev);
   const { admin } = useParams();
@@ -74,11 +88,11 @@ const GrievanceManagementSystem = () => {
   const itemsPerPage = 50;
   const totalPages = Math.ceil(grievances.length / itemsPerPage);
 
-  const handleSearch = (e) => setSearchTerm(e.target.value);
-  const handleCategoryChange = (e) => setCategory(e.target.value);
-  const handleStatusChange = (e) => setStatus(e.target.value);
-  const handleHostelChange = (e) => setHostel(e.target.value);
-  const handlePageChange = (page) => setCurrentPage(page);
+  const handleSearch = (e : any) => setSearchTerm(e.target.value);
+  const handleCategoryChange = (e:any) => setCategory(e.target.value);
+  const handleStatusChange = (e:any) => setStatus(e.target.value);
+  const handleHostelChange = (e:any) => setHostel(e.target.value);
+  const handlePageChange = (page:any) => setCurrentPage(page);
 
   const filteredGrievances = grievances.filter((grievance) => {
     return (
@@ -86,17 +100,18 @@ const GrievanceManagementSystem = () => {
         grievance.user?.username.toLowerCase().includes(searchTerm.toLowerCase())) &&
       (category === "All" || grievance.category === category) &&
       (status === "All" || grievance.status === status) &&
-      (hostel === "All" || grievance.user.hostelId === hostel)
+      (hostel === "All" || grievance?.user?.hostelId === hostel)
     );
   });
 
-  const isOlderThanTwoDaysGrivinces = (grievance) => {
-    const grievanceDate = new Date(grievance.createdAt);
-    const currentDate = new Date();
+  const isOlderThanTwoDaysGrievances = (grievance: Grievance) => {
+    const grievanceDate = new Date(grievance.createdAt).getTime(); // Get the time in milliseconds
+    const currentDate = new Date().getTime(); // Get the current time in milliseconds
     const timeDifference = currentDate - grievanceDate;
     const twoDaysInMilliseconds = 2 * 24 * 60 * 60 * 1000; // Two days in milliseconds
     return timeDifference >= twoDaysInMilliseconds;
   };
+  
 
   const paginatedGrievances = filteredGrievances.slice(
     (currentPage - 1) * itemsPerPage,
@@ -246,7 +261,7 @@ const GrievanceManagementSystem = () => {
                   {(isRector
                     ? paginatedGrievances.filter(grievance => {
                       // const isOlderThanTwoDays = new Date(grievance?.createdAt) > new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
-                      const isOlderThanTwoDays = isOlderThanTwoDaysGrivinces(grievance);
+                      const isOlderThanTwoDays = isOlderThanTwoDaysGrievances(grievance);
                       const hostelIdMatch = grievance.user?.hostelId === userData?.hostelId;
                       const shouldShow =
                         (grievance?.status === "Not Processed" && isOlderThanTwoDays) || grievance?.status === "Resolved" || grievance?.status === "Urgent";
@@ -265,7 +280,7 @@ const GrievanceManagementSystem = () => {
                       }
                       {
                         isRector && (
-                          <td className="px-4 py-2">{grievance.user?.room}</td>
+                          <td className="px-4 py-2">{grievance?.user?.room}</td>
                         )
                       }
                       <td className="px-4 py-2">{grievance.user?.username}</td>

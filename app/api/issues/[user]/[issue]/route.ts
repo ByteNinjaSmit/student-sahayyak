@@ -30,12 +30,6 @@ export async function POST(
       relevantData.every((item) => item.length >= 2)
     );
   };
-  // const isValidOwner = (foodownerName: string | undefined) => {
-  //   return foodownerName && foodownerName.length >= 2;
-  // }
-  // const isValidFoodServiceType= (foodServiceType: string | undefined) => {
-  //   return foodServiceType && foodServiceType.length >= 2;
-  // }
 
   // Parse the request body
   const reqBody = await request.json();
@@ -48,25 +42,6 @@ export async function POST(
       status: 400,
     });
   }
-  // if (!isValidOwner(foodownerName)) {
-  //   return NextResponse.json({
-  //     error: "Please enter a valid Owner Name.",
-  //     status: 400,
-  //   });
-  // }
-  // if (!isValidFoodServiceType(foodServiceType)) {
-  //   return NextResponse.json({
-  //     error: "Please Select Valid Service.",
-  //     status: 400,
-  //   });
-  // }
-
-  //  Image Handeling
-
-  // const handler = nextConnect();
-  // const file = image.get('image') as File;
-  // const buffer = await file.arrayBuffer();
-  // const imageUrl = `data:${file.type};base64,${Buffer.from(buffer).toString('base64')}`;
 
   // Process the complaints based on the issue type
   try {

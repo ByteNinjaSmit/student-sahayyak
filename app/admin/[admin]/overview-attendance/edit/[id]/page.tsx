@@ -9,8 +9,10 @@ import { toast } from 'react-toastify';
 interface Student {
     _id: string;
     student: {
+        _id:string;
         name: string;
         room: string;
+        status:string;
     };
     status: string;
 }
@@ -31,7 +33,7 @@ export default function Component() {
     const { admin, id } = useParams();
     const router = useRouter();
     const [isRector, setIsRector] = useState(false);
-    const [mockStudents, setMockStudents] = useState([]);
+    const [mockStudents, setMockStudents] = useState<Student[]>([]);
     const [selectedRoom, setSelectedRoom] = useState('All Rooms')
     const [searchQuery, setSearchQuery] = useState('')
     const [attendanceData, setAttendanceData] = useState<AttendanceData | null>(null);
@@ -56,9 +58,9 @@ export default function Component() {
                 if (response.ok) {
                     const data = await response.json();
                     setAttendanceData(data);
-                    const initialStatusData = {};
-                    data.students.forEach(students => {
-                        initialStatusData[students?.student?._id] = students.status; // populate with existing statuses
+                    const initialStatusData :Record<string, string>= {};
+                    data?.students?.forEach((student:Student) => {
+                        initialStatusData[student?.student?._id] = student?.status; // populate with existing statuses
                     });
                     setAttUpdatedData(initialStatusData);
                 }
@@ -100,10 +102,10 @@ export default function Component() {
         updateSummary(id, status); // Update summary based on the new status
     };
 
-    const handleBulkAction = (status: string) => {
-        const updatedData = {};
-        filteredStudents.forEach(student => {
-            updatedData[student?.student._id] = status;
+    const handleBulkAction = (status: any) => {
+        const updatedData:any = {};
+        filteredStudents?.forEach(student => {
+            updatedData[student?.student?._id] = status;
         });
         setAttUpdatedData(prev => ({
             ...prev,
@@ -112,7 +114,7 @@ export default function Component() {
     };
 
     const handleClearAll = () => {
-        const clearedData = {};
+        const clearedData:any = {};
         filteredStudents.forEach(student => {
             clearedData[student?.student?._id] = '';
         });
@@ -122,20 +124,20 @@ export default function Component() {
         }));
     };
 
-    const calculateSummary = () => {
-        const summary = {
-            present: 0,
-            absent: 0,
-            leave: 0,
-            late: 0,
-        };
-        Object.values(attUpdatedData).forEach(status => {
-            if (status in summary) {
-                summary[status]++;
-            }
-        });
-        return summary;
-    };
+    // const calculateSummary = () => {
+    //     const summary = {
+    //         present: 0,
+    //         absent: 0,
+    //         leave: 0,
+    //         late: 0,
+    //     };
+    //     Object.values(attUpdatedData).forEach(status => {
+    //         if (status in summary) {
+    //             summary[status]++;
+    //         }
+    //     });
+    //     return summary;
+    // };
     const updateSummary = (id: string, status: string) => {
         const prevStatus = attUpdatedData[id] || '';
         if (prevStatus) {
@@ -189,13 +191,13 @@ export default function Component() {
             toast.success(result.message);
         } catch (error) {
             console.error("Error submitting attendance:", error);
-            toast.error(error.message);
+            // toast.error(error.message);
         } finally {
             router.push(`/admin/${admin}/overview-attendance`);
         }
     };
     useEffect(() => {
-        const handleBeforeUnload = (event) => {
+        const handleBeforeUnload = (event:any) => {
             // Customize the alert message
             event.preventDefault();
             event.returnValue = 'If you reload, your data will be lost!';
@@ -223,7 +225,7 @@ export default function Component() {
             setIsRector(false); // Clear admin status if not logged in
         }
     }, [isLoggedIn, userData, admin]);
-    const formatDate = (dateString) => {
+    const formatDate = (dateString:any) => {
         const options = {
             year: "numeric",
             month: "long",
@@ -231,7 +233,7 @@ export default function Component() {
             hour: "2-digit",
             minute: "2-digit",
         };
-        return new Date(dateString).toLocaleDateString(undefined, options);
+        return new Date(dateString).toLocaleDateString(undefined, options as any);
     };
 
     const getStatusColor = (status: string) => {

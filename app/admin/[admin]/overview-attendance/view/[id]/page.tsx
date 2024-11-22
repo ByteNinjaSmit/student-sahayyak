@@ -6,6 +6,19 @@ import { useRouter, useParams } from "next/navigation";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { toast } from 'react-toastify';
 
+// Define the structure for Student data
+interface Student {
+    _id: string;
+    name: string;
+    room: string;
+}
+
+interface AttendanceData {
+    createdAt: string;
+    hostel: string;
+    students: { student: Student, status: string }[];
+}
+
 const statusOptions = [
     { value: 'Present', label: 'Present', color: 'bg-green-500' },
     { value: 'Absent', label: 'Absent', color: 'bg-red-500' },
@@ -20,7 +33,7 @@ export default function Component() {
     const [mockStudents, setMockStudents] = useState([]);
     const [selectedRoom, setSelectedRoom] = useState('All Rooms')
     const [searchQuery, setSearchQuery] = useState('')
-    const [attendanceData, setAttendanceData] = useState({})
+    const [attendanceData, setAttendanceData] = useState<AttendanceData | null>(null);
     const [isFloorOpen, setIsFloorOpen] = useState(false)
     const [attendanceFilter, setAttendanceFilter] = useState('');
     const [isRoomOpen, setIsRoomOpen] = useState(false)
@@ -72,7 +85,7 @@ export default function Component() {
     }) || [];
 
     useEffect(() => {
-        const handleBeforeUnload = (event) => {
+        const handleBeforeUnload = (event:any) => {
             // Customize the alert message
             event.preventDefault();
             event.returnValue = 'If you reload, your data will be lost!';
@@ -112,7 +125,7 @@ export default function Component() {
     };
 
     // Format Data Function
-    const formatDate = (dateString) => {
+    const formatDate = (dateString:any) => {
         const options = {
           year: "numeric",
           month: "long",
@@ -120,7 +133,7 @@ export default function Component() {
           hour: "2-digit",
           minute: "2-digit",
         };
-        return new Date(dateString).toLocaleDateString(undefined, options);
+        return new Date(dateString).toLocaleDateString(undefined, options as any);
       };
 
     return (

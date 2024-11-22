@@ -6,6 +6,11 @@ import { cookies } from "next/headers"; // Import cookies utility
 
 // Ensure the database connection is established before processing requests
 
+interface UserDocument extends Document {
+  _id: string;
+  comparePassword: (password: string) => Promise<boolean>;
+  generateToken: () => Promise<string>;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,7 +27,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const userExist = await User.findOne({ username });
+    const userExist = await User.findOne({ username }) as UserDocument;
     if (!userExist) {
       return NextResponse.json(
         { message: "Invalid Credentials" },
@@ -49,7 +54,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         msg: "Login Successful",
         token: token,
-        userId: userExist._id.toString(),
+        userId: userExist?._id.toString(), // Ensure _id is properly handled
         userExist,
         status: 200,
       });

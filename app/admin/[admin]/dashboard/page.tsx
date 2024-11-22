@@ -44,16 +44,42 @@ ChartJS.register(
   Legend
 );
 
+interface User{
+  _id:string;
+}
+interface Complaint {
+  _id:string;
+  
+  createdAt: Date; // ISO date string
+  status: string;
+  category: string;
+  user: {
+    username:string;
+    hostelId: string;
+  };
+}
+
+interface ComplaintStats {
+  allComplaints: number;
+  pendingNumber: number;
+  resolvedNumber: number;
+  urgentNumber: number;
+  hostelNumber: number;
+  messNumber: number;
+  FacilitiesNumber: number;
+  securityNumber: number;
+}
+
 const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const toggleNotifications = () => setNotificationsOpen(!notificationsOpen);
-  const { isLoggedIn, userData } = useSession();
+  const { isLoggedIn , userData } = useSession();
   const [loading, setLoading] = useState(false);
-  const [userId, setUserId] = useState(null);
-  const [complaintData, setComplaintData] = useState([]);
-  const [complaintStats, setComplaintStats] = useState({
+  const [userId, setUserId] = useState<string | null>(null);
+  const [complaintData, setComplaintData] = useState<Complaint[]>([]);
+  const [complaintStats, setComplaintStats] = useState<ComplaintStats>({
     allComplaints: 0,
     pendingNumber: 0,
     resolvedNumber: 0,
@@ -67,61 +93,61 @@ const AdminDashboard = () => {
 
   const allComplaints = complaintData.length;
   const pendingNumber = complaintData.filter(
-    (grievance) => grievance?.status === "Not Processed"
+    (grievance : any) => grievance?.status === "Not Processed"
   ).length;
   const resolvedNumber = complaintData.filter(
-    (grievance) => grievance?.status === "Resolved"
+    (grievance : any) => grievance?.status === "Resolved"
   ).length
   const urgentNumber = complaintData.filter(
-    (grievance) => grievance?.status === "Urgent"
+    (grievance : any) => grievance?.status === "Urgent"
   ).length;
 
   const hostelNumber = complaintData.filter(
-    (grievance) => grievance?.category === "Hostel"
+    (grievance : any) => grievance?.category === "Hostel"
   ).length;
   const messNumber = complaintData.filter(
-    (grievance) => grievance?.category === "Mess / Tiffin"
+    (grievance : any) => grievance?.category === "Mess / Tiffin"
   ).length;
 
   const FacilitiesNumber = complaintData.filter(
-    (grievance) => grievance?.category === "Facility"
+    (grievance : any) => grievance?.category === "Facility"
   ).length;
 
   const securityNumber = complaintData.filter(
-    (grievance) => grievance?.category === "Security"
+    (grievance : any) => grievance?.category === "Security"
   ).length;
 
 
   // Calculating Number Of complaints Hostel Wise 
   const A1Hostel = complaintData.filter(
-    (grievance) => grievance?.user?.hostelId === "A1"
+    (grievance  :any) => grievance?.user?.hostelId === "A1"
   ).length;
   const A2Hostel = complaintData.filter(
-    (grievance) => grievance?.user?.hostelId === "A2"
+    (grievance : any) => grievance?.user?.hostelId === "A2"
   ).length;
   const A3Hostel = complaintData.filter(
-    (grievance) => grievance?.user?.hostelId === "A3"
+    (grievance : any) => grievance?.user?.hostelId === "A3"
   ).length;
   const A4Hostel = complaintData.filter(
-    (grievance) => grievance?.user?.hostelId === "A4"
+    (grievance : any) => grievance?.user?.hostelId === "A4"
   ).length;
   const A5Hostel = complaintData.filter(
-    (grievance) => grievance?.user?.hostelId === "A5"
+    (grievance : any) => grievance?.user?.hostelId === "A5"
   ).length;
   const A6Hostel = complaintData.filter(
-    (grievance) => grievance?.user?.hostelId === "A6"
+    (grievance : any) => grievance?.user?.hostelId === "A6"
   ).length;
   const A7Hostel = complaintData.filter(
-    (grievance) => grievance?.user?.hostelId === "A7"
+    (grievance : any) => grievance?.user?.hostelId === "A7"
   ).length;
   const G1Hostel = complaintData.filter(
-    (grievance) => grievance?.user?.hostelId === "G1"
+    (grievance : any) => grievance?.user?.hostelId === "G1"
   ).length;
   const G2Hostel = complaintData.filter(
-    (grievance) => grievance?.user?.hostelId === "G2"
+    (grievance : any) => grievance?.user?.hostelId === "G2"
   ).length;
   const G3Hostel = complaintData.filter(
-    (grievance) => grievance?.user?.hostelId === "G3"
+    (grievance : any) => grievance?.user?.hostelId === "G3"
   ).length;
 
 
@@ -145,7 +171,7 @@ const AdminDashboard = () => {
   };
   useEffect(() => {
     // Set user data on component mount
-    setUserId(userData?._id);
+    setUserId(userData?._id ?? null);
 
     // Fetch complaints data from API when the user is available
     if (userId) {
@@ -180,7 +206,7 @@ const AdminDashboard = () => {
     {
       title: "Pending",
       value: complaintData.filter(
-        (grievance) => grievance.status === "Not Processed"
+        (grievance : any) => grievance.status === "Not Processed"
       ).length,
       color: "bg-yellow-500",
       progress: (pendingNumber / allComplaints) * 100,
@@ -188,7 +214,7 @@ const AdminDashboard = () => {
     {
       title: "Resolved",
       value: complaintData.filter(
-        (grievance) => grievance.status === "Resolved"
+        (grievance : any) => grievance.status === "Resolved"
       ).length,
       color: "bg-green-500",
       progress: (resolvedNumber / allComplaints) * 100,
@@ -216,7 +242,7 @@ const AdminDashboard = () => {
       const monthlyComplaints = new Array(12).fill(0);
 
       complaintData.forEach(complaint => {
-        const createdAt = new Date(complaint.createdAt); // Parse createdAt to Date object
+        const createdAt = new Date(complaint?.createdAt); // Parse createdAt to Date object
         const month = createdAt.getMonth(); // Extract the month (0 = Jan, 11 = Dec)
 
         // Increment the count for the respective month
@@ -235,6 +261,7 @@ const AdminDashboard = () => {
       }));
     }
   }, [complaintData]);
+
   const pieChartData = {
     labels: ["Pending", "Resolved", "Urgent"],
     datasets: [
@@ -262,58 +289,47 @@ const AdminDashboard = () => {
       },
     ],
   };
-  const barChartDataHostels = {
-    labels: ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "G1", "G2", "G3"],
-    datasets: [
-      {
-        label: "Hostels",
-        data: [
-          A1Hostel,
-          A2Hostel,
-          A3Hostel,
-          A4Hostel,
-          A5Hostel,
-          A6Hostel,
-          A7Hostel,
-          G1Hostel,
-          G2Hostel,
-          G3Hostel
-        ],
-        backgroundColor: [
-          "#FF6384",  // Color for A1
-          "#36A2EB",  // Color for A2
-          "#FFCE56",  // Color for A3
-          "#4BC0C0",  // Color for A4
-          "#9966FF",  // Color for A5
-          "#FF9F40",  // Color for A6
-          "#8E44AD",  // Color for A7
-          "#3498DB",  // Color for G1
-          "#2ECC71",  // Color for G2
-          "#E74C3C",  // Color for G3
-        ],
-        hoverBackgroundColor: [
-          "#FF6384",  // Hover color for A1
-          "#36A2EB",  // Hover color for A2
-          "#FFCE56",  // Hover color for A3
-          "#4BC0C0",  // Hover color for A4
-          "#9966FF",  // Hover color for A5
-          "#FF9F40",  // Hover color for A6
-          "#8E44AD",  // Hover color for A7
-          "#3498DB",  // Hover color for G1
-          "#2ECC71",  // Hover color for G2
-          "#E74C3C",  // Hover color for G3
-        ],
-      },
-    ],
-  };
+ // Bar chart data for the bar chart in the dashboard
+ const barChartDataHostels = {
+  labels: ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "G1", "G2", "G3"],
+  datasets: [
+    {
+      label: "Hostels",
+      data: [
+        A1Hostel,
+        A2Hostel,
+        A3Hostel,
+        A4Hostel,
+        A5Hostel,
+        A6Hostel,
+        A7Hostel,
+        G1Hostel,
+        G2Hostel,
+        G3Hostel,
+      ],
+      backgroundColor: ["#FF6384","#36A2EB","#FFCE56","#4BC0C0","#9966FF","#FF9F40","#8E44AD","#3498DB","#2ECC71","#E74C3C",],
+      hoverBackgroundColor: [
+        "#FF6384",
+        "#36A2EB",
+        "#FFCE56",
+        "#4BC0C0",
+        "#9966FF",
+        "#FF9F40",
+        "#8E44AD",
+        "#3498DB",
+        "#2ECC71",
+        "#E74C3C",
+      ],
+    },
+  ],
+};
 
-// Options to customize the bar chart
 const optionsHostel = {
   responsive: true,
   plugins: {
     legend: {
       display: true,
-      position: 'top',
+      position: "top",
       labels: {
         font: {
           size: 14,
@@ -322,30 +338,23 @@ const optionsHostel = {
     },
     tooltip: {
       callbacks: {
-        label: function (tooltipItem) {
-          return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`; // Customize tooltip display
+        label: function (tooltipItem: any) {
+          return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`;
         },
       },
     },
   },
 };
-  const handleBarClick = (elements) => {
-    if (elements.length > 0) {
-      const { index } = elements[0]; // Get the index of the clicked bar
-      console.log(`Clicked on: ${barChartDataHostels.labels[index]} with data: ${barChartDataHostels.datasets[0].data[index]}`);
-    }
-  };
 
-  // const barChartData = {
-  //     labels: ["Hostel", "Mess", "Facilities", "Security", "Other"],
-  //     datasets: [
-  //         {
-  //             label: "Grievances by Category",
-  //             data: [65, 59, 80, 81, 56],
-  //             backgroundColor: "rgba(54, 162, 235, 0.6)",
-  //         },
-  //     ],
-  // };
+const handleBarClick = (elements: any) => {
+  if (elements.length > 0) {
+    const { index } = elements[0];
+    console.log(
+      `Clicked on: ${barChartDataHostels.labels[index]} with data: ${barChartDataHostels.datasets[0].data[index]}`
+    );
+  }
+};
+
 
   const recentGrievances = [
     {
@@ -544,8 +553,8 @@ const optionsHostel = {
               </div>
               <div className="bg-white rounded-lg shadow-md p-6 lg:col-span-2">
                 <h4 className="text-xl font-semibold mb-4">Hostel Wise</h4>
-                <Bar data={barChartDataHostels} options={optionsHostel}
-                  onElementsClick={handleBarClick} />
+                <Bar data={barChartDataHostels} options={optionsHostel as any}
+                  />
               </div>
             </div>
 
@@ -564,15 +573,15 @@ const optionsHostel = {
                     </tr>
                   </thead>
                   <tbody>
-                    {complaintData.length > 0 ? (
-                      complaintData.slice(0, 5).map((grievance, index) => (
+                    {complaintData?.length > 0 ? (
+                      complaintData?.slice(0, 5).map((grievance, index) => (
                         <tr
                           key={index}
                           className="border-b hover:bg-gray-50 bg-white"
                         >
-                          <td className="p-3">{grievance._id}</td>
+                          <td className="p-3">{grievance?._id as any}</td>
                           <td className="p-3">{grievance.category}</td>
-                          <td className="p-3">{grievance.user?.username}</td>
+                          <td className="p-3">{grievance.user?.username }</td>
                           <td className="p-3">
                             <span
                               className={`px-2 py-1 rounded text-xs font-semibold ${grievance.status === "Resolved"
@@ -582,11 +591,11 @@ const optionsHostel = {
                                   : "bg-yellow-200 text-yellow-800"
                                 }`}
                             >
-                              {grievance.status}
+                              {grievance.status }
                             </span>
                           </td>
                           <td className="p-3">
-                            <Link href={`/admin/${userData?._id}/singleissue/${grievance?._id}`}>
+                            <Link href={`/admin/${userData?._id}/singleissue/${grievance?._id as String}`}>
                               <button className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition-colors duration-200">
                                 View
                               </button>

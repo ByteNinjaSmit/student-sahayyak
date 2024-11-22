@@ -1,6 +1,21 @@
-import mongoose, { Schema, model } from "mongoose";
+import mongoose, { Schema, model, Document } from "mongoose";
 
-const AttendanceSchema = new mongoose.Schema(
+// Define the interface for the Attendance document
+interface AttendanceDocument extends Document {
+  _id:string;
+  date: Date;
+  hostel: string;
+  students: Array<{
+    student: mongoose.Types.ObjectId;
+    status: "Present" | "Absent" | "Leave" | "Late";
+    remarks?: string;
+  }>;
+  createdAt:string;
+  updatedAt:string;
+}
+
+// Define the Attendance schema
+const AttendanceSchema = new Schema<AttendanceDocument>(
   {
     date: {
       type: Date,
@@ -14,7 +29,7 @@ const AttendanceSchema = new mongoose.Schema(
       {
         student: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
+          ref: "User", // Reference to the User model for student
           required: true,
         },
         status: {
@@ -23,24 +38,23 @@ const AttendanceSchema = new mongoose.Schema(
           required: true,
         },
         remarks: {
-          type: String,
+          type: String, // Optional field for additional remarks
         },
       },
     ],
   },
   {
-    timestamps: true,
+    timestamps: true, // Automatically add createdAt and updatedAt fields
   }
 );
 
+// Singleton pattern to ensure the model is compiled only once
 const Attendance = (() => {
   try {
-    // Return the existing model if it is already compiled
-    return model("Attendance");
+    return model<AttendanceDocument>("Attendance"); // Return the existing model if it exists
   } catch {
-    // Otherwise, define and return the new model
-    return model("Attendance", AttendanceSchema);
+    return model<AttendanceDocument>("Attendance", AttendanceSchema); // Otherwise, create and return a new model
   }
 })();
-// const CommonArea = model('CommonArea',commonareaSchema);
+
 export default Attendance;

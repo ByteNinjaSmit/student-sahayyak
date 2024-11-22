@@ -14,12 +14,31 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
 
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+  hostelId: string;
+  room:string;
+  username:string;
+  // add any other fields that are part of the user object
+}
+interface SelectedUser {
+  _id: string;
+  name: string;
+  username: string;
+  room: string;
+  hostelId: string;
+  hostel:string;
+}
+
+
 const UserManagement = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState<SelectedUser | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -37,7 +56,7 @@ const UserManagement = () => {
   const toggleNotifications = () => setNotificationsOpen((prev) => !prev);
 
   // Fetch users from the API
-  const fetchUsers = async (page) => {
+  const fetchUsers = async (page:any) => {
     setLoading(true);
     try {
       const response = await fetch(`/api/auth/admin/users?page=${page}`);
@@ -59,17 +78,17 @@ const UserManagement = () => {
   }, [currentPage]);
 
   // Handlers for user actions
-  const handleView = (user) => {
+  const handleView = (user : any) => {
     setSelectedUser(user);
     setIsViewing(true);
   };
 
-  const handleEdit = (user) => {
+  const handleEdit = (user : any) => {
     setSelectedUser(user);
     setIsEditing(true);
   };
 
-  const handleDelete = async (userId) => {
+  const handleDelete = async (userId : any) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       setLoading(true);
       try {
@@ -93,7 +112,7 @@ const UserManagement = () => {
     }
   };
 
-  const handleSave = async (editedUser) => {
+  const handleSave = async (editedUser: any) => {
     setLoading(true);
     try {
       // Simulated save API call
@@ -119,7 +138,7 @@ const UserManagement = () => {
     }
   };
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = (newPage : any) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
@@ -313,8 +332,8 @@ const UserManagement = () => {
                     <label className="block mb-1">Username:</label>
                     <input
                       type="text"
-                      value={selectedUser.username}
-                      onChange={(e) => setSelectedUser({ ...selectedUser, username: e.target.value })}
+                      value={selectedUser?.username}
+                      onChange={(e) => selectedUser && setSelectedUser({ ...selectedUser, username: e.target.value })}
                       className="border rounded w-full px-2 py-1"
                     />
                   </div>
@@ -322,8 +341,8 @@ const UserManagement = () => {
                     <label className="block mb-1">Hostel:</label>
                     <input
                       type="text"
-                      value={selectedUser.hostelId}
-                      onChange={(e) => setSelectedUser({ ...selectedUser, hostel: e.target.value })}
+                      value={selectedUser?.hostelId}
+                      onChange={(e) => selectedUser && setSelectedUser({ ...selectedUser, hostel: e.target.value })}
                       className="border rounded w-full px-2 py-1"
                     />
                   </div>
@@ -331,8 +350,8 @@ const UserManagement = () => {
                     <label className="block mb-1">Room Number:</label>
                     <input
                       type="text"
-                      value={selectedUser.room}
-                      onChange={(e) => setSelectedUser({ ...selectedUser, hostel: e.target.value })}
+                      value={selectedUser?.room}
+                      onChange={(e) =>selectedUser && setSelectedUser({ ...selectedUser, hostel: e.target.value })}
                       className="border rounded w-full px-2 py-1"
                     />
                   </div>
@@ -340,8 +359,8 @@ const UserManagement = () => {
                     <label className="block mb-1">Password</label>
                     <input
                       type="text"
-                      value={selectedUser.hostel}
-                      onChange={(e) => setSelectedUser({ ...selectedUser, hostel: e.target.value })}
+                      value={selectedUser?.hostel}
+                      onChange={(e) => selectedUser && setSelectedUser({ ...selectedUser, hostel: e.target.value })}
                       className="border rounded w-full px-2 py-1"
                     />
                   </div>

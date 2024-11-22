@@ -11,6 +11,8 @@ import { useParams, useRouter } from "next/navigation";
 import { BsFileImage } from "react-icons/bs";
 import { toast } from "react-toastify";
 import { relative } from "path";
+import Image from 'next/image';
+
 // Define the interface for the form data
 interface FormData {
   room: string[];
@@ -37,14 +39,14 @@ const GrievanceForm: React.FC = () => {
     issue: string;
   }>();
   // console.log(params);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState<any>(0);
 
   const [image, setImage] = useState<File | null>(null);
 
   // Image Resize code
   const resizeImage = (file: File): Promise<string> => {
     return new Promise((resolve) => {
-      const img = new Image();
+      const img = document.createElement('img'); // Correct way to create an image element
       const reader = new FileReader();
 
       reader.onloadend = () => {
@@ -86,12 +88,12 @@ const GrievanceForm: React.FC = () => {
     if (event.target.files) {
       const file = event.target.files[0];
       if (file.size > 250 * 1024) {
-        const resizedImage = await resizeImage(file);
+        const resizedImage = await resizeImage(file) as any;
         setImage(resizedImage);
       } else {
-        const reader = new FileReader();
+        const reader = new FileReader() as any;
         reader.onloadend = () => {
-          setImage(reader.result as string);
+          setImage(reader.result);
         };
         reader.readAsDataURL(file);
       }
@@ -115,7 +117,7 @@ const GrievanceForm: React.FC = () => {
     }
   }, [params.issue, params.user, router]);
 
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<any>({
     room: [],
     corridor: [],
     commonarea: [],
@@ -133,8 +135,8 @@ const GrievanceForm: React.FC = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const handleCheckboxChange = (section: keyof FormData, option: string) => {
-    setFormData((prevState) => {
+  const handleCheckboxChange = (section: any, option: string) => {
+    setFormData((prevState:any) => {
       const isOptionSelected = prevState[section].includes(option);
       const selectedCount = prevState[section].length;
 
@@ -146,7 +148,7 @@ const GrievanceForm: React.FC = () => {
       return {
         ...prevState,
         [section]: isOptionSelected
-          ? prevState[section].filter((item) => item !== option)
+          ? prevState[section]?.filter((item:any) => item !== option)
           : [...prevState[section], option],
       };
     });
@@ -155,26 +157,26 @@ const GrievanceForm: React.FC = () => {
 
 
   const handleOtherInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: any,
     section: keyof FormData
   ) => {
-    setFormData((prevState) => ({
+    setFormData((prevState:any) => ({
       ...prevState,
       [`${section}Other`]: e.target.value,
     }));
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: any,
     field: keyof FormData
   ) => {
-    setFormData((prevState) => ({
+    setFormData((prevState:any) => ({
       ...prevState,
       [field]: e.target.value,
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     setIsSubmitting(true);
 
@@ -188,7 +190,7 @@ const GrievanceForm: React.FC = () => {
     }
 
     const otherInputValue = formData[`${sectionKey}Other`];
-    const relevantData = [...(formData[sectionKey] || [])]; // Use empty array if undefined
+    const relevantData = [...(formData[sectionKey] || [])] ; 
 
     // Include the relevant other input if not already present
     if (otherInputValue && !relevantData.includes(otherInputValue)) {
@@ -208,7 +210,7 @@ const GrievanceForm: React.FC = () => {
     else {
       if (sectionKey === params.issue) {
         const progressInterval = setInterval(() => {
-          setProgress((prev) => (prev < 90 ? prev + 10 : prev));
+          setProgress((prev:any) => (prev < 90 ? prev + 10 : prev));
         }, 100);
 
         const xhr = new XMLHttpRequest();
@@ -231,13 +233,14 @@ const GrievanceForm: React.FC = () => {
                   image: image,
                 } : {}),
               })
-            }, {
-            // Track the progress of the upload
-            onUploadProgress: (progressEvent) => {
-              const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-              setProgress(percentCompleted);  // Update progress state
-            }
-          }
+            }, 
+          //   {
+          //   // Track the progress of the upload
+          //   onUploadProgress: (progressEvent) => {
+          //     const percentCompleted:any = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          //     setProgress(percentCompleted);  // Update progress state
+          //   }
+          // } as any
           );
           xhr.open('POST', url, true);
           xhr.setRequestHeader('Content-Type', 'application/json');
@@ -277,21 +280,14 @@ const GrievanceForm: React.FC = () => {
           toast.error("Grievances Raise Failed");
         } finally {
           clearInterval(progressInterval);
-          setProgress(100);
+          setProgress(0); // Reset progress
+          setIsSubmitting(false); // Reset submitting state
         }
 
 
 
       }
     }
-
-
-    // console.log(`Relevant Data: ${relevantData}`);
-    // console.log(`Food Owner Name: ${formData.foodownerName}`);
-    // console.log(`Food Service Type: ${formData.foodServiceType}`);
-
-    // Ideally, submit the data to your API here
-    // await submitData(relevantData);
 
     setIsSubmitting(false);
 
@@ -427,8 +423,8 @@ const GrievanceForm: React.FC = () => {
           </h2>
           <form onSubmit={handleSubmit} className="space-y-8">
             {formSections
-              .filter((section) => section.stateKey === params.issue)
-              .map((section, index) => (
+              .filter((section:any) => section.stateKey === params.issue)
+              .map((section : any, index:any) => (
                 <motion.div
                   key={section.title}
                   initial={{ opacity: 0, y: 50 }}
@@ -444,7 +440,7 @@ const GrievanceForm: React.FC = () => {
                     {(section.options && section.stateKey !== "foodowner") ||
                       section.stateKey === "foodquality" ? (
                       <>
-                        {section.options.map((option) => (
+                        {section.options.map((option:any) => (
                           <div key={option} className="flex items-start">
                             <div className="flex items-center h-5">
                               <input
@@ -527,8 +523,8 @@ const GrievanceForm: React.FC = () => {
                     {(section.stateKey === "corridor" && !!image) && (
                       <div className="mb-4">
                         <h2 className="text-lg font-semibold mb-2">Image Preview:</h2>
-                        <img
-                          src={image}
+                        <Image
+                          src={image as any}
                           alt="Image Preview"
                           className="w-full h-auto rounded-lg border border-gray-300"
                         />
@@ -556,13 +552,13 @@ const GrievanceForm: React.FC = () => {
                           >
                             <option value="">Select Type</option>
                             {/* Render options1 if stateKey is foodquality, otherwise render section.options */}
-                            {section.stateKey === "foodquality"
-                              ? section.options1.map((options1) => (
+                            {section?.stateKey === "foodquality"
+                              ? section?.options1.map((options1:any) => (
                                 <option key={options1} value={options1}>
                                   {options1}
                                 </option>
                               ))
-                              : section.options.map((option) => (
+                              : section.options.map((option:any) => (
                                 <option key={option} value={option}>
                                   {option}
                                 </option>
@@ -587,7 +583,7 @@ const GrievanceForm: React.FC = () => {
               <textarea
                 id="otherConcerns"
                 value={formData.otherConcernsOther}
-                onChange={(e) => handleOtherInputChange(e, "otherConcerns")}
+                onChange={(e) => handleOtherInputChange(e, "otherConcerns" as keyof FormData) }
                 rows={4}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />

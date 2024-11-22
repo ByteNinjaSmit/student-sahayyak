@@ -12,10 +12,14 @@ import { toast } from "react-toastify";
 // Define the user object shape
 interface User {
   id: string;
+  username: string;
   name: string;
-  email?:string;
+  email?: string;
   isHighAuth?: boolean;
   isRector?: boolean;
+  hostelId?: string;
+  _id?: string;
+  room?: string;
 }
 
 // Define the session state type
@@ -25,6 +29,11 @@ interface SessionState {
   isAdmin: boolean;
   isHighAuth?: boolean;
   isRector?: boolean;
+  isLoggedIn?:boolean;
+  userData?:User;
+  isUser?:boolean;
+  storeTokenInLS?: ((serverToken: any) => void) | undefined;
+  logout?: () => void;
 }
 
 // Create the context
@@ -43,12 +52,12 @@ const resetSessionState = (): SessionState => ({
 const SessionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<SessionState>(resetSessionState());
   const router = useRouter();
-  const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [token, setToken] = useState<any | null>(null);
+  const [isLoading, setIsLoading] = useState<any>(true);
   const [userData, setUserData] = useState<User | undefined>(undefined);
 
   // Function to store token in cookie (for auth) and localStorage (for persistence)
-  const storeTokenInLS = (serverToken: string) => {
+  const storeTokenInLS = (serverToken: any) => {
     setToken(serverToken);
     localStorage.setItem("token", serverToken);
   };
@@ -159,7 +168,7 @@ const SessionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       value={{
         ...session,
         isLoggedIn,
-        storeTokenInLS,
+        storeTokenInLS:storeTokenInLS,
         isUser: isAuth && !isAdmin,
         isAdmin,
         isHighAuth: isAdmin && isHighAuth,

@@ -19,7 +19,7 @@ export default function MainNavabar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { userData, logout, isLoggedIn } = useSession();
   const currentPath = usePathname();
-  const [userId, setUserId] = useState<string | null>(null);
+  const [userId, setUserId] = useState<any | null>(null);
   const [isAdmin, setIsAdmin] = useState(false); // State for admin check
 
   // Set userId and isAdmin when user data changes
@@ -170,7 +170,7 @@ export default function MainNavabar() {
       </NavbarContent>
 
       <NavbarMenu>
-        {menuItems.map((item, index) => (
+        {menuItems.map((item:any, index:any) => (
           <NavbarMenuItem key={`${item.name}-${index}`}>
             <Link
               href={item.href}

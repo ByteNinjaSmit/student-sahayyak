@@ -4,7 +4,10 @@ import { useState } from 'react';
 import { Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 
+
+
 const HostelStudentAttendance = () => {
+    
     const students = [
         { id: 1, name: 'John Doe', roomNumber: '101', floor: '1st Floor' },
         { id: 2, name: 'Jane Smith', roomNumber: '102', floor: '1st Floor' },
@@ -32,17 +35,18 @@ const HostelStudentAttendance = () => {
         (statusFilter === '' || student.status === statusFilter)
     );
 
-    const updateStatus = (id, status) => {
+
+    const updateStatus = (id : any, status : any) => {
         setAttendanceData(prev =>
             prev.map(student => student.id === id ? { ...student, status } : student)
         );
     };
 
-    const markAll = (status) => {
+    const markAll = (status : any) => {
         setAttendanceData(prev => prev.map(student => ({ ...student, status })));
     };
 
-    const getStatusColor = (status) => {
+    const getStatusColor = (status : any) => {
         switch (status) {
             case 'Present': return 'text-green-600';
             case 'Absent': return 'text-red-600';
@@ -56,7 +60,7 @@ const HostelStudentAttendance = () => {
         console.log('Attendance data:', attendanceData);
     };
 
-    const summary = attendanceData.reduce((acc, student) => {
+    const summary = attendanceData.reduce((acc : any, student : any) => {
         acc[student.status] = (acc[student.status] || 0) + 1;
         return acc;
     }, {});
@@ -81,7 +85,7 @@ const HostelStudentAttendance = () => {
                 {Object.entries(summary).map(([status, count]) => (
                     <div key={status} className="p-4 border rounded-lg shadow">
                         <h2 className="text-lg font-semibold">{status}</h2>
-                        <div className={`text-2xl font-bold ${getStatusColor(status)}`}>{count}</div>
+                        <div className={`text-2xl font-bold ${getStatusColor(status)}`}>{count as number}</div>
                     </div>
                 ))}
             </div>

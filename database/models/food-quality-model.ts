@@ -1,42 +1,51 @@
-import mongoose, { Schema,model } from "mongoose";
+import mongoose, { Schema, model, Document } from "mongoose";
 
-const foodqualitySchema = new Schema({
-    foodOwner:{
-        type:String,
-        required:true,
+// Define the interface for the FoodQuality document
+interface FoodQualityDocument extends Document {
+  _id:string;
+  foodOwner: string;
+  service: string;
+  complaint: string[];
+  status: string;
+  user?: string;
+  createdAt:string;
+  updatedAt:string;
+}
+
+// Define the FoodQuality schema
+const foodqualitySchema = new Schema<FoodQualityDocument>(
+  {
+    foodOwner: {
+      type: String,
+      required: true,
     },
-    service:{
-        type:String,
-        required:true,
+    service: {
+      type: String,
+      required: true,
     },
-    complaint:{
-        type:[String],
-        required:true,
-        // It is Hygene
+    complaint: {
+      type: [String],
+      required: true, // It is Hygene
     },
-    status:{
-        type:String,
-        default:"Not Processed",
+    status: {
+      type: String,
+      default: "Not Processed",
     },
     user: {
-        type: mongoose.Types.ObjectId,
-        ref: "User",
+      type: mongoose.Types.ObjectId,
+      ref: "User", // Reference to the User model
     },
-
-},
-{ timestamps: true }
+  },
+  { timestamps: true } // Automatically add createdAt and updatedAt fields
 );
 
+// Singleton pattern to ensure the model is compiled only once
 const FoodQuality = (() => {
-    try {
-      // Return the existing model if it is already compiled
-      return model('FoodQuality');
-    } catch {
-      // Otherwise, define and return the new model
-      return model('FoodQuality',foodqualitySchema);
-    }
-  })();
+  try {
+    return model<FoodQualityDocument>("FoodQuality"); // Return the existing model if it exists
+  } catch {
+    return model<FoodQualityDocument>("FoodQuality", foodqualitySchema); // Otherwise, create and return a new model
+  }
+})();
 
-
-// const FoodQuality = model('FoodQuality',foodqualitySchema);
 export default FoodQuality;

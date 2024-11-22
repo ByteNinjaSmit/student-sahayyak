@@ -16,13 +16,36 @@ import {
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { IoMdArrowRoundBack } from "react-icons/io";
+
+// Define the types for state variables and fetched data
+interface ActionLog {
+  actionType: string;
+  actionBy: string;
+  actionDate: string;
+  remarks: string;
+}
+
+interface ComplaintData {
+  _id: string;
+  status: string;
+  complaint: string[];
+  image?: string;
+  user?: {
+    username: string;
+    room: string;
+    hostelId: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
 const GrievanceView = () => {
-  const { id, admin } = useParams();
-  const [status, setStatus] = useState("Not Processed");
-  const [remarks, setRemarks] = useState("");
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [actionLog, setActionLog] = useState([
+  const { id, admin } = useParams() as { id: string; admin: string }; // Ensure proper type for useParams
+  const [status, setStatus] = useState<string>("Not Processed");
+  const [remarks, setRemarks] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [actionLog, setActionLog] = useState<ActionLog[]>([
     {
       actionType: "Complaint Filed",
       actionBy: "User",
@@ -30,8 +53,8 @@ const GrievanceView = () => {
       remarks: "Initial complaint submission",
     },
   ]);
-  const [complaintData, setComplaintData] = useState(null);
-  const [category, setCategory] = useState(null);
+  const [complaintData, setComplaintData] = useState<ComplaintData | null>(null);
+  const [category, setCategory] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchGrievance = async () => {
@@ -44,8 +67,8 @@ const GrievanceView = () => {
         setComplaintData(data.document);
         setStatus(data.document.status);
         setCategory(data.category);
-      } catch (err) {
-        setError(err.message);
+      } catch (error: any) {
+        setError(error.message);
       } finally {
         setLoading(false);
       }
@@ -56,15 +79,15 @@ const GrievanceView = () => {
 
 
 
-  const handleStatusChange = (e) => {
+  const handleStatusChange = (e:any) => {
     setStatus(e.target.value);
   };
 
-  const handleRemarksChange = (e) => {
+  const handleRemarksChange = (e:any) => {
     setRemarks(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e:any) => {
     e.preventDefault();
     if (remarks.trim() === "") {
       alert("Please enter remarks before submitting.");
@@ -81,7 +104,7 @@ const GrievanceView = () => {
   };
 
   // Formatting function for dates
-  const formatDate = (dateString) => {
+  const formatDate = (dateString:any) => {
     const options = {
       year: "numeric",
       month: "long",
@@ -89,11 +112,11 @@ const GrievanceView = () => {
       hour: "2-digit",
       minute: "2-digit",
     };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    return new Date(dateString).toLocaleDateString(undefined, options as any);
   };
 
   // Define status options based on the current status
-  const getStatusOptions = (currentStatus) => {
+  const getStatusOptions = (currentStatus:any) => {
     const statusHierarchy = [
       "Not Processed",
       "Urgent",
@@ -105,7 +128,7 @@ const GrievanceView = () => {
       "Resolved",
     ];
 
-    const getStatusStyles = (option) => {
+    const getStatusStyles = (option:any) => {
       switch (option) {
         case "Cancelled":
           return "bg-red-200 text-red-600";
@@ -336,7 +359,7 @@ const GrievanceView = () => {
                   </label>
                   <textarea
                     id="remarks"
-                    rows="4"
+                    rows={4}
                     className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
                     value={remarks}
                     onChange={handleRemarksChange}

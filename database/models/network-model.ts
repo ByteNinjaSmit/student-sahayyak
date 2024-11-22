@@ -1,6 +1,26 @@
-import mongoose, { Schema, model } from "mongoose";
+import mongoose, { Schema, model, Document, Types } from "mongoose";
 
-const networkconnSchema = new Schema(
+// Define the interface for the ActionLog
+interface ActionLog {
+  action: string;
+  actionTakenBy: string;
+  actionDate: Date;
+  remarks?: string;
+}
+
+// Define the interface for the NetworkConn document
+interface NetworkConnDocument extends Document {
+  _id:string;
+  complaint: string[];
+  status: string;
+  user?: string;
+  actionLog: ActionLog[];
+  createdAt:string;
+  updatedAt:string;
+}
+
+// Define the NetworkConn schema
+const networkconnSchema = new Schema<NetworkConnDocument>(
   {
     complaint: {
       type: [String],
@@ -11,7 +31,7 @@ const networkconnSchema = new Schema(
       default: "Not Processed",
     },
     user: {
-      type: mongoose.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User", // Reference to the user who submitted the complaint
     },
     actionLog: [
@@ -21,7 +41,7 @@ const networkconnSchema = new Schema(
           required: true, // Example: "Processed", "Resolved", "In Progress"
         },
         actionTakenBy: {
-          type: mongoose.Types.ObjectId,
+          type: mongoose.Schema.Types.ObjectId,
           ref: "User", // Reference to the admin who took the action
           required: true,
         },
@@ -38,16 +58,13 @@ const networkconnSchema = new Schema(
   { timestamps: true } // Automatically adds createdAt and updatedAt fields
 );
 
-// Singleton pattern for Safety model definition
+// Singleton pattern for model definition to ensure it's compiled only once
 const NetworkConn = (() => {
   try {
-    // Return the existing model if it is already compiled
-    return model("NetworkConn");
+    return model<NetworkConnDocument>("NetworkConn"); // Return the existing model if it's already compiled
   } catch {
-    // Otherwise, define and return the new model
-    return model("NetworkConn", networkconnSchema);
+    return model<NetworkConnDocument>("NetworkConn", networkconnSchema); // Otherwise, define and return the new model
   }
 })();
 
-// const NetworkConn = model('NetworkConn',networkconnSchema);
 export default NetworkConn;

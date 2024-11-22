@@ -4,7 +4,14 @@ import Faculty from "@/database/models/high-authority-model";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers"; 
 // Ensure the database connection is established before processing requests
-
+type Query = Record<string, any>;
+interface FacultyDocument extends Document {
+  _id: string;
+  comparePassword: (password: string) => Promise<boolean>;
+  generateToken: () => Promise<string>;
+  isRector?: boolean;
+  isHighAuth?: boolean;
+}
 export async function POST(request: NextRequest) {
   try {
     await connectToDatabase();
@@ -20,7 +27,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Define the query object
-    let query = { username };
+    let query: Query = { username };
 
     // Modify the query based on the role
     if (role === "rector") {
@@ -30,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Find the user based on the constructed query
-    const userExist = await Faculty.findOne(query);
+    const userExist = await Faculty.findOne(query) as FacultyDocument; // Type assertion
 
     // const userExist = await Faculty.findOne({ username });
     if (!userExist) {

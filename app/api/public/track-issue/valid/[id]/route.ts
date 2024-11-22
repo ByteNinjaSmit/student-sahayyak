@@ -24,7 +24,7 @@ export async function GET(
     const issueid = id;
 
     // Array of models
-    const models = [
+    const models:any = [
       { model: DrinkWater },
       { model: Room },
       { model: CommonArea },

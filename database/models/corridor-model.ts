@@ -1,17 +1,36 @@
-import mongoose, { Schema,model } from "mongoose";
+import mongoose, { Schema, model, Document } from "mongoose";
 
-const corridorSchema = new Schema({
-    complaint:{
-        type:[String],
-        required:true,
+// Define the interface for the Corridor document
+interface CorridorDocument extends Document {
+  _id:string;
+  complaint: string[];
+  status: string;
+  image: string;
+  user?: string;
+  actionLog: Array<{
+    action: string;
+    actionTakenBy: string;
+    actionDate: Date;
+    remarks?: string;
+  }>;
+  createdAt:string;
+  updatedAt:string;
+}
+
+// Define the Corridor schema
+const corridorSchema = new Schema<CorridorDocument>(
+  {
+    complaint: {
+      type: [String],
+      required: true,
     },
-    status:{
-        type:String,
-        default:"Not Processed",
+    status: {
+      type: String,
+      default: "Not Processed",
     },
-    image:{
-        type:String,
-        required:true,
+    image: {
+      type: String,
+      required: true,
     },
     user: {
       type: mongoose.Types.ObjectId,
@@ -38,18 +57,16 @@ const corridorSchema = new Schema({
       },
     ],
   },
-  { timestamps: true } // Automatically adds createdAt and updatedAt fields
+  { timestamps: true } // Automatically add createdAt and updatedAt fields
 );
 
+// Singleton pattern to ensure the model is compiled only once
 const Corridor = (() => {
-    try {
-      // Return the existing model if it is already compiled
-      return model('Corridor');
-    } catch {
-      // Otherwise, define and return the new model
-      return model('Corridor',corridorSchema);
-    }
-  })();
+  try {
+    return model<CorridorDocument>("Corridor"); // Return the existing model if it exists
+  } catch {
+    return model<CorridorDocument>("Corridor", corridorSchema); // Otherwise, create and return a new model
+  }
+})();
 
-// const Corridor = model('Corridor',corridorSchema);
 export default Corridor;

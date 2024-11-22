@@ -1,5 +1,23 @@
-import mongoose, { Schema, model } from "mongoose";
-const drinkwaterSchema = new Schema(
+import mongoose, { Schema, model, Document } from "mongoose";
+
+// Define the interface for the DrinkWater document
+interface DrinkWaterDocument extends Document {
+  _id:string;
+  complaint: string[];
+  status: string;
+  user?: string;
+  actionLog: Array<{
+    action: string;
+    actionTakenBy: string;
+    actionDate: Date;
+    remarks?: string;
+  }>;
+  createdAt:string;
+  updatedAt:string;
+}
+
+// Define the DrinkWater schema
+const drinkwaterSchema = new Schema<DrinkWaterDocument>(
   {
     complaint: {
       type: [String],
@@ -34,18 +52,16 @@ const drinkwaterSchema = new Schema(
       },
     ],
   },
-  { timestamps: true } // Automatically adds createdAt and updatedAt fields
+  { timestamps: true } // Automatically add createdAt and updatedAt fields
 );
 
+// Singleton pattern to ensure the model is compiled only once
 const DrinkWater = (() => {
   try {
-    // Return the existing model if it is already compiled
-    return model("DrinkWater");
+    return model<DrinkWaterDocument>("DrinkWater"); // Return the existing model if it exists
   } catch {
-    // Otherwise, define and return the new model
-    return model("DrinkWater", drinkwaterSchema);
+    return model<DrinkWaterDocument>("DrinkWater", drinkwaterSchema); // Otherwise, create and return a new model
   }
 })();
 
-// const DrinkWater = model('DrinkWater',drinkwaterSchema);
 export default DrinkWater;

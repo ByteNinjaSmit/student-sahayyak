@@ -40,7 +40,6 @@ export async function POST(request: NextRequest) {
   
       return NextResponse.json({
         msg: "Registration successful",
-        userId: userCreated._id.toString(),
       });
     } catch (error) {
       console.error("Error occurred during registration:", error);

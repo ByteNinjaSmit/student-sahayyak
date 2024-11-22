@@ -3,17 +3,20 @@ import mongoose, { Schema, model, Document } from "mongoose";
 // Interface for ActionLog
 interface ActionLog {
   action: string;
-  actionTakenBy: mongoose.Types.ObjectId;
+  actionTakenBy: string;
   actionDate: Date;
   remarks?: string;
 }
 
 // Interface for SafetyDocument
 interface SafetyDocument extends Document {
+  _id:string;
   complaint: string[];
   status: string;
-  user: mongoose.Types.ObjectId;
+  user?:string ;
   actionLog: ActionLog[];
+  createdAt:string;
+  updatedAt:string;
 }
 
 // Define the Safety schema
@@ -28,7 +31,7 @@ const safetySchema = new Schema<SafetyDocument>(
       default: "Not Processed",
     },
     user: {
-      type: mongoose.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId, // Corrected here
       ref: "User", // Reference to the user who submitted the complaint
     },
     actionLog: [
@@ -38,7 +41,7 @@ const safetySchema = new Schema<SafetyDocument>(
           required: true, // Example: "Processed", "Resolved", "In Progress"
         },
         actionTakenBy: {
-          type: mongoose.Types.ObjectId,
+          type: mongoose.Schema.Types.ObjectId, // Corrected here
           ref: "User", // Reference to the admin who took the action
           required: true,
         },
@@ -55,7 +58,7 @@ const safetySchema = new Schema<SafetyDocument>(
   { timestamps: true } // Automatically adds createdAt and updatedAt fields
 );
 
-
+// Singleton pattern to ensure the model is compiled only once
 const Safety = (() => {
   try {
     // Return the existing model if it is already compiled
@@ -65,7 +68,5 @@ const Safety = (() => {
     return model<SafetyDocument>("Safety", safetySchema);
   }
 })();
-// Singleton pattern to ensure the model is compiled only once
-// const Safety = model<SafetyDocument>("Safety", safetySchema);
 
 export default Safety;

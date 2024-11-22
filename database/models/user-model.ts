@@ -1,11 +1,24 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Document } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const userSchema = new Schema({
-  name:{
-    type:String,
-    required:true,
+interface IUser extends Document {
+  _id:string;
+  name: string;
+  username: string;
+  room: string;
+  hostelId: string;
+  password: string;
+  comparePassword(password: string): Promise<boolean>;
+  generateToken(): Promise<string>;
+}
+
+
+// Define the user schema
+const userSchema = new Schema<IUser>({
+  name: {
+    type: String,
+    required: true,
   },
   username: {
     type: String,
@@ -24,9 +37,8 @@ const userSchema = new Schema({
     required: true,
   },
 });
-
 // secure the password
-userSchema.pre("save", async function (next) {
+userSchema.pre<IUser>("save", async function (next) {
   const user = this;
 
   if (!user.isModified("password")) {
@@ -66,16 +78,15 @@ userSchema.methods.generateToken = async function () {
     console.error(error);
   }
 };
-// Define the User model if it doesn't exist already
-// Define the User model directly (no conditionals)
+
 // Singleton pattern for model definition
 const User = (() => {
   try {
-    // Check if the model is already compiled
-    return model("User");
+    // Return the existing model if it's already compiled
+    return model<IUser>("User");
   } catch {
     // If not compiled, create and return the model
-    return model("User", userSchema);
+    return model<IUser>("User", userSchema);
   }
 })();
 

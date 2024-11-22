@@ -12,15 +12,24 @@ const statusOptions = [
     { value: 'leave', label: 'Leave', color: 'bg-yellow-500' },
     { value: 'late', label: 'Late', color: 'bg-blue-500' },
 ]
+
+type Student = {
+    _id: string;
+    name: string;
+    room: string;
+};
+
+type AttendanceData = Record<string, string>; // studentId => status
+
 export default function Component() {
     const { userData, isLoggedIn } = useSession();
     const { admin } = useParams();
     const router = useRouter();
     const [isRector, setIsRector] = useState(false);
-    const [mockStudents, setMockStudents] = useState([]);
+    const [mockStudents, setMockStudents] = useState<Student[]>([]);
     const [selectedRoom, setSelectedRoom] = useState('All Rooms')
     const [searchQuery, setSearchQuery] = useState('')
-    const [attendanceData, setAttendanceData] = useState({})
+    const [attendanceData, setAttendanceData] = useState<AttendanceData>({});
     const [isFloorOpen, setIsFloorOpen] = useState(false)
     const [attendanceFilter, setAttendanceFilter] = useState('');
     const [isRoomOpen, setIsRoomOpen] = useState(false)
@@ -66,15 +75,15 @@ export default function Component() {
 
 
 
-    const handleAttendanceChange = (studentId, status) => {
+    const handleAttendanceChange = (studentId:any, status:any) => {
         setAttendanceData((prev) => ({
             ...prev,
             [studentId]: status,
         }))
     }
 
-    const handleBulkAction = (status) => {
-        const updatedData = {}
+    const handleBulkAction = (status:any) => {
+        const updatedData :AttendanceData = {}
         filteredStudents.forEach((student) => {
             updatedData[student?._id] = status
         })
@@ -85,7 +94,7 @@ export default function Component() {
     }
 
     const handleClearAll = () => {
-        const clearedData = {}
+        const clearedData:AttendanceData  = {}
         filteredStudents.forEach((student) => {
             clearedData[student?._id] = ''
         })
@@ -96,19 +105,23 @@ export default function Component() {
     }
 
     const calculateSummary = () => {
-        const summary = {
-            present: 0,
-            absent: 0,
-            leave: 0,
-            late: 0,
-        }
-        Object.values(attendanceData).forEach((status) => {
+        const summary: { [key in 'Present' | 'Absent' | 'Leave' | 'Late']: number } = {
+            Present: 0,
+            Absent: 0,
+            Leave: 0,
+            Late: 0,
+        };
+    
+        Object.values(attendanceData)?.forEach((status) => {
+            // Safely increment the correct status counter
             if (status in summary) {
-                summary[status]++
+                summary[status as 'Present' | 'Absent' | 'Leave' | 'Late']++;
             }
-        })
-        return summary
-    }
+        });
+    
+        return summary;
+    };
+    
 
     const summary = calculateSummary()
     //   When click on submit log data in console
@@ -144,7 +157,7 @@ export default function Component() {
             });
 
             if (!response.ok) {
-                toast.error(response.message);
+                toast.error('Failed to submit attendance');
             }
             if (response.ok) {
                 const result = await response.json();
@@ -152,13 +165,12 @@ export default function Component() {
             }
         } catch (error) {
             console.log("Error submitting attendance:", error);
-            toast.error(error);
         } finally {
             router.push(`/admin/${admin}/overview-attendance`);
         }
     };
     useEffect(() => {
-        const handleBeforeUnload = (event) => {
+        const handleBeforeUnload = (event:any) => {
             // Customize the alert message
             event.preventDefault();
             event.returnValue = 'If you reload, your data will be lost!';
@@ -336,7 +348,7 @@ export default function Component() {
                                             </select>
                                             {attendanceData[student?._id] && (
                                                 <span
-                                                    className={`ml-2 inline-block h-3 w-3 rounded-full ${statusOptions.find((o) => o.value === attendanceData[student?._id]).color
+                                                    className={`ml-2 inline-block h-3 w-3 rounded-full ${statusOptions.find((o) => o.value === attendanceData[student?._id])?.color
                                                         }`}
                                                 ></span>
                                             )}

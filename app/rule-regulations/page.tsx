@@ -108,7 +108,7 @@ const RulesAndRegulations = () => {
     
   ];
 
-  const toggleCategory = (id) => {
+  const toggleCategory = (id:any) => {
     setActiveCategory(activeCategory === id ? null : id);
   };
 
