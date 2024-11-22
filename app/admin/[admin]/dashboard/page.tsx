@@ -90,6 +90,16 @@ const AdminDashboard = () => {
     securityNumber: 0,
   });
 
+  useEffect(()=>{
+    setUserId(userData?._id ?? null);
+  },[userData?._id])
+
+  useEffect(() => {
+    // Fetch complaints data from API when the user is available
+    if (userId && userData?._id && userId) {
+      getComplaints();
+    }
+  }, [isLoggedIn, userId,userData?._id]);
 
   const allComplaints = complaintData.length;
   const pendingNumber = complaintData.filter(
@@ -157,7 +167,9 @@ const AdminDashboard = () => {
   const getComplaints = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/issues/getissue/all`);
+      const response = await fetch(`/api/issues/getissue/all`,{
+        cache: "no-store",
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch complaints");
       }
@@ -169,17 +181,7 @@ const AdminDashboard = () => {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    // Set user data on component mount
-    setUserId(userData?._id ?? null);
 
-    // Fetch complaints data from API when the user is available
-    if (userId) {
-      getComplaints();
-
-
-    }
-  }, [isLoggedIn, userId]);
 
   const sidebarItems = [
     { icon: <FaHome />, text: "Home" },

@@ -84,11 +84,15 @@ export async function GET(request: NextRequest) {
       ...safetyData.map(doc => ({ ...doc.toObject(), category: 'Security' })),
     ];
 
+    const headers = new Headers({
+      "Cache-Control": "no-store", // Disable caching
+    });
+
     // Sort the combined data by `createdAt` in descending order
     combinedData.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     // Return the sorted combined data
-    return NextResponse.json(combinedData);
+    return NextResponse.json(combinedData,{ headers });
   } catch (error) {
     console.error("Error fetching data:", error);
     return NextResponse.json({ error: "Failed to fetch user data" }, { status: 500 });
