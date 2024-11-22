@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, Suspense } from "react";
-import { FaQuestionCircle, FaFileAlt, FaSearch, FaPhoneAlt, FaInfoCircle } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { FaQuestionCircle, FaFileAlt, FaSearch, FaPhoneAlt, FaInfoCircle, FaCog } from "react-icons/fa";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Image from 'next/image';
 import { toast } from "react-toastify";
 
@@ -51,11 +51,9 @@ const HelpSupportPage = () => {
       case "form":
         return (
           <div className="space-y-4">
-            <Image
+            <img
               src="https://media.istockphoto.com/photos/complaint-picture-id475991835?k=6&m=475991835&s=170667a&w=0&h=g6cSyjh5iSgBFxqdVTytnvXuHXP888W0Lkv-OAFT178="
               alt="Filling form"
-              width={500} // Specify the image width
-              height={200} // Specify the image height
               className="w-full h-48 object-cover rounded-lg"
             />
             <h3 className="text-xl font-semibold">How to Fill the Grievance Form</h3>
@@ -153,13 +151,10 @@ const HelpSupportPage = () => {
                 <p>Email: clerk@sanjivanicoe.org.in</p>
               </div>
             </div>
-            <Image
+            <img
               src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1474&q=80"
               alt="Emergency contact"
-              className="rounded-lg"
-              width={1474}
-              height={300} // Adjust height proportionally
-              style={{ objectFit: 'cover', width: '100%', height: '12rem' }} // Tailwind won't work directly on `Image`
+              className="w-full h-48 object-cover rounded-lg"
             />
           </div>
         );
@@ -167,20 +162,69 @@ const HelpSupportPage = () => {
         return (
           <div className="space-y-4">
             <h3 className="text-xl font-semibold">About Us</h3>
-            <Image
+            <img
               src="https://media.istockphoto.com/vectors/young-man-outside-hostel-flat-vector-illustration-vector-id1191236486?k=6&m=1191236486&s=612x612&w=0&h=HAMwVDNKK6p9h5sYD5HMTsBjHdq0wyZK1499r52gZTw="
-              alt="About Us"
-              width={500} // Specify the image width
-              height={300} // Specify the image height
-              className="w-full h-48 object-cover rounded-lg"
+              alt="College campus"
+              className="w-full h-75 object-cover rounded-lg"
             />
             <p>
-              &nbsp;&nbsp;&nbsp;&nbsp;Our mission is to ensure that each student has a comfortable and secure stay in the hostel. Through this system, we aim to make the grievance redressal process transparent, timely, and student-centric.
+              &nbsp;&nbsp;&nbsp;&nbsp; Welcome to the Hostel Grievance System of Sanjivani College of Engineering.
+              Sanjivani College of Engineering is dedicated to fostering a supportive and enriching environment for our students.
+              To enhance the hostel experience for both boys and girls, we have established the Hostel Grievance System—an online platform designed to address and resolve student concerns related to hostel facilities and services.
             </p>
 
+            <h2><strong>Our Purpose</strong></h2>
             <p>
-              &nbsp;&nbsp;&nbsp;&nbsp; Please feel free to utilize this platform for any complaints or concerns you may have. Your feedback is valuable to us in maintaining a positive and productive hostel environment.
+              &nbsp;&nbsp;&nbsp;&nbsp;The Hostel Grievance System aims to provide a transparent and efficient way for students to voice their grievances.<br></br>
+              &nbsp;&nbsp;&nbsp;&nbsp;We believe that a comfortable living environment is essential for academic success and overall well-being.<br></br>
+              &nbsp;&nbsp;&nbsp;&nbsp;This system ensures that every concern is acknowledged and addressed in a timely manner.
             </p>
+            <h2><strong>Key Features</strong></h2>
+            <ul>
+              <li>&nbsp;&nbsp;&nbsp;&nbsp;<span>Simple Submission Process</span>: Easily submit grievances through our user-friendly interface.</li>
+              <li>&nbsp;&nbsp;&nbsp;&nbsp;<span>Confidential Handling</span>: All submissions are treated with confidentiality to protect student privacy.</li>
+              <li>&nbsp;&nbsp;&nbsp;&nbsp;<span>Timely Responses</span>: Our dedicated team works diligently to ensure that grievances are resolved quickly and effectively.</li>
+            </ul>
+            <p>
+              At Sanjivani College of Engineering, your comfort is our priority.
+              We encourage all students to utilize this system to help us create a better living experience for everyone.
+              Thank you for being an integral part of our community!
+            </p>
+            <div className="bg-gray-100 p-4 rounded-lg">
+              <h4 className="font-semibold">Our Process:</h4>
+              <ul className="list-disc list-inside mt-2">
+                <li>Receive complaints</li>
+                <li>Investigate issues</li>
+                <li>Implement solutions</li>
+                <li>Follow up with students</li>
+              </ul>
+            </div>
+          </div>
+        );
+      case "troubleshoot":
+        return (
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold">Troubleshoot</h3>
+            <div className="space-y-2">
+              {[{
+                problem: "Unable to log in",
+                solution: "Reset your password or contact the Computer Department."
+              },
+              {
+                problem: "Grievance form not submitting",
+                solution: "Check your internet connection and try again. If the issue persists, clear your browser cache."
+              },
+              {
+                problem: "Cannot upload documents",
+                solution: "Ensure your file is in a supported format (PDF, JPG, PNG) and under 5MB in size."
+              }
+              ].map((item, index) => (
+                <div key={index} className="bg-gray-100 p-4 rounded-lg">
+                  <h4 className="font-semibold">{item.problem}</h4>
+                  <p>{item.solution}</p>
+                </div>
+              ))}
+            </div>
           </div>
         );
       default:
@@ -189,43 +233,56 @@ const HelpSupportPage = () => {
   };
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <div className="container mx-auto p-4 space-y-6">
-        <h1 className="text-3xl font-semibold">Help & Support</h1>
-        <div className="space-x-4">
-          <button
-            className={`px-4 py-2 ${activeTab === "form" ? "bg-blue-500 text-white" : "bg-gray-300 text-black"} rounded-lg`}
-            onClick={() => setActiveTab("form")}
-          >
-            <FaQuestionCircle className="inline mr-2" /> Grievance Form
-          </button>
-          <button
-            className={`px-4 py-2 ${activeTab === "track" ? "bg-blue-500 text-white" : "bg-gray-300 text-black"} rounded-lg`}
-            onClick={() => setActiveTab("track")}
-          >
-            <FaSearch className="inline mr-2" /> Track Complaint
-          </button>
-          <button
-            className={`px-4 py-2 ${activeTab === "faq" ? "bg-blue-500 text-white" : "bg-gray-300 text-black"} rounded-lg`}
-            onClick={() => setActiveTab("faq")}
-          >
-            <FaFileAlt className="inline mr-2" /> FAQ
-          </button>
-          <button
-            className={`px-4 py-2 ${activeTab === "contact" ? "bg-blue-500 text-white" : "bg-gray-300 text-black"} rounded-lg`}
-            onClick={() => setActiveTab("contact")}
-          >
-            <FaPhoneAlt className="inline mr-2" /> Emergency Contact
-          </button>
-          <button
-            className={`px-4 py-2 ${activeTab === "about" ? "bg-blue-500 text-white" : "bg-gray-300 text-black"} rounded-lg`}
-            onClick={() => setActiveTab("about")}
-          >
-            <FaInfoCircle className="inline mr-2" /> About Us
-          </button>
+    <Suspense >
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-8">Help & Support</h1>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="md:col-span-1 space-y-4">
+            {[{
+              id: "form",
+              icon: FaFileAlt,
+              label: "How to Fill the Grievance Form"
+            },
+            {
+              id: "track",
+              icon: FaSearch,
+              label: "Track Complaint"
+            },
+            {
+              id: "faq",
+              icon: FaQuestionCircle,
+              label: "FAQ"
+            },
+            {
+              id: "contact",
+              icon: FaPhoneAlt,
+              label: "Emergency Contact"
+            },
+            {
+              id: "about",
+              icon: FaInfoCircle,
+              label: "About Us"
+            },
+            {
+              id: "troubleshoot",
+              icon: FaCog,
+              label: "Troubleshoot"
+            }
+            ].map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`flex items-center space-x-2 w-full p-4 rounded-lg ${activeTab === item.id ? "bg-blue-500 text-white" : "bg-gray-100 hover:bg-gray-200"}`}
+              >
+                <item.icon />
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </div>
+          <div className="md:col-span-2 bg-white p-6 rounded-lg shadow">
+              {renderContent()}
+            </div>
         </div>
-
-        {renderContent()}
       </div>
     </Suspense>
   );
