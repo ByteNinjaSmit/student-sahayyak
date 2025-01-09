@@ -1,5 +1,37 @@
 import mongoose, { Schema, model } from "mongoose";
 
+interface ActionLog {
+  action: string; // Describes the action taken (e.g., "Processed", "Resolved")
+  actionTakenBy: string; // Name or identifier of the person who took the action
+  actionDate: Date; // Timestamp for when the action occurred
+  remarks?: string; // Optional remarks or additional information
+}
+
+// Define the ActionLog schema
+const actionLogSchema = new Schema<ActionLog>(
+  {
+    action: {
+      type: String,
+      default: "Not Processed",
+      required: true,
+    },
+    actionTakenBy: {
+      type: String,
+      default: "User",
+      required: true,
+    },
+    actionDate: {
+      type: Date,
+      default: Date.now,
+    },
+    remarks: {
+      type: String,
+      default: "No remarks provided",
+    },
+  },
+  { _id: false } // Prevents creating an _id field for nested documents
+);
+
 const facultycomplaintSchema = new Schema(
   {
     complaint: {
