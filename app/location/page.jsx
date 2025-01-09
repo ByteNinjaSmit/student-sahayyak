@@ -1,8 +1,9 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { useGeolocated } from "react-geolocated";
 
-export default function Component() {
+export default function GeolocationComponent() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -20,29 +21,25 @@ export default function Component() {
       timeout: 5000, // Set timeout to 5 seconds
       maximumAge: 0, // Prevent caching
     },
-    watchPosition: false, // Set to false if you only want to get the location once
+    watchPosition: true, // Monitor geolocation changes dynamically
   });
 
-  // Render a loading state until the component is mounted
   if (!isMounted) {
     return <p>Loading...</p>;
   }
 
-  // Check if geolocation is available and enabled
   if (!isGeolocationAvailable) {
     return <p>Geolocation is not supported by your browser.</p>;
   }
 
-  if (!isGeolocationEnabled) {
+  if (!isGeolocationEnabled && !coords) {
     return <p>Please enable geolocation in your browser settings.</p>;
   }
 
-  // Handle errors in geolocation
-  if (errorMessage) {
+  if (errorMessage && !coords) {
     return <p>Error: {errorMessage}</p>;
   }
 
-  // If coordinates are available, display them
   return (
     <div className="p-6 bg-gray-800 text-white rounded-lg max-w-md mx-auto mt-10">
       <h1 className="text-2xl font-semibold text-center">Current Location</h1>
