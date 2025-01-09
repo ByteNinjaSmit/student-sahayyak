@@ -24,7 +24,7 @@ export async function GET(
     const drinkWaterData = await DrinkWater.find({ user: user });
     const roomData = await Room.find({ user: user });
     const commonAreaData = await CommonArea.find({ user: user });
-    const corridorData = await Corridor.find({ user: user });
+    const corridorData = await Corridor.find({ user: user },"-image");
     const foodQualityData = await FoodQuality.find({ user: user });
     const foodOwnerData = await FoodOwner.find({ user: user });
     const networkData = await NetworkConn.find({ user: user });

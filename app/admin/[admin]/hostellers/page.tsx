@@ -13,7 +13,7 @@ import AdminSidebar from "@/components/layout/admin/sidebar";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
-
+import axios from "axios";
 interface User {
   _id: string;
   name: string;
@@ -59,12 +59,14 @@ const UserManagement = () => {
   const fetchUsers = async (page:any) => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/auth/admin/users?page=${page}`);
-      if (!response.ok) throw new Error("Failed to fetch users");
+      const response = await axios.post(`/api/auth/admin/users?page=${page}`,{});
+      if (response.status!==200) throw new Error("Failed to fetch users");
 
-      const data = await response.json();
-      setUsers(data);
-      setTotalPages(Math.ceil(data.totalCount / itemsPerPage)); // Calculate total pages
+      if(response.status===200){
+        const data = response.data;
+        setUsers(data);
+        setTotalPages(Math.ceil(data.totalCount / itemsPerPage)); // Calculate total pages
+      }
     } catch (error) {
       console.error("Error fetching users:", error);
       // You might want to show a notification or message to the user here

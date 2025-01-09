@@ -2,10 +2,10 @@ import mongoose, { Schema, model, Document, Types } from "mongoose";
 
 // Define the interface for the ActionLog
 interface ActionLog {
-  action: string;
-  actionTakenBy: string;
-  actionDate: Date;
-  remarks?: string;
+  action: string; // Describes the action taken (e.g., "Processed", "Resolved")
+  actionTakenBy: string; // Name or identifier of the person who took the action
+  actionDate: Date; // Timestamp for when the action occurred
+  remarks?: string; // Optional remarks or additional information
 }
 
 // Define the interface for the Room document
@@ -19,6 +19,30 @@ interface RoomDocument extends Document {
   updatedAt:string;
 }
 
+
+const actionLogSchema = new Schema<ActionLog>(
+  {
+    action: {
+      type: String,
+      default: "Not Processed",
+      required: true,
+    },
+    actionTakenBy: {
+      type: String,
+      default: "User",
+      required: true,
+    },
+    actionDate: {
+      type: Date,
+      default: Date.now,
+    },
+    remarks: {
+      type: String,
+      default: "No remarks provided",
+    },
+  },
+  { _id: false } // Prevents creating an _id field for nested documents
+);
 // Define the Room schema
 const roomSchema = new Schema<RoomDocument>(
   {
@@ -34,26 +58,17 @@ const roomSchema = new Schema<RoomDocument>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User", // Reference to the user who submitted the complaint
     },
-    actionLog: [
-      {
-        action: {
-          type: String,
-          required: true, // Example: "Processed", "Resolved", "In Progress"
+    actionLog: {
+      type: [actionLogSchema], // Use the defined schema for ActionLog
+      default: [
+        {
+          action: "Not Processed",
+          actionTakenBy: "User",
+          actionDate: new Date(),
+          remarks: "No remarks provided",
         },
-        actionTakenBy: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User", // Reference to the admin who took the action
-          required: true,
-        },
-        actionDate: {
-          type: Date,
-          default: Date.now, // Timestamp when the action was taken
-        },
-        remarks: {
-          type: String, // Optional field for additional information about the action
-        },
-      },
-    ],
+      ],
+    },
   },
   { timestamps: true } // Automatically adds createdAt and updatedAt fields
 );

@@ -1,3 +1,7 @@
+// @/app/admin/admin/dashboard/page.tsx
+// Importing Differnt Models
+
+
 "use client";
 import React, { useState, useEffect } from "react";
 import {
@@ -31,6 +35,7 @@ import {
 import AdminSidebar from "@/components/layout/admin/sidebar";
 import Link from "next/link";
 import { useSession } from "@/app/store/session";
+import axios from "axios"
 
 ChartJS.register(
   CategoryScale,
@@ -44,20 +49,29 @@ ChartJS.register(
   Legend
 );
 
-interface User{
-  _id:string;
+interface User {
+  _id: string;
 }
 interface Complaint {
-  _id:string;
-  
+  _id: string;
+
   createdAt: Date; // ISO date string
   status: string;
   category: string;
+  actionLog: ActionLog[];
   user: {
-    username:string;
+    username: string;
     hostelId: string;
   };
+  updatedAt: string;
 }
+interface ActionLog {
+  action: string; // Describes the action taken (e.g., "Processed", "Resolved")
+  actionTakenBy: string; // Name or identifier of the person who took the action
+  actionDate: Date; // Timestamp for when the action occurred
+  remarks?: string; // Optional remarks or additional information
+}
+
 
 interface ComplaintStats {
   allComplaints: number;
@@ -75,7 +89,7 @@ const AdminDashboard = () => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const toggleNotifications = () => setNotificationsOpen(!notificationsOpen);
-  const { isLoggedIn , userData } = useSession();
+  const { isLoggedIn, userData } = useSession();
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [complaintData, setComplaintData] = useState<Complaint[]>([]);
@@ -90,74 +104,74 @@ const AdminDashboard = () => {
     securityNumber: 0,
   });
 
-  useEffect(()=>{
+  useEffect(() => {
     setUserId(userData?._id ?? null);
-  },[userData?._id])
+  }, [userData?._id])
 
   useEffect(() => {
     // Fetch complaints data from API when the user is available
     if (userId && userData?._id && userId) {
       getComplaints();
     }
-  }, [isLoggedIn, userId,userData?._id]);
+  }, [isLoggedIn, userId, userData?._id]);
 
   const allComplaints = complaintData.length;
   const pendingNumber = complaintData.filter(
-    (grievance : any) => grievance?.status === "Not Processed"
+    (grievance: any) => grievance?.status === "Not Processed"
   ).length;
   const resolvedNumber = complaintData.filter(
-    (grievance : any) => grievance?.status === "Resolved"
+    (grievance: any) => grievance?.status === "Resolved"
   ).length
   const urgentNumber = complaintData.filter(
-    (grievance : any) => grievance?.status === "Urgent"
+    (grievance: any) => grievance?.status === "Urgent"
   ).length;
 
   const hostelNumber = complaintData.filter(
-    (grievance : any) => grievance?.category === "Hostel"
+    (grievance: any) => grievance?.category === "Hostel"
   ).length;
   const messNumber = complaintData.filter(
-    (grievance : any) => grievance?.category === "Mess / Tiffin"
+    (grievance: any) => grievance?.category === "Mess / Tiffin"
   ).length;
 
   const FacilitiesNumber = complaintData.filter(
-    (grievance : any) => grievance?.category === "Facility"
+    (grievance: any) => grievance?.category === "Facility"
   ).length;
 
   const securityNumber = complaintData.filter(
-    (grievance : any) => grievance?.category === "Security"
+    (grievance: any) => grievance?.category === "Security"
   ).length;
 
 
   // Calculating Number Of complaints Hostel Wise 
   const A1Hostel = complaintData.filter(
-    (grievance  :any) => grievance?.user?.hostelId === "A1"
+    (grievance: any) => grievance?.user?.hostelId === "A1"
   ).length;
   const A2Hostel = complaintData.filter(
-    (grievance : any) => grievance?.user?.hostelId === "A2"
+    (grievance: any) => grievance?.user?.hostelId === "A2"
   ).length;
   const A3Hostel = complaintData.filter(
-    (grievance : any) => grievance?.user?.hostelId === "A3"
+    (grievance: any) => grievance?.user?.hostelId === "A3"
   ).length;
   const A4Hostel = complaintData.filter(
-    (grievance : any) => grievance?.user?.hostelId === "A4"
+    (grievance: any) => grievance?.user?.hostelId === "A4"
   ).length;
   const A5Hostel = complaintData.filter(
-    (grievance : any) => grievance?.user?.hostelId === "A5"
+    (grievance: any) => grievance?.user?.hostelId === "A5"
   ).length;
   const A6Hostel = complaintData.filter(
-    (grievance : any) => grievance?.user?.hostelId === "A6"
+    (grievance: any) => grievance?.user?.hostelId === "A6"
   ).length;
   const A7Hostel = complaintData.filter(
-    (grievance : any) => grievance?.user?.hostelId === "A7"
+    (grievance: any) => grievance?.user?.hostelId === "A7"
   ).length;
   const G1Hostel = complaintData.filter(
-    (grievance : any) => grievance?.user?.hostelId === "G1"
+    (grievance: any) => grievance?.user?.hostelId === "G1"
   ).length;
   const G2Hostel = complaintData.filter(
-    (grievance : any) => grievance?.user?.hostelId === "G2"
+    (grievance: any) => grievance?.user?.hostelId === "G2"
   ).length;
   const G3Hostel = complaintData.filter(
-    (grievance : any) => grievance?.user?.hostelId === "G3"
+    (grievance: any) => grievance?.user?.hostelId === "G3"
   ).length;
 
 
@@ -165,25 +179,39 @@ const AdminDashboard = () => {
   // const month = createdAtDate.getMonth();
   // Function to fetch complaints
   const getComplaints = async () => {
-    setLoading(true);
+    setLoading(true); // Indicate loading state
     try {
-      const response = await fetch(`/api/issues/getissue/all`,{
-        next:{
-          revalidate:5000
-        },
-        cache: "no-store",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch complaints");
+      const response = await axios.post(
+        `/api/issues/getissue/all-issue`,
+        {},
+        {
+          headers: {
+            "Cache-Control": "no-store",
+          },
+        }
+      );
+  
+      // Check if the response contains valid data
+      // if (!data) {
+      //   throw new Error("No data received from the server");
+      // }
+
+      if(response.status === 200){
+        setComplaintData(response.data);
       }
-      const data = await response.json();
-      setComplaintData(data); // Set fetched complaints
-    } catch (error) {
-      console.error("Error fetching complaints:", error);
+      console.log(response);
+      
+      // Set the fetched complaints to state
+      // 
+    } catch (error:any) {
+      // Log and handle errors
+      console.error("Error fetching complaints:", error.message  || error);
+      // Optionally display an error message to the user
     } finally {
-      setLoading(false);
+      setLoading(false); // Reset loading state
     }
   };
+  
 
 
   const sidebarItems = [
@@ -211,7 +239,7 @@ const AdminDashboard = () => {
     {
       title: "Pending",
       value: complaintData.filter(
-        (grievance : any) => grievance.status === "Not Processed"
+        (grievance: any) => grievance.status === "Not Processed"
       ).length,
       color: "bg-yellow-500",
       progress: (pendingNumber / allComplaints) * 100,
@@ -219,7 +247,7 @@ const AdminDashboard = () => {
     {
       title: "Resolved",
       value: complaintData.filter(
-        (grievance : any) => grievance.status === "Resolved"
+        (grievance: any) => grievance.status === "Resolved"
       ).length,
       color: "bg-green-500",
       progress: (resolvedNumber / allComplaints) * 100,
@@ -294,71 +322,71 @@ const AdminDashboard = () => {
       },
     ],
   };
- // Bar chart data for the bar chart in the dashboard
- const barChartDataHostels = {
-  labels: ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "G1", "G2", "G3"],
-  datasets: [
-    {
-      label: "Hostels",
-      data: [
-        A1Hostel,
-        A2Hostel,
-        A3Hostel,
-        A4Hostel,
-        A5Hostel,
-        A6Hostel,
-        A7Hostel,
-        G1Hostel,
-        G2Hostel,
-        G3Hostel,
-      ],
-      backgroundColor: ["#FF6384","#36A2EB","#FFCE56","#4BC0C0","#9966FF","#FF9F40","#8E44AD","#3498DB","#2ECC71","#E74C3C",],
-      hoverBackgroundColor: [
-        "#FF6384",
-        "#36A2EB",
-        "#FFCE56",
-        "#4BC0C0",
-        "#9966FF",
-        "#FF9F40",
-        "#8E44AD",
-        "#3498DB",
-        "#2ECC71",
-        "#E74C3C",
-      ],
-    },
-  ],
-};
+  // Bar chart data for the bar chart in the dashboard
+  const barChartDataHostels = {
+    labels: ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "G1", "G2", "G3"],
+    datasets: [
+      {
+        label: "Hostels",
+        data: [
+          A1Hostel,
+          A2Hostel,
+          A3Hostel,
+          A4Hostel,
+          A5Hostel,
+          A6Hostel,
+          A7Hostel,
+          G1Hostel,
+          G2Hostel,
+          G3Hostel,
+        ],
+        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40", "#8E44AD", "#3498DB", "#2ECC71", "#E74C3C",],
+        hoverBackgroundColor: [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#4BC0C0",
+          "#9966FF",
+          "#FF9F40",
+          "#8E44AD",
+          "#3498DB",
+          "#2ECC71",
+          "#E74C3C",
+        ],
+      },
+    ],
+  };
 
-const optionsHostel = {
-  responsive: true,
-  plugins: {
-    legend: {
-      display: true,
-      position: "top",
-      labels: {
-        font: {
-          size: 14,
+  const optionsHostel = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: "top",
+        labels: {
+          font: {
+            size: 14,
+          },
+        },
+      },
+      tooltip: {
+        callbacks: {
+          label: function (tooltipItem: any) {
+            return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`;
+          },
         },
       },
     },
-    tooltip: {
-      callbacks: {
-        label: function (tooltipItem: any) {
-          return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`;
-        },
-      },
-    },
-  },
-};
+  };
 
-const handleBarClick = (elements: any) => {
-  if (elements.length > 0) {
-    const { index } = elements[0];
-    console.log(
-      `Clicked on: ${barChartDataHostels.labels[index]} with data: ${barChartDataHostels.datasets[0].data[index]}`
-    );
-  }
-};
+  const handleBarClick = (elements: any) => {
+    if (elements.length > 0) {
+      const { index } = elements[0];
+      console.log(
+        `Clicked on: ${barChartDataHostels.labels[index]} with data: ${barChartDataHostels.datasets[0].data[index]}`
+      );
+    }
+  };
 
 
   const recentGrievances = [
@@ -411,6 +439,21 @@ const handleBarClick = (elements: any) => {
     { id: 2, message: "Urgent issue reported in Hostel Block A" },
     { id: 3, message: "Complaint GR002 has been resolved" },
   ];
+
+  // Formatting function for dates
+  const formatDate = (dateString: any) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(dateString).toLocaleDateString(undefined, options as any);
+  };
+
+  console.log("Complaint Data", complaintData);
+
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -559,7 +602,7 @@ const handleBarClick = (elements: any) => {
               <div className="bg-white rounded-lg shadow-md p-6 lg:col-span-2">
                 <h4 className="text-xl font-semibold mb-4">Hostel Wise</h4>
                 <Bar data={barChartDataHostels} options={optionsHostel as any}
-                  />
+                />
               </div>
             </div>
 
@@ -586,7 +629,7 @@ const handleBarClick = (elements: any) => {
                         >
                           <td className="p-3">{grievance?._id as any}</td>
                           <td className="p-3">{grievance.category}</td>
-                          <td className="p-3">{grievance.user?.username }</td>
+                          <td className="p-3">{grievance.user?.username}</td>
                           <td className="p-3">
                             <span
                               className={`px-2 py-1 rounded text-xs font-semibold ${grievance.status === "Resolved"
@@ -596,7 +639,7 @@ const handleBarClick = (elements: any) => {
                                   : "bg-yellow-200 text-yellow-800"
                                 }`}
                             >
-                              {grievance.status }
+                              {grievance.status}
                             </span>
                           </td>
                           <td className="p-3">
@@ -637,16 +680,29 @@ const handleBarClick = (elements: any) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {actionLog.map((log, index) => (
-                      <tr
-                        key={index}
-                        className="border-b hover:bg-gray-50 bg-white"
-                      >
-                        <td className="p-3">{log.action}</td>
-                        <td className="p-3">{log.admin}</td>
-                        <td className="p-3">{log.timestamp}</td>
-                      </tr>
-                    ))}
+                    {
+                      complaintData?.length > 0 ? (
+                        complaintData?.slice(0, 5).map((grievance, index) => (
+                          <tr
+                            key={index}
+                            className="border-b hover:bg-gray-50 bg-white"
+                          >
+                            <td className="p-3">{grievance?.actionLog[0]?.action}</td>
+                            <td className="p-3">{grievance?.actionLog[0]?.actionTakenBy}</td>
+                            <td className="p-3">{formatDate(grievance?.updatedAt)}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr className="border-b hover:bg-gray-50 bg-white">
+                          <td
+                            className="px-6 py-4 text-center text-gray-500"
+                            colSpan={5}
+                          >
+                            No recent grievances found.
+                          </td>
+                        </tr>
+                      )
+                    }
                   </tbody>
                 </table>
               </div>

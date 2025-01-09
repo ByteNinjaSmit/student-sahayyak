@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import Link from "next/link";
 import { useSession } from "@/app/store/session";
-
+import axios from "axios";
 
 // Define grievance type
 interface Grievance {
@@ -16,7 +16,7 @@ interface Grievance {
   createdAt: string;
   user?: {
     username: string;
-    room:string;
+    room: string;
     hostelId: string;
   };
 }
@@ -65,12 +65,11 @@ const GrievanceManagementSystem = () => {
   const getComplaints = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/issues/getissue/all`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch complaints");
+      const response = await axios.post(`/api/issues/getissue/all`, {});
+      if (response.status === 200) {
+        const data = response.data;
+        setGrievances(data); // Set fetched complaints
       }
-      const data = await response.json();
-      setGrievances(data); // Set fetched complaints
     } catch (error) {
       console.error("Error fetching complaints:", error);
     } finally {
@@ -88,11 +87,11 @@ const GrievanceManagementSystem = () => {
   const itemsPerPage = 50;
   const totalPages = Math.ceil(grievances.length / itemsPerPage);
 
-  const handleSearch = (e : any) => setSearchTerm(e.target.value);
-  const handleCategoryChange = (e:any) => setCategory(e.target.value);
-  const handleStatusChange = (e:any) => setStatus(e.target.value);
-  const handleHostelChange = (e:any) => setHostel(e.target.value);
-  const handlePageChange = (page:any) => setCurrentPage(page);
+  const handleSearch = (e: any) => setSearchTerm(e.target.value);
+  const handleCategoryChange = (e: any) => setCategory(e.target.value);
+  const handleStatusChange = (e: any) => setStatus(e.target.value);
+  const handleHostelChange = (e: any) => setHostel(e.target.value);
+  const handlePageChange = (page: any) => setCurrentPage(page);
 
   const filteredGrievances = grievances.filter((grievance) => {
     return (
@@ -111,7 +110,11 @@ const GrievanceManagementSystem = () => {
     const twoDaysInMilliseconds = 2 * 24 * 60 * 60 * 1000; // Two days in milliseconds
     return timeDifference >= twoDaysInMilliseconds;
   };
-  
+
+  const refreshData = (e: any) => {
+    e.preventDefault();
+    getComplaints();
+  };
 
   const paginatedGrievances = filteredGrievances.slice(
     (currentPage - 1) * itemsPerPage,
@@ -156,8 +159,8 @@ const GrievanceManagementSystem = () => {
             )}
           </div>
         </header>
-        <div className="mx-auto mt-4 text-start justify-start">
-          <h3 className="text-3xl font-medium text-gray-700 text-start">Grievance Management : Overview</h3>
+        <div className="mx-auto mt-4 text-start justify-start max-md:justify-center">
+          <h3 className="text-2xl font-medium text-gray-700 md:text-start max-md:text-center">Grievance Management : Overview</h3>
         </div>
 
         {loading && (
@@ -168,20 +171,20 @@ const GrievanceManagementSystem = () => {
 
         <div className="flex-1 container mx-auto p-6">
           <div className="bg-white rounded-lg shadow-lg p-6">
-            <div className="flex justify-between items-center mb-4">
-              <div className="relative">
+            <div className="flex flex-wrap justify-between items-center mb-4 space-y-4 md:space-y-0">
+              <div className="relative w-full md:w-auto">
                 <input
                   type="text"
                   placeholder="Search by ID or Name"
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300"
+                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300 w-full md:w-auto"
                   value={searchTerm}
                   onChange={handleSearch}
                 />
                 <FaSearch className="absolute left-3 top-3 text-gray-400" />
               </div>
-              <div className="flex space-x-4">
+              <div className="flex flex-wrap space-x-0 space-y-4 md:space-x-4 md:space-y-0 w-full md:w-auto">
                 <select
-                  className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300"
+                  className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300 w-full md:w-auto"
                   value={category}
                   onChange={handleCategoryChange}
                 >
@@ -192,7 +195,7 @@ const GrievanceManagementSystem = () => {
                   <option value="Security">Security</option>
                 </select>
                 <select
-                  className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300"
+                  className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300 w-full md:w-auto"
                   value={status}
                   onChange={handleStatusChange}
                 >
@@ -205,40 +208,41 @@ const GrievanceManagementSystem = () => {
                   <option value="Proceeded">Proceeded</option>
                   <option value="Not Resolved">Not Resolved</option>
                   <option value="Resolved">Resolved</option>
-
-
                 </select>
-                {
-                  !isRector && (
-                    <select
-                      className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300"
-                      value={hostel}
-                      onChange={handleHostelChange}
-                    >
-                      <option value="All">All Hostels</option>
-                      <option value="G1">G1</option>
-                      <option value="G2">G2</option>
-                      <option value="G3">G3</option>
-                      <option value="G4">G4</option>
-                      <option value="A1">A1</option>
-                      <option value="A2">A2</option>
-                      <option value="A3">A3</option>
-                      <option value="A4">A4</option>
-                      <option value="A5">A5</option>
-                      <option value="A6">A6</option>
-                      <option value="A7">A7</option>
-                    </select>
-                  )
-                }
-                <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center">
-                  <FaFilter className="mr-2" /> Apply Filters
-                </button>
-                <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300 flex items-center">
-                  <FaSync className="mr-2" /> Refresh
-                </button>
+                {!isRector && (
+                  <select
+                    className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300 w-full md:w-auto"
+                    value={hostel}
+                    onChange={handleHostelChange}
+                  >
+                    <option value="All">All Hostels</option>
+                    <option value="G1">G1</option>
+                    <option value="G2">G2</option>
+                    <option value="G3">G3</option>
+                    <option value="G4">G4</option>
+                    <option value="A1">A1</option>
+                    <option value="A2">A2</option>
+                    <option value="A3">A3</option>
+                    <option value="A4">A4</option>
+                    <option value="A5">A5</option>
+                    <option value="A6">A6</option>
+                    <option value="A7">A7</option>
+                  </select>
+                )}
+                <div className="flex flex-wrap space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
+                  <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center w-full md:w-auto">
+                    <FaFilter className="mr-2" /> Apply Filters
+                  </button>
+                  <button
+                    className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300 flex items-center w-full md:w-auto"
+                    onClick={refreshData}
+                  >
+                    <FaSync className="mr-2" /> Refresh
+                  </button>
+                </div>
               </div>
             </div>
-
+            {/* </div> */}
             <div className="overflow-x-auto">
               <table className="min-w-full table-auto">
                 <thead>

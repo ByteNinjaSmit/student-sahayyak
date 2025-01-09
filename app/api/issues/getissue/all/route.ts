@@ -11,7 +11,7 @@ import Safety from "@/database/models/safety-model";
 import User from "@/database/models/user-model"; // Ensure User model is imported
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     await connectToDatabase();
 
@@ -37,21 +37,21 @@ export async function GET(request: NextRequest) {
       options: { strictPopulate: false },
     });
 
-    const corridorData = await Corridor.find().populate({
+    const corridorData = await Corridor.find({},"-image").populate({
       path: "user",
       model: "User",
       select: "-password -image",
       options: { strictPopulate: false },
     });
 
-    const foodQualityData = await FoodQuality.find().populate({
+    const foodQualityData = await FoodQuality.find({},"-foodOwner -service").populate({
       path: "user",
       model: "User",
       select: "-password",
       options: { strictPopulate: false },
     });
 
-    const foodOwnerData = await FoodOwner.find().populate({
+    const foodOwnerData = await FoodOwner.find({},"-foodOwner -service").populate({
       path: "user",
       model: "User",
       select: "-password",

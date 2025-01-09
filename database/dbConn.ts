@@ -1,3 +1,4 @@
+// @/database/dbConn.ts
 import mongoose from "mongoose";
 import DrinkWater from "@/database/models/drink-water-model";
 import Room from "@/database/models/room-model";
@@ -24,12 +25,11 @@ export const connectToDatabase = async () => {
     if (!cached.promise) {
       cached.promise = mongoose.connect(MONGO_URI, {
         dbName: "Hostellers",  // Your database name
-        bufferCommands: false,  // Prevent MongoDB from buffering commands if connection is unavailable
+        bufferCommands: false,
         socketTimeoutMS: 30000,  // Set a timeout for socket operations
         serverSelectionTimeoutMS: 5000,  // Timeout for finding a suitable server
         connectTimeoutMS: 10000,  // Connection timeout
-        // useCreateIndex: true,  // Create indexes efficiently (if using older mongoose versions)
-        // useFindAndModify: false,  // Use native MongoDB methods (if using older mongoose versions)
+
       });
     }
 

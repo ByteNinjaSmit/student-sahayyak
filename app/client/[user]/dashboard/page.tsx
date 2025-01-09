@@ -16,6 +16,7 @@ import {
   FaHeadset,
   FaUser,
   FaBook,
+  FaChartBar,
   FaDoorOpen,
 } from "react-icons/fa";
 import Link from "next/link";
@@ -101,6 +102,13 @@ const Dashboard = () => {
       description: "Click if problem isn't resolved.",
       link: "/client/grievance/action",
       buttonText: "Raise a Grievance",
+    },
+    {
+      icon: <FaChartBar />,
+      name: "All Complaints History",
+      description: "View Your Last or All Complaint History.",
+      link: "/client/complaints",
+      buttonText: "View All",
     },
     {
       icon: <FaCheckCircle />,
@@ -254,7 +262,7 @@ const Dashboard = () => {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {complaintData.length > 0 ? (
-                complaintData.map((grievance:any, index:any) => (
+                complaintData.slice(0,5).map((grievance:any, index:any) => (
                   <tr
                     key={index}
                     className="hover:bg-gray-100 transition-colors duration-200"
@@ -279,13 +287,21 @@ const Dashboard = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`px-2 inline-flex text-sm leading-5 font-semibold rounded-full ${grievance.status === "Resolved"
-                            ? "bg-green-100 text-green-800"
+                         className={`px-2 inline-flex text-sm leading-5 font-semibold rounded-full ${
+                          grievance.status === "Resolved"
+                            ? "bg-green-300 text-green-900"
                             : grievance.status === "Urgent"
-                              ? "bg-red-200 text-red-800"
-                              : "bg-yellow-100 text-yellow-800"
-
-                          }`}
+                            ? "bg-red-200 text-red-800"
+                            : grievance.status === "Cancelled"
+                            ? "bg-orange-200 text-orange-800"
+                            : grievance.status === "Pending"
+                            ? "bg-orange-200 text-orange-800"
+                            : grievance.status === "In Progress"
+                            ? "bg-blue-200 text-blue-600"
+                            : grievance.status === "Procced"
+                            ? "bg-green-200 text-green-600"
+                            : "bg-yellow-200 text-yellow-800"
+                        }`}
                       >
                         {grievance.status}
                       </span>

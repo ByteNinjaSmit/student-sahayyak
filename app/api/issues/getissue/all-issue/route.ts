@@ -1,3 +1,4 @@
+// @/app/api/issue/getissue/all-issue
 "use server";
 import { connectToDatabase } from "@/database/dbConn";
 import DrinkWater from "@/database/models/drink-water-model";
@@ -8,14 +9,13 @@ import FoodQuality from "@/database/models/food-quality-model";
 import FoodOwner from "@/database/models/food-owner-model";
 import NetworkConn from "@/database/models/network-model";
 import Safety from "@/database/models/safety-model";
-import User from "@/database/models/user-model"; // Ensure User model is imported
+import User from "@/database/models/user-model";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     await connectToDatabase();
 
-    // Fetch data from all models and populate the `user` field with `strictPopulate: false`
     const drinkWaterData = await DrinkWater.find().populate({
       path: "user",
       model: "User", // Ensure you explicitly use the User model
@@ -37,10 +37,10 @@ export async function GET(request: NextRequest) {
       options: { strictPopulate: false },
     });
 
-    const corridorData = await Corridor.find({},"-image").populate({
+    const corridorData = await Corridor.find({}, "-image").populate({
       path: "user",
       model: "User",
-      select: "-password -image",
+      select: "-password",
       options: { strictPopulate: false },
     });
 
@@ -72,6 +72,10 @@ export async function GET(request: NextRequest) {
       options: { strictPopulate: false },
     });
 
+    // Fetch all data in parallel
+    // const results = await Promise.all(fetchPromises);
+
+    // Flatten the results array and sort it by createdAt
     // Combine all the arrays into one with categories
     const combinedData = [
       ...drinkWaterData.map((doc) => ({
@@ -96,35 +100,30 @@ export async function GET(request: NextRequest) {
         ...doc.toObject(),
         category: "Facility",
       })),
-      ...safetyData.map((doc) => ({ ...doc.toObject(), category: "Security" })),
+      ...safetyData.map((doc) => ({
+        ...doc.toObject(),
+        category: "Security",
+      })),
     ];
-
-    // const headers = new Headers({
-    //   "Cache-Control": "no-store", // Disable caching
-    // });
-
-    // Sort the combined data by `createdAt` in descending order
     combinedData.sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
 
-    // Return the sorted combined data and disable cache by setting Cache-Control header
+    // Prepare the response
     const response = NextResponse.json(combinedData);
-
-    // Explicitly disable caching by setting Cache-Control header
     response.headers.set(
       "Cache-Control",
       "no-store, no-cache, must-revalidate, proxy-revalidate"
     );
     response.headers.set("Expires", "0");
     response.headers.set("Pragma", "no-cache");
-    
+
     return response;
   } catch (error) {
     console.error("Error fetching data:", error);
     return NextResponse.json(
-      { error: "Failed to fetch user data" },
+      { error: "Failed to fetch user data Server Error" },
       { status: 500 }
     );
   }

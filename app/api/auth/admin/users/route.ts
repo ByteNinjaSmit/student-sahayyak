@@ -4,7 +4,7 @@ import User from "@/database/models/user-model";
 import { NextRequest, NextResponse } from "next/server";
 
 // Get All Users
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
     try {
         await connectToDatabase();
 

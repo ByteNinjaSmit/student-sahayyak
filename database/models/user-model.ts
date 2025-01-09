@@ -9,6 +9,7 @@ interface IUser extends Document {
   room: string;
   hostelId: string;
   password: string;
+  face_image:string;
   comparePassword(password: string): Promise<boolean>;
   generateToken(): Promise<string>;
 }
@@ -27,6 +28,9 @@ const userSchema = new Schema<IUser>({
   room: {
     type: String,
     required: true,
+  },
+  face_image:{
+    type: String,
   },
   hostelId: {
     type: String,
