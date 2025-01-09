@@ -16,11 +16,10 @@ import { toast } from "react-toastify";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
-
+import { useGeolocated } from "react-geolocated";
 
 export default function Component() {
   const [isCameraActive, setIsCameraActive] = useState(false);
-  const [locationStatus, setLocationStatus] = useState("checking");
   const [recognitionStatus, setRecognitionStatus] = useState("waiting");
   const [attendanceMarked, setAttendanceMarked] = useState(false);
   const [error, setError] = useState(null);
@@ -31,76 +30,68 @@ export default function Component() {
   // --------------------------
   // Location Within range Logic in Specefic diameter
   //-----------------------
-  // const [isWithinRange, setIsWithinRange] = useState(false);
+  const [isWithinRange, setIsWithinRange] = useState(false);
+  const [currentDistance, setCurrentDistance] = useState(null);
+  const [locationStatus, setLocationStatus] = useState("unknown");
 
-  // const Latitude = 19.48888466843967; //This is Limit
-  // const Longitude = 74.92649700810367; // This Is Limit
-  // const Radius = 50; // 50 Meter Radius
+  const targetLatitude = 19.488729; //This is Limit
+  const targetLongitude = 74.926598; // This Is Limit
+  const allowedRadius = 50; // 50 Meter Radius
 
-  // // Function to calculate distance between two coordinates using Haversine formula
-  // const haversineDistance = (lat1, lon1, lat2, lon2) => {
-  //   const R = 6371; // Earth radius in km
-  //   const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  //   const dLon = ((lon2 - lon1) * Math.PI) / 180;
-
-  //   const a =
-  //     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-  //     Math.cos((lat1 * Math.PI) / 180) *
-  //       Math.cos((lat2 * Math.PI) / 180) *
-  //       Math.sin(dLon / 2) *
-  //       Math.sin(dLon / 2);
-  //   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  //   const distance = R * c * 1000; // Distance in meters
-  //   console.log(`Distance: ${distance}`);
-
-  //   return distance;
-  // };
+  // Haversine formula to calculate distance between two coordinates
+  const haversineDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Earth radius in km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c * 1000; // Distance in meters
+  };
 
   // // Get user's current position
 
-  // const checkLocation = () => {
-  //   setIsWithinRange(false);
-  //   setLocationStatus("out of range");
-  //   navigator.geolocation.getCurrentPosition(
-  //     (position) => {
-  //       const { latitude, longitude, accuracy } = position.coords; // Get latitude, longitude, and accuracy
-  //       console.log(`Latitude: ${latitude}`);
-  //       console.log(`Longitude: ${longitude}`);
-  //       console.log(`Accuracy: ${accuracy} meters`);
+  // Function to verify user's location
+  const {
+    coords, // Latitude and Longitude
+    isGeolocationAvailable,
+    isGeolocationEnabled,
+    errorMessage,
+  } = useGeolocated({
+    positionOptions: {
+      enableHighAccuracy: true, // Disable high accuracy mode for faster results
+      timeout: 2000, // Timeout in milliseconds (set to 3 seconds for quicker response)
+      maximumAge: 0, // Prevent cached location usage
+    },
+    watchPosition: true, // Get location only once
+  });
 
-  //       // Check if the accuracy is good enough (e.g., within 50 meters)
-  //       if (accuracy <= 1000) {
-  //         // Calculate the distance between current position and target location
-  //         const distance = haversineDistance(
-  //           latitude,
-  //           longitude,
-  //           Latitude,
-  //           Longitude
-  //         );
+  // Check if the user is within range
+  const verifyLocation = () => {
+    if (coords) {
+      const { latitude, longitude } = coords;
+      const distance = haversineDistance(
+        latitude,
+        longitude,
+        targetLatitude,
+        targetLongitude
+      );
+      setCurrentDistance(distance);
 
-  //         if (distance <= Radius) {
-  //           setLocationStatus("verified");
-  //           setIsWithinRange(true); // User is within the allowed radius
-  //         } else {
-  //           setLocationStatus("out of range");
-  //           setIsWithinRange(false); // User is outside the allowed radius
-  //         }
-  //       } else {
-  //         console.log("low accuracy"); // Accuracy is 153377 meters is very low
-  //         setLocationStatus("low accuracy"); // Location accuracy is not good enough
-  //       }
-  //     },
-  //     (error) => {
-  //       setLocationStatus("error");
-  //       console.error("Error getting location", error);
-  //     },
-  //     {
-  //       enableHighAccuracy: true, // Request higher accuracy if possible
-  //       timeout: 5000, // Timeout for getting location (in milliseconds)
-  //       maximumAge: 0, // Do not use cached location
-  //     }
-  //   );
-  // };
+      if (distance <= allowedRadius) {
+        setLocationStatus("Verified");
+        setIsWithinRange(true);
+      } else {
+        setLocationStatus("Out of range");
+        setIsWithinRange(false);
+      }
+    } else {
+      setLocationStatus("Location not available.");
+    }
+  };
 
   //----------------------
   // Face Recognation Model
@@ -115,7 +106,7 @@ export default function Component() {
   const [userImageGot, setUserImageGot] = useState(false);
   const { userData, isLoggedIn } = useSession();
   // const router = useRouter();
-  const { id, hostel, date } = useParams(); 
+  const { id, hostel, date } = useParams();
 
   // Check in range or not
 
@@ -125,7 +116,7 @@ export default function Component() {
       setLoading(true);
       try {
         const response = await axios.get(`/api/admin/get-image/${id}`);
-        if(response.status===200){
+        if (response.status === 200) {
           const imageData = response.data;
           setUserImage(imageData[0].face_image);
           setUserImageGot(true);
@@ -160,7 +151,7 @@ export default function Component() {
         .detectAllFaces(refFace)
         .withFaceLandmarks()
         .withFaceDescriptors();
-      const faceMatcher = new faceapi.FaceMatcher(refFaceAiData,0.5);
+      const faceMatcher = new faceapi.FaceMatcher(refFaceAiData, 0.5);
 
       // Capture and compare frames continuously
       const intervalId = setInterval(async () => {
@@ -202,6 +193,12 @@ export default function Component() {
             setRecognitionStatus(`recognized`);
             setStatus("Present");
 
+            // Checking Location at this time
+            // if (coords) {
+              verifyLocation();
+            // }
+
+
             const drawBox = new faceapi.draw.DrawBox(detection.box, {
               label: "Hosteller", // replace with user.name
             });
@@ -220,17 +217,16 @@ export default function Component() {
   // Start camera function
   const handleStartCamera = () => {
     setIsCameraActive(true);
-    // checkLocation();
   };
 
   // useEffect hook to run face mesh when the camera is active
   useEffect(() => {
-    if (isCameraActive && userImageGot ) {
+    if (isCameraActive && userImageGot && coords) {
       // Load the face mesh model
       runFacialRecognition();
-      // checkLocation();
+      // verifyLocation();
     }
-  }, [isCameraActive, userImageGot ]);
+  }, [isCameraActive, userImageGot, coords]);
 
   //--------------------
   // Other Functions
@@ -259,23 +255,26 @@ export default function Component() {
 
     try {
       // Send the POST request with the data
-      const response = await fetch(`${API}/api/admin/save-attendance-one-by-one`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json", // Ensure the server knows you're sending JSON
-        },
-        body: JSON.stringify({
-          userId,
-          date,
-          hostelId,
-          status: newStatus,
-        }), // Convert the data to a JSON string
-      });
+      const response = await fetch(
+        `${API}/api/admin/save-attendance-one-by-one`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Ensure the server knows you're sending JSON
+          },
+          body: JSON.stringify({
+            userId,
+            date,
+            hostelId,
+            status: newStatus,
+          }), // Convert the data to a JSON string
+        }
+      );
 
       // Handle response
       if (response.ok) {
         console.log("Attendance submitted successfully:");
-        toast.success("Attendance submitted successfully")
+        toast.success("Attendance submitted successfully");
         navigate("/admin/overview-attendance/take-attendance");
       } else {
         console.log("Error submitting attendance:", response.status);
@@ -342,20 +341,19 @@ export default function Component() {
             <div className="p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center space-x-3">
                 <FaMapMarkerAlt
-                  className={`text-2xl ${
-                    locationStatus === "verified"
+                  className={`text-2xl ${locationStatus === "Verified"
                       ? "text-green-500"
                       : "text-yellow-500"
-                  }`}
+                    }`}
                 />
                 <div>
                   <h3 className="font-semibold">Location Status</h3>
                   <p className="text-sm text-gray-600">
-                    {locationStatus === "verified"
+                    {locationStatus === "Verified"
                       ? "Within attendance zone"
                       : "Checking location..."}
                   </p>
-                  {locationStatus === "out of range" && (
+                  {locationStatus === "Out of range" && (
                     <div className="text-red-500 text-sm mb-4">
                       You are out of the allowed location range!
                     </div>
@@ -387,17 +385,13 @@ export default function Component() {
           {/* Attendance Marking Section */}
           <div className="flex flex-col justify-between space-y-4">
             <button
-             onClick={(e) => handleAttendanceSubmit(e, "Present")}
+              onClick={(e) => handleAttendanceSubmit(e, "Present")}
               disabled={
-                recognitionStatus !== "recognized" 
-                // locationStatus !== "verified"
+                recognitionStatus !== "recognized" ||
+                locationStatus !== "Verified" ||
+                !isWithinRange
               }
-              className={`w-full md:w-auto px-8 py-4 rounded-lg font-semibold text-white transition-all duration-200 transform hover:scale-105 ${
-                recognitionStatus === "recognized"
-                // locationStatus === "verified"
-                  ? "bg-green-600 hover:bg-green-800"
-                  : "bg-gray-400 cursor-not-allowed"
-              }`}
+              className={`w-full md:w-auto px-8 py-4 rounded-lg font-semibold text-white transition-all bg-green-600 hover:bg-green-800 duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed `}
               aria-label="Mark attendance"
             >
               Mark Attendance : Present
@@ -405,23 +399,25 @@ export default function Component() {
             <button
               onClick={(e) => handleAttendanceSubmit(e, "Leave")}
               disabled={
-                recognitionStatus === "recognized" 
-                //&&
-                //locationStatus === "verified"
+                !!(
+                  recognitionStatus === "recognized" &&
+                  locationStatus === "Verified" &&
+                  isWithinRange
+                )
               }
-              className="bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 disabled:opacity-50"
+              className="bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 disabled:cursor-not-allowed  disabled:opacity-50"
               aria-label="Clock Out"
             >
               Leave
             </button>
             <button
-             onClick={(e) => handleAttendanceSubmit(e, "Absent")}
+              onClick={(e) => handleAttendanceSubmit(e, "Absent")}
               disabled={
-                recognitionStatus === "recognized" 
-                //&&
-                //locationStatus === "verified"
+                (recognitionStatus === "recognized" &&
+                  locationStatus === "Verified" &&
+                  isWithinRange)
               }
-              className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50"
+              className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed  focus:ring-opacity-50 disabled:opacity-50"
               aria-label="Clock Out"
             >
               Absent
@@ -429,11 +425,13 @@ export default function Component() {
             <button
               onClick={(e) => handleAttendanceSubmit(e, "Late")}
               disabled={
-                recognitionStatus === "recognized" 
-                //&&
-                //locationStatus === "verified"
+                !!(
+                  recognitionStatus === "recognized" &&
+                  locationStatus === "Verified" &&
+                  isWithinRange
+                )
               }
-              className="bg-yellow-600 hover:bg-yellow-700 text-white py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50 disabled:opacity-50"
+              className="bg-yellow-600 hover:bg-yellow-700 text-white py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 disabled:cursor-not-allowed  focus:ring-yellow-500 focus:ring-opacity-50 disabled:opacity-50"
               aria-label="Clock Out"
             >
               Late
@@ -458,4 +456,4 @@ export default function Component() {
       </div>
     </div>
   );
-};
+}
