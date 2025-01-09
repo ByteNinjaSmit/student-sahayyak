@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/layout/navbar/AcmeLogo.jsx", "app/admin/[admin]/hostellers/page.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/layout/navbar/AcmeLogo.jsx", "app/admin/[admin]/hostellers/page.tsx", "app/admin/[admin]/overview-attendance/attendance/new/[id]/[hostel]/[date]/page.jsx", "app/location/page.jsx"],
   "exclude": ["node_modules"]
 }

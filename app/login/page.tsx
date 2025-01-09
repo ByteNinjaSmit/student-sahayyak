@@ -36,7 +36,7 @@ export default function Login() {
         if (response.ok) {
           // document.cookie = "user-token=" + res_data.token + "; path=/; max-age=7200"; // assuming you get the token from res_data
           // document.cookie = "isLoggedIn=true; path=/; max-age=7200"; // Setting login status
-          document.cookie = "isLoggedIn=true; path=/;";
+          document.cookie = "isLoggedIn=true; path=/; max-age=" + 60 * 60 * 2 + ";";
           if (storeTokenInLS) {
             storeTokenInLS(res_data?.token);
           }
@@ -65,7 +65,7 @@ export default function Login() {
         const res_data = await response.json();
     
         if (response.ok) {
-          document.cookie = "isLoggedIn=true; path=/;";
+          document.cookie = "isLoggedIn=true; path=/; max-age=" + 60 * 60 * 2 + ";";
           if (storeTokenInLS) {
             storeTokenInLS(res_data?.token);
           }

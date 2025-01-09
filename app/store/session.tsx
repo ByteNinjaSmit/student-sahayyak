@@ -48,6 +48,9 @@ const resetSessionState = (): SessionState => ({
   isRector: false,
 });
 
+
+
+
 // Create a provider component
 const SessionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<SessionState>(resetSessionState());
