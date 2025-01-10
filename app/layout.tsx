@@ -9,6 +9,7 @@ import SessionProvider from "./store/session";
 import MainFooter from "@/components/layout/footer/page";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
   title: "Hostellers Sahayyak",
@@ -28,7 +29,9 @@ export default function RootLayout({
             <NextThemesProvider attribute="class" defaultTheme="light">
               <SessionProvider>
                 <MainNavbar />
-                <main>{children}</main>
+                <main>{children}
+                <SpeedInsights />
+                </main>
                 <MainFooter />
               </SessionProvider>
               <ToastContainer
